@@ -44,23 +44,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobile }: SidebarProps) {
-  const { sidebarCollapsed, toggleSidebar, user, notifications, signOut } = useAppStore(
+  const { sidebarCollapsed, toggleSidebar, user, signOut } = useAppStore(
     useShallow((state) => ({
       sidebarCollapsed: state.sidebarCollapsed,
       toggleSidebar: state.toggleSidebar,
       user: state.user,
-      notifications: state.notifications,
       signOut: state.signOut,
     }))
   );
   const { t } = useI18n();
-  const unreadCount = notifications.filter(n => !n.isRead).length;
   const isCollapsed = mobile ? false : sidebarCollapsed;
-
-  const navItems = NAV_ITEMS.map(item => ({
-    ...item,
-    badge: item.id === 'tasks' && unreadCount > 0 ? unreadCount : undefined,
-  }));
 
   return (
     <motion.aside
@@ -113,7 +106,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
       {/* Nav Items */}
       <nav className="touch-scroll flex-1 overflow-y-auto px-3 py-2 space-y-0.5 min-h-0">
-        {navItems.map((item) => {
+        {NAV_ITEMS.map((item) => {
           const isActive = activeModule === item.id;
           const Icon = item.icon;
           return (

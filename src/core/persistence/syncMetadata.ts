@@ -57,14 +57,25 @@ export function dispatchSyncStatus(status: PersistenceSyncStatus, updatedAt?: st
 export function pushSyncErrorNotification() {
   const store = useAppStore.getState();
   const now = new Date().toISOString();
-  const alreadyExists = store.notifications.some(
+  const existingNotification = store.notifications.find(
     (notification) =>
       notification.type === 'system' &&
-      notification.title === 'Sincronización Firebase' &&
-      !notification.isRead,
+      notification.title === 'Sync remoto' &&
+      notification.message === 'Falló la última sincronización remota. Se mantiene la última copia confirmada.',
   );
 
-  if (alreadyExists) {
+  if (existingNotification) {
+    useAppStore.setState((currentState) => ({
+      notifications: currentState.notifications.map((notification) =>
+        notification.id === existingNotification.id
+          ? {
+              ...notification,
+              isRead: false,
+              createdAt: now,
+            }
+          : notification,
+      ),
+    }));
     return;
   }
 
