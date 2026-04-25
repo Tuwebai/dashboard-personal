@@ -15,7 +15,7 @@ export function GeneralSection() {
   const linkAnonymousAccount = useAppStore((state) => state.linkAnonymousAccount);
   const {
     user, profileData, isSaving, saved, fileInputRef, 
-    handleFieldChange, saveProfile, handleAvatarClick, handleAvatarFileChange 
+    handleFieldChange, saveProfile, handleAvatarClick, handleAvatarFileChange, profileReadonlyError,
   } = useProfileSettings();
   const [linkPassword, setLinkPassword] = useState('');
   const [confirmLinkPassword, setConfirmLinkPassword] = useState('');
@@ -25,8 +25,12 @@ export function GeneralSection() {
     try {
       await saveProfile();
       toast.success(t('settings.profileSaved'));
-    } catch {
-      toast.error(t('settings.profileSaveError'));
+    } catch (error) {
+      toast.error(
+        error instanceof Error && error.message === profileReadonlyError
+          ? t('settings.profileReadonly')
+          : t('settings.profileSaveError'),
+      );
     }
   };
 
@@ -62,8 +66,12 @@ export function GeneralSection() {
     try {
       await handleAvatarFileChange(event);
       toast.success(t('settings.avatarUpdated'));
-    } catch {
-      toast.error(t('settings.avatarUpdateError'));
+    } catch (error) {
+      toast.error(
+        error instanceof Error && error.message === profileReadonlyError
+          ? t('settings.profileReadonly')
+          : t('settings.avatarUpdateError'),
+      );
     }
   };
 
