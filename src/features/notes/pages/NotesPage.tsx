@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
+import { List, Plus } from 'lucide-react';
 import { NoteSidebar } from '../components/NoteSidebar';
 import { NoteEditor } from '../components/NoteEditor';
 import { NoteToolbar } from '../components/NoteToolbar';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { Button } from '../../../shared/ui/Button';
 
 export type NoteFilter = 'all' | 'favorites' | 'trash' | 'folder';
 
 export default function Notes() {
   const selectedNoteId = useAppStore((state) => state.selectedNoteId);
   const setSelectedNote = useAppStore((state) => state.setSelectedNote);
+  const addNote = useAppStore((state) => state.addNote);
   const { t } = useI18n();
   const [activeFilter, setActiveFilter] = useState<NoteFilter>('all');
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
@@ -49,6 +52,23 @@ export default function Notes() {
     setMobileView('list');
   };
 
+  const handleCreateNote = () => {
+    addNote({
+      title: t('notes.newUntitled'),
+      content: '',
+      tags: [],
+      isPinned: false,
+      isFavorite: false,
+      isArchived: false,
+      wordCount: 0,
+      readingTime: 0,
+    });
+
+    if (isMobile) {
+      setMobileView('editor');
+    }
+  };
+
   const showSidebar = !isMobile || mobileView === 'list';
   const showEditor = !isMobile || mobileView === 'editor';
 
@@ -82,6 +102,24 @@ export default function Notes() {
             </div>
             <h3 className="text-xl font-bold text-text-primary">{t('notes.selectNote')}</h3>
             <p className="text-text-secondary mt-2 max-w-xs">{t('notes.selectNoteDesc')}</p>
+            <div className="mt-8 flex w-full max-w-sm flex-col gap-3 sm:flex-row sm:justify-center">
+              <Button
+                variant="secondary"
+                className="w-full sm:w-auto"
+                leftIcon={<List size={16} />}
+                onClick={handleBackToList}
+              >
+                {t('notes.goToNotes')}
+              </Button>
+              <Button
+                variant="primary"
+                className="w-full sm:w-auto"
+                leftIcon={<Plus size={16} />}
+                onClick={handleCreateNote}
+              >
+                {t('notes.createFirst')}
+              </Button>
+            </div>
           </div>
         )}
       </div>

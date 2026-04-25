@@ -27,6 +27,9 @@ export const notesTranslations = {
     'notes.restore': 'Restore',
     'notes.archive': 'Archive',
     'notes.deleteAction': 'Delete note',
+    'notes.goToNotes': 'Go to notes',
+    'notes.createFirst': 'Create note',
+    'notes.newUntitled': 'New Note',
   },
   es: {
     'notes.new': 'Crear nota nueva',
@@ -54,5 +57,8 @@ export const notesTranslations = {
     'notes.restore': 'Restaurar',
     'notes.archive': 'Archivar',
     'notes.deleteAction': 'Eliminar nota',
+    'notes.goToNotes': 'Ir a notas',
+    'notes.createFirst': 'Crear nota',
+    'notes.newUntitled': 'Nueva nota',
   },
 } as const satisfies TranslationDictionary;
