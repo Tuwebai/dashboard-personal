@@ -14,6 +14,7 @@ interface KPIGridProps {
   netWorth: number;
   notesThisWeek: number;
   setActiveModule: (module: string) => void;
+  setSelectedTask: (id: string | null) => void;
 }
 
 export function KPIGrid({
@@ -24,7 +25,8 @@ export function KPIGrid({
   longestEver,
   netWorth,
   notesThisWeek,
-  setActiveModule
+  setActiveModule,
+  setSelectedTask,
 }: KPIGridProps) {
   const { t } = useI18n();
 
@@ -48,6 +50,10 @@ export function KPIGrid({
           priorityKey: task.priority,
           priority: t(`tasks.priority${task.priority.charAt(0).toUpperCase()}${task.priority.slice(1)}`),
         }))}
+        onTaskClick={(taskId) => {
+          setSelectedTask(taskId);
+          setActiveModule('tasks');
+        }}
       />
       <KPICard
         icon={<Flame size={20} className="text-orange-400" />}
@@ -91,6 +97,7 @@ function KPICard({
   decimals = 0,
   onClick,
   taskItems,
+  onTaskClick,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -102,6 +109,7 @@ function KPICard({
   decimals?: number;
   onClick?: () => void;
   taskItems?: Array<{ id: string; title: string; priority: string; priorityKey: 'critical' | 'high' | 'medium' | 'low' }>;
+  onTaskClick?: (id: string) => void;
 }) {
   return (
     <motion.div
@@ -131,7 +139,15 @@ function KPICard({
         {taskItems && taskItems.length > 0 ? (
           <div className="hidden min-w-0 flex-1 space-y-1.5 lg:block">
             {taskItems.map((task) => (
-              <div key={task.id} className="flex items-center justify-between gap-2 rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-2">
+              <button
+                key={task.id}
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onTaskClick?.(task.id);
+                }}
+                className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-2 text-left transition-all hover:border-white/10 hover:bg-white/[0.04]"
+              >
                 <p className="truncate text-[11px] font-medium text-white/80">{task.title}</p>
                 <span
                   className={cn(
@@ -141,7 +157,7 @@ function KPICard({
                 >
                   {task.priority}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         ) : null}

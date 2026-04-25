@@ -7,7 +7,7 @@ import { useDashboardFinanceStats } from './useDashboardFinanceStats';
 import { useDashboardActivityStats } from './useDashboardActivityStats';
 
 export function useDashboardStats() {
-  const { tasks, habits, habitLogs, accounts, transactions, notes, events, activities, setActiveModule, logHabit } = useAppStore(
+  const { tasks, habits, habitLogs, accounts, transactions, notes, events, activities, setActiveModule, setSelectedTask, logHabit } = useAppStore(
     useShallow((state) => ({
       tasks: state.tasks,
       habits: state.habits,
@@ -18,6 +18,7 @@ export function useDashboardStats() {
       events: state.events,
       activities: state.activities,
       setActiveModule: state.setActiveModule,
+      setSelectedTask: state.setSelectedTask,
       logHabit: state.logHabit,
     }))
   );
@@ -47,6 +48,7 @@ export function useDashboardStats() {
     ...activityStats,
     weeklyScore,
     setActiveModule,
+    setSelectedTask,
     logHabit,
   };
 }

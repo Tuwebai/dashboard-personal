@@ -13,6 +13,7 @@ export function Dashboard() {
     today,
     tasksCompletedToday,
     totalTasksToday,
+    topTasks,
     todayHabits,
     completedHabits,
     habitCompletionRate,
@@ -28,6 +29,7 @@ export function Dashboard() {
     upcomingEvents,
     activities,
     setActiveModule,
+    setSelectedTask,
     logHabit,
   } = useDashboardStats();
 
@@ -48,11 +50,13 @@ export function Dashboard() {
       <KPIGrid
         tasksCompletedToday={tasksCompletedToday}
         totalTasksToday={totalTasksToday}
+        topTasks={topTasks}
         maxStreak={maxStreak}
         longestEver={longestEver}
         netWorth={netWorth}
         notesThisWeek={notesThisWeek}
         setActiveModule={setActiveModule}
+        setSelectedTask={setSelectedTask}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
