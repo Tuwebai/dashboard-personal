@@ -1,6 +1,8 @@
 export type PersistenceMode = 'local' | 'firebase';
 
-const DEFAULT_PERSISTENCE_MODE: PersistenceMode = 'local';
+function getDefaultPersistenceMode(): PersistenceMode {
+  return isFirebasePersistenceConfigured() ? 'firebase' : 'local';
+}
 const PERSISTENCE_MODE_STORAGE_KEY = 'nexus-crm-persistence-mode';
 
 function isPersistenceMode(value: string | undefined): value is PersistenceMode {
@@ -18,7 +20,7 @@ export function getPersistenceMode(): PersistenceMode {
 
   const mode = import.meta.env.VITE_PERSISTENCE_MODE;
 
-  return isPersistenceMode(mode) ? mode : DEFAULT_PERSISTENCE_MODE;
+  return isPersistenceMode(mode) ? mode : getDefaultPersistenceMode();
 }
 
 export function setPersistenceMode(mode: PersistenceMode) {

@@ -67,6 +67,11 @@ export const settingsTranslations = {
     'settings.aboutDesc': 'App version and info',
     'settings.saveChanges': 'Save Changes',
     'settings.saved': 'Saved!',
+    'settings.localization': 'Localization',
+    'settings.defaultRegion': 'International (Metric)',
+    'settings.linkGuestTitle': 'Protect guest data',
+    'settings.linkGuestDesc': 'Add an email and password to keep this same workspace and sign in later without losing data.',
+    'settings.linkGuestAction': 'Protect with email',
   },
   es: {
     'settings.title': 'Ajustes',
@@ -134,5 +139,10 @@ export const settingsTranslations = {
     'settings.aboutDesc': 'Versión e información',
     'settings.saveChanges': 'Guardar Cambios',
     'settings.saved': '¡Guardado!',
+    'settings.localization': 'Localización',
+    'settings.defaultRegion': 'Internacional (Métrico)',
+    'settings.linkGuestTitle': 'Proteger datos de invitado',
+    'settings.linkGuestDesc': 'Agregá correo y contraseña para conservar este mismo workspace y volver a entrar sin perder datos.',
+    'settings.linkGuestAction': 'Proteger con correo',
   },
 } as const satisfies TranslationDictionary;

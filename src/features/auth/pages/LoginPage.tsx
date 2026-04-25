@@ -45,6 +45,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isAnonymousSession = authProvider === 'anonymous';
 
   const handleAnonymousAccess = async () => {
     setIsSubmitting(true);
@@ -68,7 +69,7 @@ export function LoginPage() {
 
     try {
       if (mode === 'sign-up') {
-        if (authProvider === 'anonymous') {
+        if (isAnonymousSession) {
           await linkAnonymousAccount(email, password);
           toast.success(t('auth.linkedSuccess'));
         } else {
@@ -102,7 +103,7 @@ export function LoginPage() {
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">
-                {authProvider === 'anonymous' ? t('auth.anonymousBadge') : t('auth.valueBadge')}
+                {isAnonymousSession ? t('auth.anonymousBadge') : t('auth.valueBadge')}
               </p>
               <p className="mt-3 text-sm leading-6 text-white/70">
                 {t('auth.valueDescription')}
@@ -175,8 +176,16 @@ export function LoginPage() {
                   loading={isSubmitting}
                   onClick={handleEmailAccess}
                 >
-                  {mode === 'sign-up' ? t('auth.submitSignUp') : t('auth.submitSignIn')}
+                  {mode === 'sign-up'
+                    ? isAnonymousSession
+                      ? t('auth.linkAccount')
+                      : t('auth.submitSignUp')
+                    : t('auth.submitSignIn')}
                 </Button>
+
+                {isAnonymousSession && mode === 'sign-up' && (
+                  <p className="text-center text-xs text-white/50">{t('auth.linkAccountHint')}</p>
+                )}
 
                 <div className="flex items-center gap-3">
                   <div className="h-px flex-1 bg-white/10" />

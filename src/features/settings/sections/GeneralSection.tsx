@@ -1,15 +1,51 @@
+import { useState } from 'react';
 import { Input, Textarea } from '../../../shared/ui/Input';
 import { Button } from '../../../shared/ui/Button';
-import { Camera, Mail, User as UserIcon, MapPin, Globe, Check } from 'lucide-react';
+import { Camera, Mail, User as UserIcon, MapPin, Globe, Check, Lock } from 'lucide-react';
+import { toast } from 'sonner';
 import { useProfileSettings } from '../hooks/useProfileSettings';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { useAppStore } from '../../../stores/useAppStore';
 
 export function GeneralSection() {
   const { t } = useI18n();
+  const authProvider = useAppStore((state) => state.authProvider);
+  const linkAnonymousAccount = useAppStore((state) => state.linkAnonymousAccount);
   const {
     user, profileData, isSaving, saved, fileInputRef, 
     handleFieldChange, saveProfile, handleAvatarClick, handleAvatarFileChange 
   } = useProfileSettings();
+  const [linkPassword, setLinkPassword] = useState('');
+  const [confirmLinkPassword, setConfirmLinkPassword] = useState('');
+  const [isLinking, setIsLinking] = useState(false);
+
+  const handleLinkGuestAccount = async () => {
+    const normalizedEmail = profileData.email.trim();
+
+    if (!normalizedEmail || !linkPassword) {
+      toast.error(t('auth.sessionRequired'));
+      return;
+    }
+
+    if (linkPassword !== confirmLinkPassword) {
+      toast.error(t('auth.passwordMismatch'));
+      return;
+    }
+
+    setIsLinking(true);
+
+    try {
+      await linkAnonymousAccount(normalizedEmail, linkPassword);
+      toast.success(t('auth.linkedSuccess'));
+      setLinkPassword('');
+      setConfirmLinkPassword('');
+      handleFieldChange('email', normalizedEmail);
+    } catch {
+      toast.error(t('auth.genericError'));
+    } finally {
+      setIsLinking(false);
+    }
+  };
 
   return (
     <section className="space-y-8 md:space-y-12">
@@ -70,17 +106,59 @@ export function GeneralSection() {
               loading={isSaving}
               leftIcon={saved ? <Check size={18} /> : undefined}
             >
-              {saved ? 'Saved!' : 'Save Changes'}
+              {saved ? t('settings.saved') : t('settings.saveChanges')}
             </Button>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:gap-8">
+        {authProvider === 'anonymous' && (
+          <div className="rounded-xl border border-violet-500/20 bg-bg-card p-4 space-y-5 sm:p-6">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-300">
+                <Lock size={18} />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold tracking-tight text-white">{t('settings.linkGuestTitle')}</h3>
+                <p className="text-sm leading-6 text-white/55">{t('settings.linkGuestDesc')}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Input
+                label={t('auth.password')}
+                type="password"
+                value={linkPassword}
+                onChange={(e) => setLinkPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+              <Input
+                label={t('auth.confirmPassword')}
+                type="password"
+                value={confirmLinkPassword}
+                onChange={(e) => setConfirmLinkPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
+
+            <div className="flex justify-stretch md:justify-end">
+              <Button
+                variant="primary"
+                className="h-10 w-full md:w-auto"
+                onClick={handleLinkGuestAccount}
+                loading={isLinking}
+              >
+                {t('settings.linkGuestAction')}
+              </Button>
+            </div>
+          </div>
+        )}
+
         <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
           <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
             <Globe className="w-4 h-4 text-violet-400" />
-            Localization
+            {t('settings.localization')}
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
             <Input 
@@ -91,7 +169,7 @@ export function GeneralSection() {
             />
             <Input 
               label={t('settings.region')} 
-              defaultValue="International (Metric)" 
+              defaultValue={t('settings.defaultRegion')} 
               disabled
               leftIcon={<MapPin size={18} />} 
               className="opacity-50 cursor-not-allowed"
