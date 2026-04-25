@@ -81,12 +81,21 @@ export function TaskModal({ isOpen, onClose, task, initialGoalId = '' }: TaskMod
   }, [task, isOpen, setValue, reset, initialGoalId]);
 
   const onSubmit = (data: TaskFormValues) => {
+    const normalizedData = {
+      ...data,
+      title: data.title.trim(),
+      description: data.description?.trim() ?? '',
+      goalId: data.goalId?.trim() ?? '',
+      dueDate: data.dueDate?.trim() ?? '',
+      project: data.project?.trim() ?? '',
+    };
+
     if (task) {
-      updateTask(task.id, data);
+      updateTask(task.id, normalizedData);
       toast.success(t('tasks.updated'));
     } else {
       addTask({
-        ...data,
+        ...normalizedData,
         tags: [],
         subtasks: [],
         recurrence: 'none',

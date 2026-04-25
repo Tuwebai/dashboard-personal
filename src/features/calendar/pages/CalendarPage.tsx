@@ -34,11 +34,17 @@ export default function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
   const handleConfirmAdd = useCallback((eventData: { title: string; startDate: string; startTime: string; duration: string; color: string }) => {
+    const title = eventData.title.trim();
+    const duration = Number.parseInt(eventData.duration, 10);
+    if (!title || Number.isNaN(duration)) {
+      return;
+    }
+
     const start = `${eventData.startDate}T${eventData.startTime}:00`;
-    const end = new Date(new Date(start).getTime() + parseInt(eventData.duration) * 60000).toISOString();
+    const end = new Date(new Date(start).getTime() + duration * 60000).toISOString();
     
     addEvent({
-      title: eventData.title,
+      title,
       startDate: start,
       endDate: end,
       color: eventData.color,
