@@ -3,6 +3,7 @@ import { ShoppingCart, Coffee, CreditCard, ArrowUpRight, Landmark, Zap, Car, Tra
 import { cn } from '../../../shared/lib/cn';
 import { format } from 'date-fns';
 import type { Transaction } from '../../../shared/types';
+import { useI18n } from '../../../shared/i18n/useI18n';
 
 interface TransactionTableProps {
   limit?: number;
@@ -20,6 +21,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 };
 
 export function TransactionTable({ limit, accountId, onRowClick }: TransactionTableProps) {
+  const { t } = useI18n();
   const { transactions, deleteTransaction } = useAppStore();
   
   const filteredTransactions = accountId 
@@ -38,10 +40,10 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
         <table className="w-full text-left border-collapse">
           <thead className="bg-white/5 border-b border-border">
             <tr>
-              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Transaction</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Category</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Date</th>
-              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">Amount</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">{t('finances.tableTransaction')}</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">{t('finances.tableCategory')}</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">{t('finances.tableDate')}</th>
+              <th className="px-6 py-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">{t('finances.tableAmount')}</th>
               <th className="px-6 py-4 w-10"></th>
             </tr>
           </thead>
@@ -95,7 +97,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
             {displayTransactions.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center text-xs text-text-muted italic">
-                  No transactions found for this selection.
+                  {t('finances.noTransactionsForSelection')}
                 </td>
               </tr>
             )}
