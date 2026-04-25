@@ -47,8 +47,8 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
     >
       <div className="space-y-6">
         <div className="flex p-1 bg-white/5 rounded-xl border border-white/5">
-          <button onClick={() => setNewTx({...newTx, type: 'expense'})} className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", newTx.type === 'expense' ? "bg-rose-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}>Expense</button>
-          <button onClick={() => setNewTx({...newTx, type: 'income'})} className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", newTx.type === 'income' ? "bg-emerald-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}>Income</button>
+          <button onClick={() => setNewTx({...newTx, type: 'expense'})} className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", newTx.type === 'expense' ? "bg-rose-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}>{t('finances.expense')}</button>
+          <button onClick={() => setNewTx({...newTx, type: 'income'})} className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", newTx.type === 'income' ? "bg-emerald-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}>{t('finances.income')}</button>
         </div>
         
         <Input 
@@ -73,12 +73,12 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
               value={newTx.category}
               onChange={e => setNewTx({...newTx, category: e.target.value})}
               options={[
-                { value: 'Food', label: 'Food' },
-                { value: 'Shopping', label: 'Shopping' },
-                { value: 'Entertainment', label: 'Entertainment' },
-                { value: 'Transport', label: 'Transport' },
-                { value: 'Income', label: 'Income' },
-                { value: 'Other', label: 'Other' },
+                { value: 'Food', label: t('finances.categoryFood') },
+                { value: 'Shopping', label: t('finances.categoryShopping') },
+                { value: 'Entertainment', label: t('finances.categoryEntertainment') },
+                { value: 'Transport', label: t('finances.categoryTransport') },
+                { value: 'Income', label: t('finances.income') },
+                { value: 'Other', label: t('finances.categoryOther') },
               ]}
             />
           </div>
@@ -93,7 +93,7 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
         </div>
 
         <div className="pt-4">
-            <Button variant="primary" className="w-full h-11" onClick={handleAdd}>Confirm Transaction</Button>
+            <Button variant="primary" className="w-full h-11" onClick={handleAdd}>{t('finances.confirmTransaction')}</Button>
         </div>
       </div>
     </Modal>
