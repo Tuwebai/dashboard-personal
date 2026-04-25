@@ -21,9 +21,21 @@ export default function Finances() {
   // UI State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [editingTx, setEditingTx] = useState<Transaction | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showBudgetManager, setShowBudgetManager] = useState(false);
+
+  const handleCloseTransactionModal = () => {
+    setIsAddModalOpen(false);
+    setEditingTx(null);
+  };
+
+  const handleEditTransaction = (transaction: Transaction) => {
+    setSelectedTx(null);
+    setEditingTx(transaction);
+    setIsAddModalOpen(true);
+  };
 
   return (
     <div className="space-y-8 page-enter pb-12 text-scrollbar">
@@ -124,10 +136,10 @@ export default function Finances() {
                 variant="primary" 
                 size="sm" 
                 className="mt-4 bg-white text-black hover:bg-white/90 border-none px-6 shadow-xl" 
-                leftIcon={<BarChart3 size={14} />}
+               leftIcon={<BarChart3 size={14} />}
                 onClick={() => setShowAnalysis(true)}
                >
-                 Analysis
+                 {t('finances.analysisAction')}
                </Button>
              </div>
              <div className="absolute -right-4 -bottom-4 opacity-10 blur-2xl w-32 h-32 bg-violet-500 rounded-full group-hover:opacity-20 transition-all" />
@@ -137,14 +149,17 @@ export default function Finances() {
 
       {/* Modals & SlideOvers */}
       <AddTransactionModal 
+        key={editingTx?.id ?? 'new-transaction'}
         isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
+        onClose={handleCloseTransactionModal}
+        transaction={editingTx}
       />
 
       <TransactionDetailModal 
         transaction={selectedTx} 
         isOpen={!!selectedTx} 
         onClose={() => setSelectedTx(null)} 
+        onEdit={handleEditTransaction}
       />
 
       <FinancialAnalysisSlideOver 

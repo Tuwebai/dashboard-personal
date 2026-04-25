@@ -11,9 +11,29 @@ interface TransactionDetailModalProps {
   transaction: Transaction | null;
   isOpen: boolean;
   onClose: () => void;
+  onEdit: (transaction: Transaction) => void;
 }
 
-export function TransactionDetailModal({ transaction, isOpen, onClose }: TransactionDetailModalProps) {
+const getCategoryLabel = (category: string, t: (key: string) => string) => {
+  switch (category) {
+    case 'Food':
+      return t('finances.categoryFood');
+    case 'Shopping':
+      return t('finances.categoryShopping');
+    case 'Entertainment':
+      return t('finances.categoryEntertainment');
+    case 'Transport':
+      return t('finances.categoryTransport');
+    case 'Income':
+      return t('finances.income');
+    case 'Other':
+      return t('finances.categoryOther');
+    default:
+      return category;
+  }
+};
+
+export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }: TransactionDetailModalProps) {
   const { t } = useI18n();
   const { deleteTransaction, accounts } = useAppStore();
 
@@ -40,7 +60,7 @@ export function TransactionDetailModal({ transaction, isOpen, onClose }: Transac
           <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-border">
             <div className="flex items-center gap-3">
               <Calendar size={16} className="text-violet-400" />
-              <span className="text-xs font-bold text-text-muted uppercase tracking-widest">Date</span>
+              <span className="text-xs font-bold text-text-muted uppercase tracking-widest">{t('finances.dateLabel')}</span>
             </div>
             <span className="text-sm font-semibold text-text-primary">{format(new Date(transaction.date), 'MMMM d, yyyy')}</span>
           </div>
@@ -48,17 +68,19 @@ export function TransactionDetailModal({ transaction, isOpen, onClose }: Transac
           <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-border">
             <div className="flex items-center gap-3">
               <Landmark size={16} className="text-violet-400" />
-              <span className="text-xs font-bold text-text-muted uppercase tracking-widest">Account</span>
+              <span className="text-xs font-bold text-text-muted uppercase tracking-widest">{t('finances.accountLabel')}</span>
             </div>
-            <span className="text-sm font-semibold text-text-primary">{account?.name || 'Unknown Account'}</span>
+            <span className="text-sm font-semibold text-text-primary">{account?.name || t('finances.unknownAccount')}</span>
           </div>
 
           <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-border">
             <div className="flex items-center gap-3">
               <Tag size={16} className="text-violet-400" />
-              <span className="text-xs font-bold text-text-muted uppercase tracking-widest">Category</span>
+              <span className="text-xs font-bold text-text-muted uppercase tracking-widest">{t('finances.categoryLabel')}</span>
             </div>
-            <span className="text-xs bg-bg-tertiary px-2 py-1 rounded-lg border border-border/50 text-text-secondary">{transaction.category}</span>
+            <span className="text-xs bg-bg-tertiary px-2 py-1 rounded-lg border border-border/50 text-text-secondary">
+              {getCategoryLabel(transaction.category, t)}
+            </span>
           </div>
         </div>
 
@@ -69,15 +91,15 @@ export function TransactionDetailModal({ transaction, isOpen, onClose }: Transac
             leftIcon={<Trash2 size={16} />}
             onClick={handleDelete}
           >
-            Delete
+            {t('finances.deleteTransaction')}
           </Button>
           <Button 
             variant="primary" 
             className="flex-1" 
             leftIcon={<Edit3 size={16} />}
-            onClick={() => { /* Edit logic would go here if we had an edit form */ }}
+            onClick={() => onEdit(transaction)}
           >
-            Edit
+            {t('common.edit')}
           </Button>
         </div>
       </div>

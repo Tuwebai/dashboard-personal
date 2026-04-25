@@ -1,48 +1,89 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Modal } from '../../../shared/ui/Modal';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select } from '../../../shared/ui/Input';
 import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { Transaction } from '../../../shared/types';
 
 interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  transaction?: Transaction | null;
 }
 
-export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProps) {
+const buildInitialTransactionState = (accountId = '') => ({
+  description: '',
+  amount: '',
+  type: 'expense' as 'income' | 'expense',
+  category: 'Other',
+  accountId,
+});
+
+const normalizeTransactionType = (type: Transaction['type']): 'income' | 'expense' =>
+  type === 'income' ? 'income' : 'expense';
+
+const buildTransactionState = (transaction: Transaction | null | undefined, accountId = '') =>
+  transaction
+    ? {
+        description: transaction.description,
+        amount: transaction.amount.toString(),
+        type: normalizeTransactionType(transaction.type),
+        category: transaction.category,
+        accountId: transaction.accountId,
+      }
+    : buildInitialTransactionState(accountId);
+
+export function AddTransactionModal({ isOpen, onClose, transaction }: AddTransactionModalProps) {
   const { t } = useI18n();
-  const { accounts, addTransaction } = useAppStore();
-  const [newTx, setNewTx] = useState({
-    description: '',
-    amount: '',
-    type: 'expense' as 'income' | 'expense',
-    category: 'Other',
-    accountId: accounts[0]?.id || ''
-  });
+  const { accounts, addTransaction, updateTransaction } = useAppStore();
+  const defaultAccountId = accounts[0]?.id || '';
+  const [newTx, setNewTx] = useState(() => buildTransactionState(transaction, defaultAccountId));
+
+  const categoryOptions = useMemo(
+    () => [
+      { value: 'Food', label: t('finances.categoryFood') },
+      { value: 'Shopping', label: t('finances.categoryShopping') },
+      { value: 'Entertainment', label: t('finances.categoryEntertainment') },
+      { value: 'Transport', label: t('finances.categoryTransport') },
+      { value: 'Income', label: t('finances.income') },
+      { value: 'Other', label: t('finances.categoryOther') },
+    ],
+    [t],
+  );
 
   const handleAdd = () => {
     if (!newTx.description || !newTx.amount) return;
-    addTransaction({
+
+    const payload = {
       description: newTx.description,
       amount: parseFloat(newTx.amount),
       type: newTx.type,
       category: newTx.category,
       accountId: newTx.accountId,
-      date: new Date().toISOString().split('T')[0],
-      tags: [],
-      isRecurring: false
-    });
+    };
+
+    if (transaction) {
+      updateTransaction(transaction.id, payload);
+    } else {
+      addTransaction({
+        ...payload,
+        date: new Date().toISOString().split('T')[0],
+        tags: [],
+        isRecurring: false,
+      });
+    }
+
     onClose();
-    setNewTx({ description: '', amount: '', type: 'expense', category: 'Other', accountId: accounts[0]?.id || '' });
+    setNewTx(buildInitialTransactionState(defaultAccountId));
   };
 
   return (
     <Modal 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={t('finances.newTransaction')}
+      title={transaction ? t('finances.editTransaction') : t('finances.newTransaction')}
       size="md"
     >
       <div className="space-y-6">
@@ -72,14 +113,7 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
             <Select
               value={newTx.category}
               onChange={e => setNewTx({...newTx, category: e.target.value})}
-              options={[
-                { value: 'Food', label: t('finances.categoryFood') },
-                { value: 'Shopping', label: t('finances.categoryShopping') },
-                { value: 'Entertainment', label: t('finances.categoryEntertainment') },
-                { value: 'Transport', label: t('finances.categoryTransport') },
-                { value: 'Income', label: t('finances.income') },
-                { value: 'Other', label: t('finances.categoryOther') },
-              ]}
+              options={categoryOptions}
             />
           </div>
           <div className="space-y-1.5">
@@ -93,7 +127,9 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
         </div>
 
         <div className="pt-4">
-            <Button variant="primary" className="w-full h-11" onClick={handleAdd}>{t('finances.confirmTransaction')}</Button>
+            <Button variant="primary" className="w-full h-11" onClick={handleAdd}>
+              {transaction ? t('finances.saveTransactionChanges') : t('finances.confirmTransaction')}
+            </Button>
         </div>
       </div>
     </Modal>
