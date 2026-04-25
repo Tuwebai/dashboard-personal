@@ -74,10 +74,6 @@ export function useFirebasePersistenceSync() {
       remoteUnsubscribe = null;
     };
 
-    const resetWorkspaceForUser = (uid: string, email: string | null) => {
-      useAppStore.setState((state) => mergePersistedWorkspace(state, createScopedInitialSnapshot(uid, email)));
-    };
-
     const setupSync = async (uid: string, email: string | null) => {
       const remoteDocRef = getRemoteDocRef();
 
@@ -207,17 +203,14 @@ export function useFirebasePersistenceSync() {
       }
 
       if (!user) {
+        const previousUid = currentUid;
         currentUid = null;
         remoteHydrated = false;
         teardownStoreSubscription();
         teardownRemoteSubscription();
-        clearLastSyncAt();
+        clearLastSyncAt(previousUid);
         dispatchSyncStatus('idle');
         return;
-      }
-
-      if (currentUid && currentUid !== user.uid) {
-        resetWorkspaceForUser(user.uid, user.email);
       }
 
       currentUid = user.uid;

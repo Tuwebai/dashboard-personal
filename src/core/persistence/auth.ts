@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
-import { CURRENT_USER } from '../constants';
 import { shouldUseFirebasePersistence, subscribeToFirebaseAuth } from './firebase';
+import { resetWorkspaceForSession } from './workspace';
 
 export function useFirebaseAuthBootstrap() {
   const updateUser = useAppStore((state) => state.updateUser);
   const setAuthState = useAppStore((state) => state.setAuthState);
+  const previousUidRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!shouldUseFirebasePersistence()) {
@@ -19,18 +20,21 @@ export function useFirebaseAuthBootstrap() {
 
     return subscribeToFirebaseAuth((user) => {
       if (!user) {
+        previousUidRef.current = null;
+        resetWorkspaceForSession();
         setAuthState({
           authStatus: 'unauthenticated',
           authProvider: null,
           firebaseUid: null,
         });
-        updateUser({
-          id: CURRENT_USER.id,
-          email: '',
-        });
         return;
       }
 
+      if (previousUidRef.current !== user.uid) {
+        resetWorkspaceForSession(user.uid, user.email);
+      }
+
+      previousUidRef.current = user.uid;
       const authProvider = user.isAnonymous ? 'anonymous' : 'password';
       updateUser({
         id: user.uid,
