@@ -16,6 +16,24 @@ export interface RemoteWorkspaceDocument {
   state: PersistedWorkspaceSnapshot;
 }
 
+function stripUndefinedDeep<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((item) => stripUndefinedDeep(item)) as T;
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>).reduce<Record<string, unknown>>((acc, [key, entry]) => {
+      if (entry !== undefined) {
+        acc[key] = stripUndefinedDeep(entry);
+      }
+
+      return acc;
+    }, {}) as T;
+  }
+
+  return value;
+}
+
 function getFirebaseDocPath(uid: string) {
   const template = import.meta.env.VITE_FIREBASE_PERSISTENCE_DOC_PATH ?? DEFAULT_FIREBASE_DOC_PATH;
   return template.replace('{uid}', uid);
@@ -51,7 +69,7 @@ export async function writeWorkspaceRemote(uid: string, payload: RemoteWorkspace
     throw new Error('persistence/invalid-doc-ref');
   }
 
-  await setDoc(ref, payload, { merge: true });
+  await setDoc(ref, stripUndefinedDeep(payload), { merge: true });
 }
 
 export async function wipeRemoteWorkspace(uid: string) {
