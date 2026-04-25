@@ -67,7 +67,7 @@ export default function Habits() {
                   : 'bg-transparent border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'
               }`}
             >
-              {category}
+              {t(`habits.category_${category}`)}
             </button>
           ))}
         </div>
@@ -114,10 +114,10 @@ export default function Habits() {
             value={newHabit.category}
             onChange={e => setNewHabit({...newHabit, category: e.target.value as HabitCategory})}
             options={[
-              { value: 'health', label: 'Health' },
-              { value: 'mind', label: 'Mind' },
-              { value: 'work', label: 'Work' },
-              { value: 'finance', label: 'Finance' },
+              { value: 'health', label: t('habits.category_health') },
+              { value: 'mind', label: t('habits.category_mind') },
+              { value: 'work', label: t('habits.category_work') },
+              { value: 'finance', label: t('habits.category_finance') },
             ]}
           />
 
