@@ -18,6 +18,7 @@ import { Settings } from './features/settings/pages/SettingsPage';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { useFirebaseAuthBootstrap } from './core/persistence/auth';
 import { useFirebasePersistenceSync } from './core/persistence/sync';
+import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
 
 export default function App() {
   const { theme, settings, activeModule, setActiveModule, authStatus } = useAppStore();
@@ -85,33 +86,37 @@ export default function App() {
   };
 
   const renderModule = () => {
+    const withBoundary = (featureName: string, children: React.ReactNode) => (
+      <FeatureErrorBoundary featureName={featureName}>{children}</FeatureErrorBoundary>
+    );
+
     switch (activeModule) {
       case 'dashboard':
-        return <Dashboard />;
+        return withBoundary('Dashboard', <Dashboard />);
       case 'goals':
-        return <GoalsPage />;
+        return withBoundary('Metas', <GoalsPage />);
       case 'weekly-planning':
-        return <WeeklyPlanningPage />;
+        return withBoundary('Planificación semanal', <WeeklyPlanningPage />);
       case 'journaling':
-        return <JournalingPage />;
+        return withBoundary('Journal', <JournalingPage />);
       case 'focus':
-        return <FocusPage />;
+        return withBoundary('Focus', <FocusPage />);
       case 'tasks':
-        return <Tasks />;
+        return withBoundary('Tareas', <Tasks />);
       case 'routines':
-        return <Routines />;
+        return withBoundary('Rutinas', <Routines />);
       case 'habits':
-        return <Habits />;
+        return withBoundary('Hábitos', <Habits />);
       case 'finances':
-        return <Finances />;
+        return withBoundary('Finanzas', <Finances />);
       case 'calendar':
-        return <Calendar />;
+        return withBoundary('Calendario', <Calendar />);
       case 'notes':
-        return <Notes />;
+        return withBoundary('Notas', <Notes />);
       case 'settings':
-        return <Settings />;
+        return withBoundary('Ajustes', <Settings />);
       default:
-        return <Dashboard />;
+        return withBoundary('Dashboard', <Dashboard />);
     }
   };
 
