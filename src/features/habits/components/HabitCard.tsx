@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Habit } from '../../../shared/types';
 import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { Modal } from '../../../shared/ui/Modal';
@@ -15,7 +15,7 @@ interface HabitCardProps {
   habit: Habit;
 }
 
-export function HabitCard({ habit }: HabitCardProps) {
+export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
   const { t } = useI18n();
   const { habitLogs, logHabit, deleteHabit, updateHabit } = useAppStore(
     useShallow((state) => ({
@@ -286,4 +286,4 @@ export function HabitCard({ habit }: HabitCardProps) {
       />
     </motion.div>
   );
-}
+});

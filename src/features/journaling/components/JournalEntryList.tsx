@@ -12,7 +12,7 @@ interface JournalEntryListProps {
   onDelete: (id: string) => void;
 }
 
-export function JournalEntryList({ entries, emptyMessage, onEdit, onDelete }: JournalEntryListProps) {
+export const JournalEntryList = memo(function JournalEntryList({ entries, emptyMessage, onEdit, onDelete }: JournalEntryListProps) {
   const { t } = useI18n();
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
@@ -93,4 +93,5 @@ export function JournalEntryList({ entries, emptyMessage, onEdit, onDelete }: Jo
       />
     </section>
   );
-}
+});
+import { memo } from 'react';

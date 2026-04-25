@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
@@ -17,7 +17,7 @@ interface RoutineCardProps {
   onEdit: (routine: Routine) => void;
 }
 
-export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
+export const RoutineCard = memo(function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
   const { t } = useI18n();
   const startRoutineSession = useAppStore((state) => state.startRoutineSession);
   const deleteRoutine = useAppStore((state) => state.deleteRoutine);
@@ -154,4 +154,4 @@ export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
       />
     </>
   );
-}
+});

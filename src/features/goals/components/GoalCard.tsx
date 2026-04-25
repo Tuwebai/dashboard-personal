@@ -1,5 +1,5 @@
 import { Target } from 'lucide-react';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { cn } from '../../../shared/lib/cn';
 import type { PersonalGoal } from '../types';
 import { GoalProgressBar } from './GoalProgressBar';
@@ -21,7 +21,7 @@ const STATUS_STYLES: Record<PersonalGoal['status'], string> = {
   completed: 'bg-emerald-500/15 text-emerald-300',
 };
 
-export function GoalCard({ goal, onEdit, onDelete, relatedTaskCount = 0 }: GoalCardProps) {
+export const GoalCard = memo(function GoalCard({ goal, onEdit, onDelete, relatedTaskCount = 0 }: GoalCardProps) {
   const { t } = useI18n();
   const setWeeklyFocusGoal = useAppStore((state) => state.setWeeklyFocusGoal);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -123,4 +123,4 @@ export function GoalCard({ goal, onEdit, onDelete, relatedTaskCount = 0 }: GoalC
       />
     </article>
   );
-}
+});
