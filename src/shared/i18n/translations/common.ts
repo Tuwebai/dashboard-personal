@@ -4,6 +4,7 @@ export const commonTranslations = {
   en: {
     'common.close': 'Close',
     'common.cancel': 'Cancel',
+    'common.confirm': 'Confirm',
     'common.create': 'Create',
     'common.saveChanges': 'Save changes',
     'common.help': 'Help',
@@ -32,6 +33,7 @@ export const commonTranslations = {
   es: {
     'common.close': 'Cerrar',
     'common.cancel': 'Cancelar',
+    'common.confirm': 'Confirmar',
     'common.create': 'Crear',
     'common.saveChanges': 'Guardar cambios',
     'common.help': 'Ayuda',

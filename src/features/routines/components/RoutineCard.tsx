@@ -9,6 +9,7 @@ import { useAppStore } from '../../../stores/useAppStore';
 import type { Routine, RoutineType } from '../../../shared/types';
 import { ROUTINE_ICONS, TYPE_COLORS } from './constants';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 interface RoutineCardProps {
   routine: Routine;
@@ -20,15 +21,19 @@ export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
   const { t } = useI18n();
   const { startRoutineSession, deleteRoutine } = useAppStore();
   const [showMenu, setShowMenu] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const Icon = ROUTINE_ICONS[routine.type as RoutineType];
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm(`Are you sure you want to delete "${routine.name}"?`)) {
-      deleteRoutine(routine.id);
-      toast.success(t('routines.routineDeleted'));
-    }
     setShowMenu(false);
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
+    deleteRoutine(routine.id);
+    setIsDeleteOpen(false);
+    toast.success(t('routines.routineDeleted'));
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -38,12 +43,13 @@ export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
   };
 
   return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      className="group bg-bg-card border border-border/50 rounded-2xl p-5 cursor-pointer transition-all hover:bg-bg-hover hover-card relative"
-      onClick={() => onSelect(routine)}
-    >
-      <div className="flex items-start justify-between mb-4">
+    <>
+      <motion.div
+        whileHover={{ y: -4 }}
+        className="group bg-bg-card border border-border/50 rounded-2xl p-5 cursor-pointer transition-all hover:bg-bg-hover hover-card relative"
+        onClick={() => onSelect(routine)}
+      >
+        <div className="flex items-start justify-between mb-4">
         <div 
           className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md shadow-black/20"
           style={{ background: `${TYPE_COLORS[routine.type as RoutineType]}15` }}
@@ -136,7 +142,15 @@ export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
         >
           <Play size={14} className="fill-current" />
         </Button>
-      </div>
-    </motion.div>
+        </div>
+      </motion.div>
+      <ConfirmDialog
+        isOpen={isDeleteOpen}
+        onCancel={() => setIsDeleteOpen(false)}
+        onConfirm={confirmDelete}
+        title={t('routines.deleteTitle')}
+        message={t('routines.deleteMessage')}
+      />
+    </>
   );
 }

@@ -5,11 +5,13 @@ import { cn } from '../../../shared/lib/cn';
 import { useState } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 export function NoteToolbar() {
   const { t } = useI18n();
   const { notes, selectedNoteId, updateNote, deleteNote } = useAppStore();
   const [showMenu, setShowMenu] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const note = notes.find(n => n.id === selectedNoteId);
 
@@ -30,8 +32,13 @@ export function NoteToolbar() {
   };
 
   const handleDelete = () => {
-    deleteNote(note.id);
     setShowMenu(false);
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
+    deleteNote(note.id);
+    setIsDeleteOpen(false);
     toast.success(t('notes.noteDeleted'));
   };
 
@@ -46,8 +53,9 @@ export function NoteToolbar() {
   };
 
   return (
-    <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-white/2 relative">
-      <div className="flex items-center gap-1">
+    <>
+      <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-white/2 relative">
+        <div className="flex items-center gap-1">
         <input
           type="text"
           value={note.title}
@@ -125,8 +133,15 @@ export function NoteToolbar() {
             )}
           </AnimatePresence>
         </div>
+        </div>
       </div>
-
-    </div>
+      <ConfirmDialog
+        isOpen={isDeleteOpen}
+        onCancel={() => setIsDeleteOpen(false)}
+        onConfirm={confirmDelete}
+        title={t('notes.deleteTitle')}
+        message={t('notes.deleteMessage')}
+      />
+    </>
   );
 }

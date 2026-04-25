@@ -5,6 +5,8 @@ import { cn } from '../../../shared/lib/cn';
 import { format } from 'date-fns';
 import type { Transaction } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { useState } from 'react';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 interface TransactionTableProps {
   limit?: number;
@@ -24,6 +26,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 export function TransactionTable({ limit, accountId, onRowClick }: TransactionTableProps) {
   const { t } = useI18n();
   const { transactions, deleteTransaction } = useAppStore();
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   
   const filteredTransactions = accountId 
     ? transactions.filter((tx: Transaction) => tx.accountId === accountId)
@@ -33,6 +36,13 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+  };
+
+  const confirmDelete = () => {
+    if (!pendingDeleteId) return;
+    deleteTransaction(pendingDeleteId);
+    setPendingDeleteId(null);
+    toast.success(t('finances.transactionDeleted'));
   };
 
   return (
@@ -86,7 +96,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                   </td>
                   <td className="px-4 py-4">
                     <button 
-                      onClick={(e) => { e.stopPropagation(); deleteTransaction(tx.id); toast.success(t('finances.transactionDeleted')); }}
+                      onClick={(e) => { e.stopPropagation(); setPendingDeleteId(tx.id); }}
                       className="p-2 text-text-muted hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
                     >
                       <Trash2 size={14} />
@@ -105,6 +115,14 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
           </tbody>
         </table>
       </div>
+      <ConfirmDialog
+        isOpen={pendingDeleteId !== null}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={confirmDelete}
+        title={t('finances.deleteTransactionTitle')}
+        message={t('finances.deleteTransactionMessage')}
+        confirmLabel={t('finances.deleteTransaction')}
+      />
     </div>
   );
 }

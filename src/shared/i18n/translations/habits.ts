@@ -13,6 +13,8 @@ export const habitsTranslations = {
     'habits.category': 'Category',
     'habits.created': 'Habit created.',
     'habits.habitDeleted': 'Habit deleted.',
+    'habits.deleteTitle': 'Delete habit',
+    'habits.deleteMessage': 'This action will permanently remove the habit and its history.',
   },
   es: {
     'habits.title': 'Panel de Hábitos',
@@ -26,5 +28,7 @@ export const habitsTranslations = {
     'habits.category': 'Categoría',
     'habits.created': 'Hábito creado.',
     'habits.habitDeleted': 'Hábito eliminado.',
+    'habits.deleteTitle': 'Eliminar hábito',
+    'habits.deleteMessage': 'Esta acción eliminará permanentemente el hábito y su historial.',
   },
 } as const satisfies TranslationDictionary;

@@ -6,6 +6,7 @@ import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useState } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 interface HabitCardProps {
   habit: Habit;
@@ -15,6 +16,7 @@ export function HabitCard({ habit }: HabitCardProps) {
   const { t } = useI18n();
   const { habitLogs, logHabit, deleteHabit } = useAppStore();
   const [showMenu, setShowMenu] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   
   // Get last 7 days of logs
   const days = Array.from({ length: 7 }, (_, i) => {
@@ -32,8 +34,13 @@ export function HabitCard({ habit }: HabitCardProps) {
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    deleteHabit(habit.id);
     setShowMenu(false);
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
+    deleteHabit(habit.id);
+    setIsDeleteOpen(false);
     toast.success(t('habits.habitDeleted'));
   };
 
@@ -135,6 +142,13 @@ export function HabitCard({ habit }: HabitCardProps) {
           </button>
         ))}
       </div>
+      <ConfirmDialog
+        isOpen={isDeleteOpen}
+        onCancel={() => setIsDeleteOpen(false)}
+        onConfirm={confirmDelete}
+        title={t('habits.deleteTitle')}
+        message={t('habits.deleteMessage')}
+      />
 
       <div className="pt-4 border-t border-border flex items-center justify-between relative z-10">
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-bold">

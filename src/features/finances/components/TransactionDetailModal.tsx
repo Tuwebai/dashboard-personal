@@ -7,6 +7,8 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { format } from 'date-fns';
 import { Trash2, Calendar, Landmark, Tag, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 interface TransactionDetailModalProps {
   transaction: Transaction | null;
@@ -37,13 +39,20 @@ const getCategoryLabel = (category: string, t: (key: string) => string) => {
 export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }: TransactionDetailModalProps) {
   const { t } = useI18n();
   const { deleteTransaction, accounts } = useAppStore();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   if (!transaction) return null;
 
   const account = accounts.find(a => a.id === transaction.accountId);
 
   const handleDelete = () => {
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (!transaction) return;
     deleteTransaction(transaction.id);
+    setIsDeleteOpen(false);
     toast.success(t('finances.transactionDeleted'));
     onClose();
   };
@@ -104,6 +113,14 @@ export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }:
             {t('common.edit')}
           </Button>
         </div>
+        <ConfirmDialog
+          isOpen={isDeleteOpen}
+          onCancel={() => setIsDeleteOpen(false)}
+          onConfirm={confirmDelete}
+          title={t('finances.deleteTransactionTitle')}
+          message={t('finances.deleteTransactionMessage')}
+          confirmLabel={t('finances.deleteTransaction')}
+        />
       </div>
     </Modal>
   );
