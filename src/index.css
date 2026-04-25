@@ -46,6 +46,10 @@ body {
   overflow-x: hidden;
 }
 
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
 button {
   cursor: pointer !important;
 }

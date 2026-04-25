@@ -11,6 +11,7 @@ import { KANBAN_COLUMNS } from '../../../shared/lib/helpers';
 import type { Task, TaskStatus } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { STORE_STORAGE_KEY } from '../../../core/persistence/storage';
+import { useMediaQuery } from '../../../shared/hooks/useMediaQuery';
 
 // Subcomponents
 import { TaskToolbar } from '../components/TaskToolbar';
@@ -42,12 +43,13 @@ export function Tasks() {
     }))
   );
   const { t } = useI18n();
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || taskView !== 'kanban' || window.innerWidth >= 768) {
+    if (typeof window === 'undefined' || taskView !== 'kanban' || !isMobile) {
       return;
     }
 
@@ -57,7 +59,7 @@ export function Tasks() {
     if (persistedTaskView == null) {
       setTaskView('list');
     }
-  }, [setTaskView, taskView]);
+  }, [isMobile, setTaskView, taskView]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 

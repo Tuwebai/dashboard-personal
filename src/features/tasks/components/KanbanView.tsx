@@ -46,7 +46,7 @@ export function KanbanView({
   } as const;
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-      <div className="flex h-full gap-4 overflow-x-auto pb-4 scrollbar-hide [touch-action:pan-x]">
+      <div className="touch-scroll flex h-full gap-4 overflow-x-auto pb-4 scrollbar-hide [touch-action:pan-x]">
         {KANBAN_COLUMNS.map(col => (
           <div key={col.id} className="flex h-full min-w-[280px] shrink-0 flex-col rounded-2xl border border-white/5 bg-white/2 p-4 md:w-80">
             <div className="flex items-center gap-2 mb-4 px-1">
@@ -62,7 +62,7 @@ export function KanbanView({
               strategy={verticalListSortingStrategy}
             >
               <div
-                className="flex-1 space-y-3 min-h-[200px] overflow-y-auto pr-1"
+                className="touch-scroll flex-1 space-y-3 min-h-[200px] overflow-y-auto pr-1"
                 style={{ background: `${col.color}05` }}
               >
                 {tasksByStatus[col.id].map(task => (
@@ -114,7 +114,7 @@ function SortableTaskCard({
       {...listeners}
       onClick={() => onSelect(task)}
       className={cn(
-        'bg-white/2 border border-white/5 rounded-xl p-3.5 cursor-pointer',
+        'bg-white/2 border border-white/5 rounded-xl p-3.5 cursor-pointer [touch-action:pan-y]',
         'hover:border-white/15 hover:bg-[#1e1e1e] transition-all',
         isDragging && 'opacity-50 rotate-2 shadow-xl z-50',
         task.status === 'done' && 'opacity-60',

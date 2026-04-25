@@ -112,7 +112,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
 
       {/* Nav Items */}
-      <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5 min-h-0">
+      <nav className="touch-scroll flex-1 overflow-y-auto px-3 py-2 space-y-0.5 min-h-0">
         {navItems.map((item) => {
           const isActive = activeModule === item.id;
           const Icon = item.icon;
