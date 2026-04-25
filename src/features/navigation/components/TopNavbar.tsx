@@ -114,7 +114,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       </button>
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 flex-1 min-w-0">
-        <BrandLogo collapsed className="h-5 w-auto opacity-50 hover:opacity-100 transition-opacity cursor-pointer" />
+        <BrandLogo collapsed className="h-5 w-5 opacity-50 hover:opacity-100 transition-opacity cursor-pointer shrink-0" />
         <ChevronRight size={14} className="text-white/20" />
         <span className="text-white/80 text-sm font-medium">{t(moduleLabelKey)}</span>
       </div>
