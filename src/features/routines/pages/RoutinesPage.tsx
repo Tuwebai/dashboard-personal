@@ -33,6 +33,12 @@ export function Routines() {
   const activeRoutine = routines.find(r => r.id === activeRoutineSession?.routineId);
   const currentStepIndex = activeRoutineSession?.currentStepIndex ?? 0;
 
+  useEffect(() => {
+    if (activeRoutineSession && !activeRoutine) {
+      endRoutineSession();
+    }
+  }, [activeRoutineSession, activeRoutine, endRoutineSession]);
+
   // Global shortcuts for the active session and modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
