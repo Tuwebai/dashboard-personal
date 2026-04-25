@@ -139,33 +139,6 @@ export const EVENT_COLORS = [
   '#6366f1', '#84cc16', '#a855f7', '#14b8a6',
 ];
 
-export const QUOTES = {
-  en: [
-    { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
-    { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
-    { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-    { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-    { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
-    { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs" },
-    { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
-  ],
-  es: [
-    { text: "El secreto para salir adelante es empezar.", author: "Mark Twain" },
-    { text: "El éxito no es definitivo, el fracaso no es fatal: lo que cuenta es el valor para continuar.", author: "Winston Churchill" },
-    { text: "La única manera de hacer un gran trabajo es amar lo que haces.", author: "Steve Jobs" },
-    { text: "No mires el reloj; haz lo que él hace. Sigue adelante.", author: "Sam Levenson" },
-    { text: "Cree que puedes y estarás a mitad de camino.", author: "Theodore Roosevelt" },
-    { text: "Tu tiempo es limitado, no lo desperdicies viviendo la vida de otro.", author: "Steve Jobs" },
-    { text: "El mejor momento para plantar un árbol fue hace 20 años. El segundo mejor momento es ahora.", author: "Proverbio Chino" },
-  ]
-};
-
-export const getTodayQuote = (lang: 'en' | 'es' = 'en'): { text: string; author: string } => {
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-  const quotesList = QUOTES[lang] || QUOTES.en;
-  return quotesList[dayOfYear % quotesList.length];
-};
-
 export const getHabitStats = (habitId: string, logs: HabitLog[]) => {
   const habitLogs = logs.filter(l => l.habitId === habitId).sort((a, b) => b.date.localeCompare(a.date));
   let longestStreak = 0;

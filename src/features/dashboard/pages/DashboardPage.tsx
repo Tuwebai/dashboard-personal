@@ -6,7 +6,6 @@ import { HabitsWidget } from '../components/HabitsWidget';
 import { UpcomingEventsWidget } from '../components/UpcomingEventsWidget';
 import { FinanceWidgets } from '../components/FinanceWidgets';
 import { ActivityWidget } from '../components/ActivityWidget';
-import { AchievementsWidget } from '../components/AchievementsWidget';
 
 export function Dashboard() {
   const {
@@ -83,18 +82,7 @@ export function Dashboard() {
         setActiveModule={setActiveModule}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ActivityWidget activities={recentActivity} />
-
-        <AchievementsWidget
-          maxStreak={maxStreak}
-          tasksCompletedToday={tasksCompletedToday}
-          notesThisWeek={notesThisWeek}
-          netWorth={netWorth}
-          completedHabits={completedHabits}
-          weeklyScore={weeklyScore}
-        />
-      </div>
+      <ActivityWidget activities={recentActivity} />
     </motion.div>
   );
 }
