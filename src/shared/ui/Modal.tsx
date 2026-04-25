@@ -31,7 +31,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md', className
   const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-1000 overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto">
           {/* Overlay */}
           <motion.div
             ref={overlayRef}
@@ -104,7 +104,7 @@ export function SlideOver({ isOpen, onClose, title, children, width = 'w-96' }: 
   const slideOverContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-1000 flex justify-end">
+        <div className="fixed inset-0 z-50 flex justify-end">
           <motion.div
             className="absolute inset-0 bg-black/50"
             initial={{ opacity: 0 }}
