@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useShallow } from 'zustand/react/shallow';
@@ -37,9 +38,15 @@ export function useNotificationSettings() {
 
   const requestBrowserPermission = async () => {
     if (!('Notification' in window)) {
-      alert(t('settings.browserNoNotifications'));
+      toast.error(t('settings.browserNoNotifications'));
       return;
     }
+
+    if (permissionStatus === 'denied') {
+      toast.error(t('settings.notificationsDenied'));
+      return;
+    }
+
     const permission = await Notification.requestPermission();
     setPermissionStatus(permission);
     
@@ -48,7 +55,16 @@ export function useNotificationSettings() {
         body: t('settings.notificationsEnabledBody'),
         icon: '/favicon.ico'
       });
+      toast.success(t('settings.notificationsGranted'));
+      return;
     }
+
+    if (permission === 'denied') {
+      toast.error(t('settings.notificationsDenied'));
+      return;
+    }
+
+    toast.info(t('settings.notificationsDefault'));
   };
 
   return {

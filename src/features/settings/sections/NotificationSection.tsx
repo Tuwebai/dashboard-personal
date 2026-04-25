@@ -10,11 +10,23 @@ export function NotificationSection() {
   } = useNotificationSettings();
 
   const notificationGroups = [
-    { id: 'tasks', title: 'Task Management', icon: CheckSquare, color: 'text-blue-400', bg: 'bg-blue-400/10', setting: 'taskNotifications', description: 'Reminders for deadlines, subtasks, and productivity reports.' },
-    { id: 'habits', title: 'Habit Tracking', icon: Zap, color: 'text-amber-400', bg: 'bg-amber-400/10', setting: 'habitNotifications', description: 'Streaks alerts and daily check-in reminders.' },
-    { id: 'finances', title: 'Personal Finance', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-400/10', setting: 'financeAlerts', description: 'Budget alerts, goal completion, and bill reminders.' },
-    { id: 'calendar', title: 'Calendar Events', icon: Calendar, color: 'text-rose-400', bg: 'bg-rose-400/10', setting: 'calendarNotifications', description: 'Event invitations and upcoming meeting alerts.' }
+    { id: 'tasks', title: t('settings.notificationsTasksTitle'), icon: CheckSquare, color: 'text-blue-400', bg: 'bg-blue-400/10', setting: 'taskNotifications', description: t('settings.notificationsTasksDesc') },
+    { id: 'habits', title: t('settings.notificationsHabitsTitle'), icon: Zap, color: 'text-amber-400', bg: 'bg-amber-400/10', setting: 'habitNotifications', description: t('settings.notificationsHabitsDesc') },
+    { id: 'finances', title: t('settings.notificationsFinancesTitle'), icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-400/10', setting: 'financeAlerts', description: t('settings.notificationsFinancesDesc') },
+    { id: 'calendar', title: t('settings.notificationsCalendarTitle'), icon: Calendar, color: 'text-rose-400', bg: 'bg-rose-400/10', setting: 'calendarNotifications', description: t('settings.notificationsCalendarDesc') }
   ] as const;
+
+  const browserPermissionMessage = permissionStatus === 'granted'
+    ? t('settings.notificationsGranted')
+    : permissionStatus === 'denied'
+      ? t('settings.notificationsDenied')
+      : t('settings.notificationsDefault');
+
+  const browserPermissionActionLabel = permissionStatus === 'granted'
+    ? t('common.notAvailable')
+    : permissionStatus === 'denied'
+      ? t('settings.notificationsReviewBrowser')
+      : t('common.enable');
 
   return (
     <section className="space-y-8 md:space-y-12">
@@ -62,18 +74,14 @@ export function NotificationSection() {
         </div>
         <div>
           <p className="text-sm font-semibold text-white">{t('common.desktopNotifications')}</p>
-          <p className="text-sm text-white/30">
-            {permissionStatus === 'granted' 
-              ? t('settings.notificationsGranted') 
-              : t('settings.notificationsDefault')}
-          </p>
+          <p className="text-sm text-white/30">{browserPermissionMessage}</p>
         </div>
         <button 
           onClick={requestBrowserPermission}
           disabled={permissionStatus === 'granted'}
           className="ml-auto px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-semibold transition-all border border-border"
         >
-          {permissionStatus === 'granted' ? t('common.notAvailable') : t('common.enable')}
+          {browserPermissionActionLabel}
         </button>
       </div>
     </section>
