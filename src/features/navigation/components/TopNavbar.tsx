@@ -35,6 +35,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
     notifications,
     markNotificationRead,
     markAllNotificationsRead,
+    clearNotifications,
     setCommandPaletteOpen,
     focusSessions,
     selectedFocusSessionId,
@@ -202,19 +203,29 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
               >
                 <div className="flex items-center justify-between px-4 py-3 border-b border-bg-secondary">
                   <h3 className="text-sm font-semibold text-white">Notifications</h3>
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={markAllNotificationsRead}
-                      className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
-                    >
-                      Mark all read
-                    </button>
-                  )}
+                  <div className="flex items-center gap-3">
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={markAllNotificationsRead}
+                        className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                      >
+                        {t('common.markAllRead')}
+                      </button>
+                    )}
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={clearNotifications}
+                        className="text-xs text-white/45 hover:text-white/80 transition-colors"
+                      >
+                        {t('common.clearAll')}
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className="max-h-80 overflow-y-auto divide-y divide-border">
                   {notifications.length === 0 ? (
                     <div className="p-4 text-center text-white/40 text-sm">
-                      No notifications
+                      {t('common.noNotifications')}
                     </div>
                   ) : (
                     notifications.slice(0, 10).map(notif => {

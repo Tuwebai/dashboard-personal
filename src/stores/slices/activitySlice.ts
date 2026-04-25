@@ -22,13 +22,19 @@ export const createActivitySlice: StateCreator<
     state.notifications.forEach(n => { n.isRead = true; });
   }),
 
+  clearNotifications: () => set(state => {
+    state.notifications = [];
+  }),
+
   addActivity: (activityData) => set(state => {
     state.activities.unshift({
       ...activityData,
       id: genId(),
       createdAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
     });
-    if (state.activities.length > 50) state.activities = state.activities.slice(0, 50);
+    if (state.activities.length > 100) {
+      state.activities = state.activities.slice(0, 80);
+    }
   }),
 
   addNotification: (notifData) => set(state => {
@@ -37,5 +43,8 @@ export const createActivitySlice: StateCreator<
       id: genId(),
       createdAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
     });
+    if (state.notifications.length > 50) {
+      state.notifications = state.notifications.slice(0, 40);
+    }
   }),
 });

@@ -193,6 +193,7 @@ export interface ActivitySlice {
   activities: ActivityItem[];
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
+  clearNotifications: () => void;
   addActivity: (activity: Omit<ActivityItem, 'id' | 'createdAt'>) => void;
   addNotification: (notif: Omit<AppNotification, 'id' | 'createdAt'>) => void;
 }
