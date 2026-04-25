@@ -44,7 +44,7 @@ export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange, onNo
 
   const handleCreateNote = () => {
     addNote({
-      title: 'New Note',
+      title: t('notes.newUntitled'),
       content: '',
       tags: [],
       isPinned: false,
