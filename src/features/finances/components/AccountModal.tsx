@@ -142,6 +142,7 @@ export function AccountModal({ isOpen, onClose, account }: AccountModalProps) {
       <div className="space-y-4 pt-2">
         <Input
           label={t('finances.accountNameLabel')}
+          data-testid="account-name-input"
           value={form.name}
           error={errors.name}
           onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
@@ -163,6 +164,7 @@ export function AccountModal({ isOpen, onClose, account }: AccountModalProps) {
 
         <Input
           label={t('finances.accountCurrencyLabel')}
+          data-testid="account-currency-input"
           value={form.currency}
           error={errors.currency}
           onChange={(event) => setForm((current) => ({ ...current, currency: event.target.value }))}
@@ -197,7 +199,13 @@ export function AccountModal({ isOpen, onClose, account }: AccountModalProps) {
           <Button variant="ghost" className="flex-1" onClick={handleClose}>
             {t('common.cancel')}
           </Button>
-          <Button variant="primary" className="flex-1" onClick={handleSave}>
+          <Button
+            variant="primary"
+            className="flex-1"
+            data-testid="account-save-button"
+            onClick={handleSave}
+          >
+            {''}
             {account ? t('common.saveChanges') : t('common.create')}
           </Button>
         </div>

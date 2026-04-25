@@ -78,6 +78,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
 
   return (
     <motion.div
+      data-testid={`habit-card-${habit.id}`}
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -130,7 +131,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
                     <RotateCcw size={16} />
                     <span>{t('habits.resetStreak')}</span>
                   </button>
-                  <div className="h-[1px] bg-border my-1 mx-2" />
+                  <div className="h-1px bg-border my-1 mx-2" />
                   <button onClick={handleDelete} className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left">
                     <Trash2 size={16} />
                     <span>{t('habits.deleteHabit')}</span>
@@ -146,6 +147,8 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
         {days.map((day) => (
           <button
             key={day.date}
+            data-testid={day.isToday ? `habit-log-${habit.id}-today` : undefined}
+            aria-pressed={day.completed}
             onClick={() => logHabit(habit.id, day.date, !day.completed)}
             className={cn(
               "flex min-w-0 flex-col items-center gap-3 p-2 rounded-2xl transition-all",
@@ -273,7 +276,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
       </div>
 
       <div 
-        className="absolute -right-8 -bottom-8 w-32 h-32 blur-[40px] rounded-full opacity-10 pointer-events-none transition-all group-hover:opacity-20"
+        className="absolute -right-8 -bottom-8 w-32 h-32 blur-2xl rounded-full opacity-10 pointer-events-none transition-all group-hover:opacity-20"
         style={{ backgroundColor: habit.color }}
       />
     </motion.div>

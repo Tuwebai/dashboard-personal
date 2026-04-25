@@ -122,6 +122,7 @@ export function LoginPage() {
                 <Input
                   label={t('auth.email')}
                   type="email"
+                  data-testid="auth-email-input"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder={t('auth.emailPlaceholder')}
@@ -129,6 +130,7 @@ export function LoginPage() {
                 <Input
                   label={t('auth.password')}
                   type="password"
+                  data-testid="auth-password-input"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder={t('auth.passwordPlaceholder')}
@@ -137,6 +139,7 @@ export function LoginPage() {
                   <Input
                     label={t('auth.confirmPassword')}
                     type="password"
+                    data-testid="auth-confirm-password-input"
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
                     placeholder={t('auth.passwordPlaceholder')}
@@ -148,6 +151,7 @@ export function LoginPage() {
                 <Button
                   type="button"
                   variant="primary"
+                  data-testid="auth-email-submit-button"
                   className="h-11 w-full"
                   loading={isSubmitting}
                   onClick={handleEmailAccess}
@@ -174,6 +178,7 @@ export function LoginPage() {
                 <Button
                   type="button"
                   variant="ghost"
+                  data-testid="auth-guest-submit-button"
                   className="h-11 w-full border border-white/10"
                   loading={isSubmitting}
                   onClick={handleAnonymousAccess}

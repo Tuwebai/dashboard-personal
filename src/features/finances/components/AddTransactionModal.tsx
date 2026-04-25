@@ -151,6 +151,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
         
         <Input 
           label={t('finances.descriptionLabel')}
+          data-testid="transaction-description-input"
           placeholder={t('finances.descriptionPlaceholder')}
           value={newTx.description}
           onChange={e => setNewTx({...newTx, description: e.target.value})}
@@ -158,6 +159,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
 
         <Input 
           label={t('finances.amountLabel')}
+          data-testid="transaction-amount-input"
           type="text"
           inputMode="decimal"
           placeholder={t('finances.amountPlaceholder')}
@@ -169,6 +171,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">{t('finances.categoryLabel')}</label>
             <Select
+              data-testid="transaction-category-select"
               value={newTx.category}
               onChange={e => setNewTx({...newTx, category: e.target.value})}
               options={categoryOptions}
@@ -177,6 +180,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
           <div className="space-y-1.5">
               <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">{t('finances.accountLabel')}</label>
               <Select
+               data-testid="transaction-account-select"
                value={resolvedAccountId}
                 onChange={e => setNewTx({...newTx, accountId: e.target.value})}
                 options={accounts.map(acc => ({ value: acc.id, label: acc.name }))}
@@ -186,13 +190,19 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
 
         <Input
           label={t('finances.dateLabel')}
+          data-testid="transaction-date-input"
           type="date"
           value={newTx.date}
           onChange={e => setNewTx({ ...newTx, date: e.target.value })}
         />
 
         <div className="pt-4">
-            <Button variant="primary" className="w-full h-11" onClick={handleAdd}>
+            <Button
+              variant="primary"
+              className="w-full h-11"
+              data-testid="transaction-save-button"
+              onClick={handleAdd}
+            >
               {transaction ? t('finances.saveTransactionChanges') : t('finances.confirmTransaction')}
             </Button>
         </div>

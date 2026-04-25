@@ -107,6 +107,7 @@ export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }:
           <Button 
             variant="ghost" 
             className="flex-1 text-rose-400 hover:bg-rose-500/10" 
+            data-testid="transaction-detail-delete-button"
             leftIcon={<Trash2 size={16} />}
             onClick={handleDelete}
           >

@@ -53,6 +53,7 @@ export default function Habits() {
         <Button 
           variant="primary" 
           className="h-11 px-6 shadow-xl shadow-violet-500/20"
+          data-testid="habits-new-button"
           leftIcon={<Plus size={18} strokeWidth={2.5} />} 
           onClick={() => setIsModalOpen(true)}
         >
@@ -126,6 +127,7 @@ export default function Habits() {
 
           <Input 
             label={t('habits.habitName')} 
+            data-testid="habit-name-input"
             placeholder={t('habits.habitPlaceholder')} 
             value={newHabit.name}
             onChange={e => setNewHabit({...newHabit, name: e.target.value})}
@@ -147,6 +149,7 @@ export default function Habits() {
           <Button 
             variant="primary" 
             className="w-full h-11 shadow-xl shadow-violet-500/20" 
+            data-testid="habits-submit-button"
             onClick={handleAddHabit}
           >
             {t('habits.createHabit')}

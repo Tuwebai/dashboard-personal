@@ -51,6 +51,7 @@ export const AddEventModal = memo(({ isOpen, onClose, mode = 'create', initialVa
             </div>
 
             <AddEventForm
+              key={initialValues ? JSON.stringify(initialValues) : mode}
               initialValues={initialValues}
               submitLabel={mode === 'edit' ? t('calendar.edit') : t('calendar.confirm')}
               onConfirm={onAdd}

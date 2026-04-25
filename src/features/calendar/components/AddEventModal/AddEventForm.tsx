@@ -1,4 +1,4 @@
-import { useEffect, useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { useI18n } from '../../../../shared/i18n/useI18n';
 import { Button } from '../../../../shared/ui/Button';
 import { Select } from '../../../../shared/ui/Input';
@@ -19,10 +19,6 @@ export const AddEventForm = memo(({ initialValues, submitLabel, onConfirm }: Eve
   const [formData, setFormData] = useState<CalendarEventFormValues>(
     initialValues ?? createDefaultCalendarEventFormValues(),
   );
-
-  useEffect(() => {
-    setFormData(initialValues ?? createDefaultCalendarEventFormValues());
-  }, [initialValues]);
 
   const handleSubmit = () => {
     const title = formData.title.trim();
