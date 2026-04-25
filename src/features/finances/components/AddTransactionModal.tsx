@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Modal } from '../../../shared/ui/Modal';
 import { Button } from '../../../shared/ui/Button';
@@ -40,6 +40,14 @@ const buildTransactionState = (transaction: Transaction | null | undefined, acco
       }
     : buildInitialTransactionState(accountId);
 
+const resolveDefaultAccountId = (accountIds: string[], preferredAccountId?: string) => {
+  if (preferredAccountId && accountIds.includes(preferredAccountId)) {
+    return preferredAccountId;
+  }
+
+  return accountIds[0] ?? '';
+};
+
 const parseTransactionAmount = (value: string): number => {
   const normalized = value.replace(/\s/g, '');
 
@@ -77,8 +85,21 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
       updateTransaction: state.updateTransaction,
     })),
   );
-  const defaultAccountId = initialAccountId || accounts[0]?.id || '';
+  const accountIds = useMemo(() => accounts.map(({ id }) => id), [accounts]);
+  const defaultAccountId = resolveDefaultAccountId(accountIds, initialAccountId);
   const [newTx, setNewTx] = useState(() => buildTransactionState(transaction, defaultAccountId));
+
+  useEffect(() => {
+    setNewTx(buildTransactionState(transaction, defaultAccountId));
+  }, [defaultAccountId, transaction]);
+
+  useEffect(() => {
+    if (transaction || newTx.accountId || !defaultAccountId) {
+      return;
+    }
+
+    setNewTx((current) => ({ ...current, accountId: defaultAccountId }));
+  }, [defaultAccountId, newTx.accountId, transaction]);
 
   const categoryOptions = useMemo(
     () => [
@@ -96,15 +117,19 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
     if (!newTx.description || !newTx.amount) return;
     const amount = parseTransactionAmount(newTx.amount);
     if (Number.isNaN(amount)) return;
+    if (!newTx.accountId) {
+      toast.error(t('finances.transactionAccountRequired'));
+      return;
+    }
 
     const payload = {
       description: newTx.description,
       amount,
       type: newTx.type,
-        category: newTx.category,
-        accountId: newTx.accountId,
-        date: newTx.date,
-      };
+      category: newTx.category,
+      accountId: newTx.accountId,
+      date: newTx.date,
+    };
 
     if (transaction) {
       updateTransaction(transaction.id, payload);

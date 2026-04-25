@@ -31,6 +31,14 @@ const ensureSingleDefaultAccount = (accounts: FinancialAccount[]) => {
   }
 };
 
+const resolveTransactionAccountId = (accounts: FinancialAccount[], requestedAccountId?: string) => {
+  if (requestedAccountId && accounts.some(({ id }) => id === requestedAccountId)) {
+    return requestedAccountId;
+  }
+
+  return accounts.find(({ isDefault }) => isDefault)?.id ?? accounts[0]?.id ?? '';
+};
+
 export const createFinanceSlice: StateCreator<
   AppStore,
   [["zustand/immer", never], ["zustand/persist", unknown]],
@@ -43,8 +51,12 @@ export const createFinanceSlice: StateCreator<
   goals: [],
 
   addTransaction: (txData) => set(state => {
+    const accountId = resolveTransactionAccountId(state.accounts, txData.accountId);
+    if (!accountId) return;
+
     state.transactions.unshift({
       ...txData,
+      accountId,
       id: genId(),
       createdAt: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
     });
@@ -52,7 +64,15 @@ export const createFinanceSlice: StateCreator<
 
   updateTransaction: (id, updates) => set(state => {
     const idx = state.transactions.findIndex(t => t.id === id);
-    if (idx !== -1) Object.assign(state.transactions[idx], updates);
+    if (idx === -1) return;
+
+    const nextAccountId = resolveTransactionAccountId(state.accounts, updates.accountId ?? state.transactions[idx].accountId);
+    if (!nextAccountId) return;
+
+    Object.assign(state.transactions[idx], {
+      ...updates,
+      accountId: nextAccountId,
+    });
   }),
 
   deleteTransaction: (id) => set(state => {
