@@ -11,6 +11,7 @@ interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
   transaction?: Transaction | null;
+  initialAccountId?: string;
 }
 
 const buildInitialTransactionState = (accountId = '') => ({
@@ -63,10 +64,10 @@ const parseTransactionAmount = (value: string): number => {
   return Number(`${integerPart}.${decimalPart}`);
 };
 
-export function AddTransactionModal({ isOpen, onClose, transaction }: AddTransactionModalProps) {
+export function AddTransactionModal({ isOpen, onClose, transaction, initialAccountId }: AddTransactionModalProps) {
   const { t } = useI18n();
   const { accounts, addTransaction, updateTransaction } = useAppStore();
-  const defaultAccountId = accounts[0]?.id || '';
+  const defaultAccountId = initialAccountId || accounts[0]?.id || '';
   const [newTx, setNewTx] = useState(() => buildTransactionState(transaction, defaultAccountId));
 
   const categoryOptions = useMemo(

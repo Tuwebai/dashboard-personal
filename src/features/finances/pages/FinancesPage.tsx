@@ -38,6 +38,11 @@ export default function Finances() {
     setEditingTx(null);
   };
 
+  const handleOpenNewTransaction = () => {
+    setEditingTx(null);
+    setIsAddModalOpen(true);
+  };
+
   const handleCloseAccountModal = () => {
     setIsAccountModalOpen(false);
     setEditingAccount(null);
@@ -113,7 +118,7 @@ export default function Finances() {
             variant="primary" 
             className="shadow-lg shadow-violet/20 font-bold" 
             leftIcon={<Plus size={16} />}
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={handleOpenNewTransaction}
           >
             {t('finances.addTransaction')}
           </Button>
@@ -237,10 +242,11 @@ export default function Finances() {
       />
 
       <AddTransactionModal 
-        key={editingTx?.id ?? 'new-transaction'}
+        key={editingTx?.id ?? selectedAccountId ?? 'new-transaction'}
         isOpen={isAddModalOpen} 
         onClose={handleCloseTransactionModal}
         transaction={editingTx}
+        initialAccountId={editingTx?.accountId ?? selectedAccountId ?? undefined}
       />
 
       <TransactionDetailModal 
