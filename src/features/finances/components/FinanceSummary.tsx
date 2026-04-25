@@ -35,6 +35,7 @@ export function FinanceSummary() {
   const lastExpenses = lastMonthTx.filter(tx => tx.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
   const currentBalance = income - expenses;
   const lastBalance = lastIncome - lastExpenses;
+  const totalAvailable = currentBalance + expenses;
 
   const calculateTrend = (current: number, previous: number, invert = false) => {
     if (previous === 0) {
@@ -51,7 +52,7 @@ export function FinanceSummary() {
 
   const balanceTrend = calculateTrend(currentBalance, lastBalance);
   const incomeTrend = calculateTrend(income, lastIncome);
-  const expensesTrend = calculateTrend(expenses, lastExpenses, true);
+  const expensesTrend = totalAvailable > 0 ? `-${((expenses / totalAvailable) * 100).toFixed(1)}%` : '0%';
   const savingsRateTrend = calculateTrend(savingsRate, lastIncome > 0 ? ((lastIncome - lastExpenses) / lastIncome) * 100 : 0);
 
   const stats = [
