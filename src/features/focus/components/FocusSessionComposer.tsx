@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Play, Plus } from 'lucide-react';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select } from '../../../shared/ui/Input';
 import { useI18n } from '../../../shared/i18n/useI18n';
@@ -62,6 +63,7 @@ export function FocusSessionComposer({ tasks, onCreateSession }: FocusSessionCom
       startedAt: now.toISOString(),
       lastResumedAt: now.toISOString(),
     });
+    toast.success(t('focus.created'));
 
     setTitle('');
     setMode('pomodoro');

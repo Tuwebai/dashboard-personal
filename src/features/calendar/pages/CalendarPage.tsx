@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../../shared/ui/Button';
 import { useI18n } from '../../../shared/i18n/useI18n';
@@ -46,8 +47,9 @@ export default function Calendar() {
       reminders: [],
       isAllDay: false,
     });
+    toast.success(t('calendar.created'));
     setIsAddModalOpen(false);
-  }, [addEvent]);
+  }, [addEvent, t]);
 
   return (
     <div className="h-full flex flex-col space-y-6 page-enter pb-6">

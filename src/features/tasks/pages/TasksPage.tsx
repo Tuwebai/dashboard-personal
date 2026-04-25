@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
 import { 
   useSensor, useSensors, PointerSensor, type DragEndEvent 
 } from '@dnd-kit/core';
@@ -58,6 +59,16 @@ export function Tasks() {
     setSelectedTask(task.id);
   };
 
+  const handleCompleteTask = (taskId: string) => {
+    completeTask(taskId);
+    toast.success(t('tasks.completed'));
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    deleteTask(taskId);
+    toast.success(t('tasks.deleted'));
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
@@ -102,7 +113,7 @@ export function Tasks() {
             tasksByStatus={tasksByStatus}
             sensors={sensors}
             onDragEnd={handleDragEnd}
-            onComplete={completeTask}
+            onComplete={handleCompleteTask}
             onEdit={handleEdit}
             onSelect={handleSelectTask}
           />
@@ -110,9 +121,9 @@ export function Tasks() {
         {taskView === 'list' && (
           <ListView
             tasks={filteredTasks}
-            onComplete={completeTask}
+            onComplete={handleCompleteTask}
             onEdit={handleEdit}
-            onDelete={deleteTask}
+            onDelete={handleDeleteTask}
             onSelect={handleSelectTask}
             onToggleSubtask={toggleSubtask}
           />
@@ -121,15 +132,15 @@ export function Tasks() {
           <MatrixView
             tasks={filteredTasks}
             onSelect={handleSelectTask}
-            onComplete={completeTask}
+            onComplete={handleCompleteTask}
           />
         )}
         {taskView === 'table' && (
           <TableView
             tasks={filteredTasks}
             onEdit={handleEdit}
-            onDelete={deleteTask}
-            onComplete={completeTask}
+            onDelete={handleDeleteTask}
+            onComplete={handleCompleteTask}
           />
         )}
       </div>
@@ -144,9 +155,9 @@ export function Tasks() {
       <TaskDetailSlideOver
         task={selectedTask}
         onClose={() => setSelectedTask(null)}
-        onComplete={completeTask}
+        onComplete={handleCompleteTask}
         onEdit={handleEdit}
-        onDelete={deleteTask}
+        onDelete={handleDeleteTask}
         onToggleSubtask={toggleSubtask}
       />
     </div>

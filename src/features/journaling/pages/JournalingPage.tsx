@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { BookOpenText } from 'lucide-react';
+import { toast } from 'sonner';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { Select, Input } from '../../../shared/ui/Input';
 import { useAppStore } from '../../../stores/useAppStore';
@@ -62,6 +63,7 @@ export function JournalingPage() {
     setTags('');
     setLinkedDate(journalingContextDate);
     setLinkedArea('');
+    toast.success(t('journaling.created'));
   };
 
   return (

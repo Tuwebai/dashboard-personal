@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 import { Modal } from '../../../shared/ui/Modal';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select } from '../../../shared/ui/Input';
@@ -97,6 +98,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
 
     if (transaction) {
       updateTransaction(transaction.id, payload);
+      toast.success(t('finances.updated'));
     } else {
       addTransaction({
         ...payload,
@@ -104,6 +106,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
         tags: [],
         isRecurring: false,
       });
+      toast.success(t('finances.created'));
     }
 
     onClose();

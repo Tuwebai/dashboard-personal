@@ -7,6 +7,7 @@ import type { Task } from '../../../shared/types';
 import { TaskModal } from '../../tasks/components/TaskModal';
 import type { PersonalGoal, GoalHorizon, GoalPriority, GoalStatus } from '../types';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { toast } from 'sonner';
 
 interface GoalModalProps {
   isOpen: boolean;
@@ -67,8 +68,10 @@ function GoalFormContent({ goal, relatedTasks, onClose }: GoalFormContentProps) 
 
     if (goal) {
       updatePersonalGoal(goal.id, form);
+      toast.success(t('goals.updated'));
     } else {
       addPersonalGoal(form);
+      toast.success(t('goals.created'));
     }
 
     onClose();

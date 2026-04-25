@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, CheckCircle2, Circle, Clock, Edit3, Trash2 
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { format, parseISO } from 'date-fns';
 import { Button } from '../../../shared/ui/Button';
 import { Badge } from '../../../shared/ui/Badge';
@@ -206,6 +207,7 @@ export function TaskDetailSlideOver({
                     startedAt: now.toISOString(),
                     lastResumedAt: now.toISOString(),
                   });
+                  toast.success(t('focus.created'));
                   onClose();
                   setActiveModule('focus');
                 }}

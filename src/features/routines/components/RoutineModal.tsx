@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Clock, Check } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '../../../shared/ui/Button';
 import { Modal } from '../../../shared/ui/Modal';
 import { Input } from '../../../shared/ui/Input';
@@ -80,8 +81,10 @@ export function RoutineModal({ isOpen, onClose, routine }: RoutineModalProps) {
 
     if (routine) {
       updateRoutine(routine.id, routineData);
+      toast.success(t('routines.updated'));
     } else {
       addRoutine(routineData);
+      toast.success(t('routines.created'));
     }
     onClose();
   };

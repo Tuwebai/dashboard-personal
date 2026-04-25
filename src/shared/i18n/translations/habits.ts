@@ -11,6 +11,7 @@ export const habitsTranslations = {
     'habits.noHabitsDesc': 'Try searching in another category or create a new one.',
     'habits.createHabit': 'Create Habit',
     'habits.category': 'Category',
+    'habits.created': 'Habit created.',
     'habits.habitDeleted': 'Habit deleted.',
   },
   es: {
@@ -23,6 +24,7 @@ export const habitsTranslations = {
     'habits.noHabitsDesc': 'Intenta buscar en otra categoría o crea uno nuevo.',
     'habits.createHabit': 'Crear Hábito',
     'habits.category': 'Categoría',
+    'habits.created': 'Hábito creado.',
     'habits.habitDeleted': 'Hábito eliminado.',
   },
 } as const satisfies TranslationDictionary;

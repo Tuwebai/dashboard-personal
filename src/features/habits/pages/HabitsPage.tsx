@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
 import { Button } from '../../../shared/ui/Button';
 import { Modal } from '../../../shared/ui/Modal';
@@ -30,6 +31,7 @@ export default function Habits() {
       isBoolean: true,
       isArchived: false,
     });
+    toast.success(t('habits.created'));
     setNewHabit({ name: '', category: 'health', icon: '✨' });
     setIsModalOpen(false);
   };
