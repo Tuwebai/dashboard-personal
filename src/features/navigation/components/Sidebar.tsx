@@ -38,9 +38,11 @@ const BOTTOM_ITEMS: NavItem[] = [
 interface SidebarProps {
   activeModule: string;
   onNavigate: (module: string) => void;
+  mobile?: boolean;
+  onCloseMobile?: () => void;
 }
 
-export function Sidebar({ activeModule, onNavigate }: SidebarProps) {
+export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobile }: SidebarProps) {
   const { sidebarCollapsed, toggleSidebar, user, notifications } = useAppStore();
   const { t } = useI18n();
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -52,8 +54,11 @@ export function Sidebar({ activeModule, onNavigate }: SidebarProps) {
 
   return (
     <motion.aside
-      className="flex flex-col h-full bg-[#0f0f0f] border-r border-[#1e1e1e] relative overflow-hidden"
-      animate={{ width: sidebarCollapsed ? 72 : 240 }}
+      className={cn(
+        'flex flex-col h-full bg-[#0f0f0f] border-r border-[#1e1e1e] relative overflow-hidden',
+        mobile && 'z-50 w-[240px] max-w-[85vw] shadow-2xl'
+      )}
+      animate={{ width: mobile ? 240 : sidebarCollapsed ? 72 : 240 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
       {/* Subtle gradient top */}
@@ -104,7 +109,10 @@ export function Sidebar({ activeModule, onNavigate }: SidebarProps) {
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => {
+                onNavigate(item.id);
+                if (mobile) onCloseMobile?.();
+              }}
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative cursor-pointer',
                 isActive
@@ -160,7 +168,10 @@ export function Sidebar({ activeModule, onNavigate }: SidebarProps) {
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => {
+                onNavigate(item.id);
+                if (mobile) onCloseMobile?.();
+              }}
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer',
                 isActive
@@ -235,28 +246,30 @@ export function Sidebar({ activeModule, onNavigate }: SidebarProps) {
         </button>
 
         {/* Collapse Toggle */}
-        <button
-          onClick={toggleSidebar}
-          className={cn(
-            'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 mt-2 cursor-pointer',
-            sidebarCollapsed && 'justify-center px-0'
-          )}
-          aria-label={sidebarCollapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
-        >
-          {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          <AnimatePresence>
-            {!sidebarCollapsed && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm font-medium whitespace-nowrap"
-              >
-                {sidebarCollapsed ? t('nav.expand') : t('nav.collapse')}
-              </motion.span>
+        {!mobile ? (
+          <button
+            onClick={toggleSidebar}
+            className={cn(
+              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 mt-2 cursor-pointer',
+              sidebarCollapsed && 'justify-center px-0'
             )}
-          </AnimatePresence>
-        </button>
+            aria-label={sidebarCollapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
+          >
+            {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            <AnimatePresence>
+              {!sidebarCollapsed && (
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-sm font-medium whitespace-nowrap"
+                >
+                  {sidebarCollapsed ? t('nav.expand') : t('nav.collapse')}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
+        ) : null}
       </div>
     </motion.aside>
   );

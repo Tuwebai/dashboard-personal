@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { BrandLogo } from '../../../shared/ui/BrandLogo';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search, Bell, Sun, Moon, ChevronRight,
+  Search, Bell, Sun, Moon, ChevronRight, Menu,
   Check, AlertCircle, TrendingUp, Calendar, Pause, Play, CheckCircle2
 } from 'lucide-react';
 import { cn } from '../../../shared/lib/cn';
@@ -37,9 +37,10 @@ const NOTIF_ICONS: Record<NotificationType, React.ComponentType<{ size?: number 
 interface TopNavbarProps {
   activeModule: string;
   onNavigate: (module: string) => void;
+  onToggleSidebar?: () => void;
 }
 
-export function TopNavbar({ activeModule, onNavigate }: TopNavbarProps) {
+export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavbarProps) {
   const { t } = useI18n();
   const [notifOpen, setNotifOpen] = useState(false);
   const [now, setNow] = useState(() => Date.now());
@@ -98,7 +99,15 @@ export function TopNavbar({ activeModule, onNavigate }: TopNavbarProps) {
   }, [activeFocusSession, now]);
 
   return (
-    <header className="h-14 bg-bg-primary/80 backdrop-blur-xl border-b border-[#1e1e1e] flex items-center px-6 gap-4 sticky top-0 z-30">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-[#1e1e1e] bg-bg-primary/80 px-4 backdrop-blur-xl md:px-6">
+      <button
+        type="button"
+        onClick={onToggleSidebar}
+        className="rounded-lg p-2 text-white/50 transition-all hover:bg-white/8 hover:text-white lg:hidden"
+        aria-label="Abrir navegación"
+      >
+        <Menu size={18} />
+      </button>
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 flex-1 min-w-0">
         <BrandLogo collapsed className="h-5 w-auto opacity-50 hover:opacity-100 transition-opacity cursor-pointer" />
@@ -153,7 +162,7 @@ export function TopNavbar({ activeModule, onNavigate }: TopNavbarProps) {
       {/* Search Trigger */}
       <button
         onClick={() => setCommandPaletteOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/8 rounded-lg text-white/40 hover:text-white/60 hover:bg-white/8 transition-all text-sm group"
+        className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/5 px-2.5 py-1.5 text-sm text-white/40 transition-all group hover:bg-white/8 hover:text-white/60 sm:px-3"
       >
         <Search size={14} />
         <span className="hidden sm:inline">Search...</span>
