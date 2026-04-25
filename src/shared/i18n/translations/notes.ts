@@ -23,6 +23,10 @@ export const notesTranslations = {
     'notes.shareFailed': 'We could not copy the link.',
     'notes.deleteTitle': 'Delete note',
     'notes.deleteMessage': 'This action will permanently remove the current note.',
+    'notes.backToNotes': 'Back to notes',
+    'notes.restore': 'Restore',
+    'notes.archive': 'Archive',
+    'notes.deleteAction': 'Delete note',
   },
   es: {
     'notes.new': 'Crear nota nueva',
@@ -46,5 +50,9 @@ export const notesTranslations = {
     'notes.shareFailed': 'No pudimos copiar el enlace.',
     'notes.deleteTitle': 'Eliminar nota',
     'notes.deleteMessage': 'Esta acción eliminará permanentemente la nota actual.',
+    'notes.backToNotes': 'Volver a notas',
+    'notes.restore': 'Restaurar',
+    'notes.archive': 'Archivar',
+    'notes.deleteAction': 'Eliminar nota',
   },
 } as const satisfies TranslationDictionary;

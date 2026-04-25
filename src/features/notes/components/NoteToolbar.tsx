@@ -1,4 +1,4 @@
-import { Star, Share2, MoreHorizontal, Archive, Trash2, Pin } from 'lucide-react';
+import { ArrowLeft, Star, Share2, MoreHorizontal, Archive, Trash2, Pin } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
 import { cn } from '../../../shared/lib/cn';
@@ -8,7 +8,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { useShallow } from 'zustand/react/shallow';
 
-export function NoteToolbar() {
+interface NoteToolbarProps {
+  showBackButton?: boolean;
+  onBack?: () => void;
+}
+
+export function NoteToolbar({ showBackButton = false, onBack }: NoteToolbarProps) {
   const { t } = useI18n();
   const { notes, selectedNoteId, updateNote, deleteNote } = useAppStore(
     useShallow((state) => ({
@@ -63,12 +68,21 @@ export function NoteToolbar() {
   return (
     <>
       <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-white/2 relative">
-        <div className="flex items-center gap-1">
+        <div className="flex min-w-0 items-center gap-1">
+        {showBackButton && onBack && (
+          <button
+            onClick={onBack}
+            className="mr-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-text-muted transition-all hover:bg-white/5 hover:text-text-primary"
+            title={t('notes.backToNotes')}
+          >
+            <ArrowLeft size={18} />
+          </button>
+        )}
         <input
           type="text"
           value={note.title}
           onChange={(e) => updateNote(note.id, { title: e.target.value })}
-          className="bg-transparent border-none text-lg font-bold text-text-primary focus:ring-0 placeholder:text-text-muted w-64 md:w-96"
+          className="w-full bg-transparent border-none text-lg font-bold text-text-primary focus:ring-0 placeholder:text-text-muted md:max-w-96"
           placeholder={t('common.untitledNote')}
         />
       </div>
@@ -130,11 +144,11 @@ export function NoteToolbar() {
                 >
                   <button onClick={handleArchive} className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left">
                     <Archive size={16} />
-                    <span>{note.isArchived ? 'Restore' : 'Archive'}</span>
+                    <span>{note.isArchived ? t('notes.restore') : t('notes.archive')}</span>
                   </button>
                   <button onClick={handleDelete} className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left">
                     <Trash2 size={16} />
-                    <span>Delete Note</span>
+                    <span>{t('notes.deleteAction')}</span>
                   </button>
                 </motion.div>
               </>

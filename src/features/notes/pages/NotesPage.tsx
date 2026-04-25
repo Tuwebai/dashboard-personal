@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NoteSidebar } from '../components/NoteSidebar';
 import { NoteEditor } from '../components/NoteEditor';
 import { NoteToolbar } from '../components/NoteToolbar';
@@ -9,32 +9,69 @@ export type NoteFilter = 'all' | 'favorites' | 'trash' | 'folder';
 
 export default function Notes() {
   const selectedNoteId = useAppStore((state) => state.selectedNoteId);
+  const setSelectedNote = useAppStore((state) => state.setSelectedNote);
   const { t } = useI18n();
   const [activeFilter, setActiveFilter] = useState<NoteFilter>('all');
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setMobileView('list');
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile && selectedNoteId) {
+      const frame = window.requestAnimationFrame(() => {
+        setMobileView('editor');
+      });
+
+      return () => window.cancelAnimationFrame(frame);
+    }
+  }, [isMobile, selectedNoteId]);
 
   const handleFilterChange = (filter: NoteFilter, folderId: string | null = null) => {
     setActiveFilter(filter);
     setActiveFolderId(folderId);
   };
 
+  const handleBackToList = () => {
+    setSelectedNote(null);
+    setMobileView('list');
+  };
+
+  const showSidebar = !isMobile || mobileView === 'list';
+  const showEditor = !isMobile || mobileView === 'editor';
+
   return (
-    <div className="h-[calc(100vh-140px)] flex gap-6 page-enter pb-6 text-scrollbar">
-      {/* Sidebar - Note List */}
-      <div className="w-80 h-full flex flex-col min-w-0">
+    <div className="flex h-[calc(100vh-140px)] flex-col gap-4 pb-6 text-scrollbar page-enter md:flex-row md:gap-6">
+      <div className={`${showSidebar ? 'flex' : 'hidden'} h-full w-full min-w-0 flex-col md:flex md:w-80`}>
         <NoteSidebar 
           activeFilter={activeFilter} 
           activeFolderId={activeFolderId} 
           onFilterChange={handleFilterChange} 
+          onNoteSelect={() => {
+            if (isMobile) {
+              setMobileView('editor');
+            }
+          }}
         />
       </div>
 
-      {/* Editor Area */}
-      <div className="flex-1 flex flex-col bg-bg-secondary border border-border rounded-3xl glass overflow-hidden min-w-0">
+      <div className={`${showEditor ? 'flex' : 'hidden'} min-w-0 flex-1 flex-col overflow-hidden rounded-3xl border border-border bg-bg-secondary glass md:flex`}>
         {selectedNoteId ? (
           <>
-            <NoteToolbar />
-            <div className="flex-1 overflow-y-auto p-8 md:p-12">
+            <NoteToolbar showBackButton={isMobile} onBack={handleBackToList} />
+            <div className="flex-1 overflow-y-auto p-5 md:p-12">
               <NoteEditor />
             </div>
           </>

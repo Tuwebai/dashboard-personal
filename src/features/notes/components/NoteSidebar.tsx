@@ -10,9 +10,10 @@ interface NoteSidebarProps {
   activeFilter: NoteFilter;
   activeFolderId: string | null;
   onFilterChange: (filter: NoteFilter, folderId?: string | null) => void;
+  onNoteSelect?: () => void;
 }
 
-export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange }: NoteSidebarProps) {
+export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange, onNoteSelect }: NoteSidebarProps) {
   const { notes, selectedNoteId, setSelectedNote, noteSearch, setNoteSearch, addNote, folders } = useAppStore(
     useShallow((state) => ({
       notes: state.notes,
@@ -152,7 +153,10 @@ export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange }: No
               filteredNotes.map(note => (
                 <button
                   key={note.id}
-                  onClick={() => setSelectedNote(note.id)}
+                  onClick={() => {
+                    setSelectedNote(note.id);
+                    onNoteSelect?.();
+                  }}
                   className={cn(
                     "w-full text-left p-4 rounded-2xl border transition-all group relative overflow-hidden",
                     selectedNoteId === note.id 
