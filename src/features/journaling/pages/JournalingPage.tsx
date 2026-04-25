@@ -67,8 +67,8 @@ export function JournalingPage() {
         .split(',')
         .map((tag) => tag.trim())
         .filter(Boolean),
-      linkedDate: linkedDate || undefined,
-      linkedArea: linkedArea || undefined,
+      linkedDate: linkedDate || '',
+      linkedArea: linkedArea || '',
     };
 
     if (editingEntryId) {

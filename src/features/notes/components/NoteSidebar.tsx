@@ -50,7 +50,7 @@ export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange, onNo
       isPinned: false,
       isFavorite: activeFilter === 'favorites',
       isArchived: false,
-      folderId: activeFilter === 'folder' ? activeFolderId || undefined : undefined,
+      folderId: activeFilter === 'folder' ? activeFolderId || '' : '',
       wordCount: 0,
       readingTime: 0
     });
