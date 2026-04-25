@@ -3,6 +3,7 @@ import { TrendingUp, TrendingDown, Wallet, CreditCard } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 import { cn } from '../../../shared/lib/cn';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { formatCurrency } from '../../../shared/lib/helpers';
 
 export function FinanceSummary() {
   const { t } = useI18n();
@@ -32,27 +33,30 @@ export function FinanceSummary() {
 
   const lastIncome = lastMonthTx.filter(tx => tx.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
   const lastExpenses = lastMonthTx.filter(tx => tx.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+  const currentBalance = income - expenses;
+  const lastBalance = lastIncome - lastExpenses;
 
   const calculateTrend = (current: number, previous: number) => {
-    if (previous === 0) return '+0%';
+    if (previous === 0) {
+      if (current === 0) return '0%';
+      return `${current > 0 ? '+' : '-'}100%`;
+    }
+
     const change = ((current - previous) / previous) * 100;
     return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
   };
 
+  const balanceTrend = calculateTrend(currentBalance, lastBalance);
   const incomeTrend = calculateTrend(income, lastIncome);
   const expensesTrend = calculateTrend(expenses, lastExpenses);
   const savingsRateTrend = calculateTrend(savingsRate, lastIncome > 0 ? ((lastIncome - lastExpenses) / lastIncome) * 100 : 0);
 
   const stats = [
-    { label: t('finances.currentBalance'), value: income - expenses, icon: <Wallet className="text-violet-400" />, trend: '+0%', isValue: true },
+    { label: t('finances.currentBalance'), value: currentBalance, icon: <Wallet className="text-violet-400" />, trend: balanceTrend, isValue: true },
     { label: t('finances.monthlyIncome'), value: income, icon: <TrendingUp className="text-emerald-400" />, trend: incomeTrend, isValue: true },
     { label: t('finances.monthlyExpenses'), value: expenses, icon: <TrendingDown className="text-rose-400" />, trend: expensesTrend, isValue: true },
     { label: t('finances.savingsRate'), value: savingsRateFormatted, icon: <CreditCard className="text-blue-400" />, trend: savingsRateTrend, isValue: false },
   ];
-
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-  };
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
