@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
@@ -28,12 +28,16 @@ export function GoalsPage() {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<PersonalGoal | null>(null);
-  const filteredGoals = personalGoals.filter((goal) => {
-    if (goalFilters.horizon && goal.horizon !== goalFilters.horizon) return false;
-    if (goalFilters.status && goal.status !== goalFilters.status) return false;
-    if (goalFilters.priority && goal.priority !== goalFilters.priority) return false;
-    return true;
-  });
+  const filteredGoals = useMemo(
+    () =>
+      personalGoals.filter((goal) => {
+        if (goalFilters.horizon && goal.horizon !== goalFilters.horizon) return false;
+        if (goalFilters.status && goal.status !== goalFilters.status) return false;
+        if (goalFilters.priority && goal.priority !== goalFilters.priority) return false;
+        return true;
+      }),
+    [personalGoals, goalFilters],
+  );
   const hasGoals = filteredGoals.length > 0;
 
   const handleCreate = () => {
@@ -55,8 +59,11 @@ export function GoalsPage() {
     toast.success(t('goals.deleted'));
   };
 
-  const getRelatedTasks = (goalId: string) => tasks.filter((task) => task.goalId === goalId && !task.isArchived);
-  const getRelatedTaskCount = (goalId: string) => getRelatedTasks(goalId).length;
+  const getRelatedTasks = useCallback(
+    (goalId: string) => tasks.filter((task) => task.goalId === goalId && !task.isArchived),
+    [tasks],
+  );
+  const getRelatedTaskCount = useCallback((goalId: string) => getRelatedTasks(goalId).length, [getRelatedTasks]);
 
   return (
     <div className="space-y-6 page-enter pb-6">
