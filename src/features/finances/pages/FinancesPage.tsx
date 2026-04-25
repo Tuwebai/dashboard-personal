@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Plus, Download, Filter, BarChart3, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
@@ -19,13 +19,14 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { getDerivedAccounts, type DerivedFinancialAccount } from '../lib/accounts';
 
 export default function Finances() {
-  const { accounts, transactions, budgets, updateAccount, deleteAccount } = useAppStore(
+  const { accounts, transactions, budgets, updateAccount, deleteAccount, normalizeTransactionAccounts } = useAppStore(
     useShallow((state) => ({
       accounts: state.accounts,
       transactions: state.transactions,
       budgets: state.budgets,
       updateAccount: state.updateAccount,
       deleteAccount: state.deleteAccount,
+      normalizeTransactionAccounts: state.normalizeTransactionAccounts,
     }))
   );
   const { t } = useI18n();
@@ -41,6 +42,20 @@ export default function Finances() {
   const [showBudgetManager, setShowBudgetManager] = useState(false);
 
   const derivedAccounts = useMemo(() => getDerivedAccounts(accounts, transactions), [accounts, transactions]);
+
+  useEffect(() => {
+    if (accounts.length === 0) {
+      return;
+    }
+
+    const hasOrphanTransactions = transactions.some((transaction) => !transaction.accountId || !accounts.some(({ id }) => id === transaction.accountId));
+    if (!hasOrphanTransactions) {
+      return;
+    }
+
+    normalizeTransactionAccounts();
+    toast.success(t('finances.transactionAccountRecovered'));
+  }, [accounts, normalizeTransactionAccounts, t, transactions]);
 
   const handleCloseTransactionModal = () => {
     setIsAddModalOpen(false);

@@ -79,6 +79,15 @@ export const createFinanceSlice: StateCreator<
     state.transactions = state.transactions.filter(t => t.id !== id);
   }),
 
+  normalizeTransactionAccounts: () => set(state => {
+    const fallbackAccountId = resolveTransactionAccountId(state.accounts);
+    if (!fallbackAccountId) return;
+
+    state.transactions.forEach((transaction) => {
+      transaction.accountId = resolveTransactionAccountId(state.accounts, transaction.accountId);
+    });
+  }),
+
   addAccount: (accountData) => set(state => {
     const nextAccount = {
       ...accountData,

@@ -114,8 +114,16 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                   </tr>
                   <tr key={`${tx.id}-mobile`} className="md:hidden">
                     <td colSpan={5} className="p-3">
-                      <button
+                      <div
+                        role="button"
+                        tabIndex={0}
                         onClick={() => onRowClick?.(tx)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            onRowClick?.(tx);
+                          }
+                        }}
                         className="w-full rounded-2xl border border-border/70 bg-white/3 p-4 text-left transition-all hover:bg-white/5"
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -155,7 +163,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                             </button>
                           </div>
                         </div>
-                      </button>
+                      </div>
                     </td>
                   </tr>
                 </Fragment>

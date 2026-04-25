@@ -106,6 +106,7 @@ export interface FinanceSlice {
   addTransaction: (tx: Omit<Transaction, 'id' | 'createdAt'>) => void;
   updateTransaction: (id: string, updates: Partial<Transaction>) => void;
   deleteTransaction: (id: string) => void;
+  normalizeTransactionAccounts: () => void;
   addAccount: (account: Omit<FinancialAccount, 'id' | 'createdAt'>) => void;
   updateAccount: (id: string, updates: Partial<FinancialAccount>) => void;
   deleteAccount: (id: string) => void;
