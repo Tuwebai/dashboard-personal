@@ -1,9 +1,9 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { memo, useState } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import type { JournalEntry } from '../types';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
-import { useState } from 'react';
 
 interface JournalEntryListProps {
   entries: JournalEntry[];
@@ -94,4 +94,3 @@ export const JournalEntryList = memo(function JournalEntryList({ entries, emptyM
     </section>
   );
 });
-import { memo } from 'react';
