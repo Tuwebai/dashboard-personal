@@ -7,8 +7,8 @@ import { EmptyState } from '../../../shared/ui/EmptyState';
 import { useI18n } from '../../../shared/i18n/useI18n';
 
 interface FinanceWidgetsProps {
-  isTrendPositive: boolean;
-  netWorthTrend: number;
+  isTrendPositive: boolean | null;
+  netWorthTrend: number | null;
   TrendIcon: LucideIcon;
   balanceHistory: { date: string; dateKey: string; balance: number }[];
   setActiveModule: (module: string) => void;
@@ -32,14 +32,16 @@ export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, bala
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-semibold text-white text-sm">{t('dashboard.netWorth')}</h3>
-            <p className="text-xs text-white/40 mt-0.5">{t('dashboard.trend30d')}</p>
+            <p className="text-xs text-white/40 mt-0.5">{t('dashboard.trend7d')}</p>
           </div>
-          <div className={cn("flex items-center gap-1.5", isTrendPositive ? "text-green-400" : "text-red-400")}>
-            <TrendIcon size={14} />
-            <span className="text-xs font-semibold">
-              {isTrendPositive ? '+' : ''}{netWorthTrend.toFixed(1)}%
-            </span>
-          </div>
+          {netWorthTrend !== null && isTrendPositive !== null ? (
+            <div className={cn("flex items-center gap-1.5", isTrendPositive ? "text-green-400" : "text-red-400")}>
+              <TrendIcon size={14} />
+              <span className="text-xs font-semibold">
+                {isTrendPositive ? '+' : ''}{netWorthTrend.toFixed(1)}%
+              </span>
+            </div>
+          ) : null}
         </div>
         {balanceHistory.length > 0 ? (
           <ResponsiveContainer width="100%" height={120}>

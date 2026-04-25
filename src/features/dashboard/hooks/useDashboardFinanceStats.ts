@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { addDays, format } from 'date-fns';
-import { TrendingDown, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import type { FinancialAccount, Transaction } from '../../../shared/types';
 import { getDerivedAccounts } from '../../finances/lib/accounts';
 
@@ -13,10 +13,10 @@ export function useDashboardFinanceStats(accounts: FinancialAccount[], transacti
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const thirtyDaysAgo = new Date(today);
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
 
-    const previousTransactions = sortedTransactions.filter((transaction) => new Date(transaction.date) < thirtyDaysAgo);
+    const previousTransactions = sortedTransactions.filter((transaction) => new Date(transaction.date) < sevenDaysAgo);
     const previousAccounts = getDerivedAccounts(accounts, previousTransactions);
     const previousNetWorth = previousAccounts.reduce((sum, account) => sum + account.derivedBalance, 0);
 
@@ -36,7 +36,7 @@ export function useDashboardFinanceStats(accounts: FinancialAccount[], transacti
 
     const balanceHistory: { date: string; dateKey: string; balance: number }[] = [];
     let runningBalance = previousNetWorth;
-    let cursor = new Date(thirtyDaysAgo);
+    let cursor = new Date(sevenDaysAgo);
 
     while (cursor <= today) {
       const dateKey = format(cursor, 'yyyy-MM-dd');
@@ -49,15 +49,7 @@ export function useDashboardFinanceStats(accounts: FinancialAccount[], transacti
       cursor = addDays(cursor, 1);
     }
 
-    const trendBase = balanceHistory[0]?.balance ?? 0;
-    const trendCurrent = balanceHistory[balanceHistory.length - 1]?.balance ?? netWorth;
-    const netWorthTrend =
-      trendBase === 0
-        ? 0
-        : ((trendCurrent - trendBase) / Math.abs(trendBase)) * 100;
-
-    const isTrendPositive = netWorthTrend >= 0;
-    const TrendIcon = isTrendPositive ? TrendingUp : TrendingDown;
+    const TrendIcon = TrendingUp;
 
     const monthlyCashFlowMap = new Map<string, { month: string; income: number; expenses: number; savings: number }>();
     sortedTransactions.forEach((transaction) => {
@@ -81,8 +73,8 @@ export function useDashboardFinanceStats(accounts: FinancialAccount[], transacti
 
     return {
       netWorth,
-      netWorthTrend,
-      isTrendPositive,
+      netWorthTrend: null,
+      isTrendPositive: null,
       TrendIcon,
       hasFinancialData: accounts.length > 0 || transactions.length > 0,
       balanceHistory,
