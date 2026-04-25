@@ -2,10 +2,13 @@ import { motion } from 'framer-motion';
 import { CheckSquare, Flame, DollarSign, FileText, Target } from 'lucide-react';
 import { AnimatedCounter } from '../../../shared/ui/AnimatedCounter';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { PRIORITY_BG } from '../../../shared/lib/helpers';
+import { cn } from '../../../shared/lib/cn';
 
 interface KPIGridProps {
   tasksCompletedToday: number;
   totalTasksToday: number;
+  topTasks: Array<{ id: string; title: string; priority: 'critical' | 'high' | 'medium' | 'low' }>;
   maxStreak: number;
   longestEver: number;
   netWorth: number;
@@ -16,6 +19,7 @@ interface KPIGridProps {
 export function KPIGrid({
   tasksCompletedToday,
   totalTasksToday,
+  topTasks,
   maxStreak,
   longestEver,
   netWorth,
@@ -38,6 +42,12 @@ export function KPIGrid({
         subtitle={`${t('common.of')} ${totalTasksToday} ${t('common.total')}`}
         color="#3b82f6"
         onClick={() => setActiveModule('tasks')}
+        taskItems={topTasks.map((task) => ({
+          id: task.id,
+          title: task.title,
+          priorityKey: task.priority,
+          priority: t(`tasks.priority${task.priority.charAt(0).toUpperCase()}${task.priority.slice(1)}`),
+        }))}
       />
       <KPICard
         icon={<Flame size={20} className="text-orange-400" />}
@@ -80,6 +90,7 @@ function KPICard({
   suffix = '',
   decimals = 0,
   onClick,
+  taskItems,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -90,6 +101,7 @@ function KPICard({
   suffix?: string;
   decimals?: number;
   onClick?: () => void;
+  taskItems?: Array<{ id: string; title: string; priority: string; priorityKey: 'critical' | 'high' | 'medium' | 'low' }>;
 }) {
   return (
     <motion.div
@@ -106,13 +118,34 @@ function KPICard({
         </div>
         <Target size={14} className="text-white/20 group-hover:text-white/40 transition-colors" />
       </div>
-      <p className="text-2xl font-bold text-white">
-        {prefix}
-        <AnimatedCounter value={value} decimals={decimals} />
-        {suffix}
-      </p>
-      <p className="text-xs text-white/40 mt-1">{label}</p>
-      <p className="text-xs text-white/25 mt-0.5">{subtitle}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-2xl font-bold text-white">
+            {prefix}
+            <AnimatedCounter value={value} decimals={decimals} />
+            {suffix}
+          </p>
+          <p className="text-xs text-white/40 mt-1">{label}</p>
+          <p className="text-xs text-white/25 mt-0.5">{subtitle}</p>
+        </div>
+        {taskItems && taskItems.length > 0 ? (
+          <div className="hidden min-w-0 flex-1 space-y-1.5 lg:block">
+            {taskItems.map((task) => (
+              <div key={task.id} className="flex items-center justify-between gap-2 rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-2">
+                <p className="truncate text-[11px] font-medium text-white/80">{task.title}</p>
+                <span
+                  className={cn(
+                    'shrink-0 rounded-md border px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider',
+                    PRIORITY_BG[task.priorityKey],
+                  )}
+                >
+                  {task.priority}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
     </motion.div>
   );
 }
