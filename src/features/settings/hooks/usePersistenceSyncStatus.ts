@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
 import { getPersistenceMode } from '../../../core/persistence/config';
-import { getLastSyncAt } from '../../../core/persistence/sync';
-
-type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error';
+import { useAppStore } from '../../../stores/useAppStore';
+import { getLastSyncAt, type PersistenceSyncStatus } from '../../../core/persistence/syncMetadata';
 
 interface PersistenceSyncDetail {
-  status: SyncStatus;
+  status: PersistenceSyncStatus;
   updatedAt?: string;
 }
 
 const SYNC_EVENT_NAME = 'nexus-crm:persistence-sync';
 
 export function usePersistenceSyncStatus() {
-  const [status, setStatus] = useState<SyncStatus>(
+  const firebaseUid = useAppStore((state) => state.firebaseUid);
+  const [status, setStatus] = useState<PersistenceSyncStatus>(
     getPersistenceMode() === 'firebase' ? 'idle' : 'synced',
   );
-  const [updatedAt, setUpdatedAt] = useState(getLastSyncAt());
+  const [updatedAt, setUpdatedAt] = useState(getLastSyncAt(firebaseUid ?? ''));
 
   useEffect(() => {
     const handleStatusChange = (event: Event) => {

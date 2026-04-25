@@ -17,9 +17,10 @@ import { createWeeklyPlanningSlice } from './slices/weeklyPlanningSlice';
 import { createJournalingSlice } from './slices/journalingSlice';
 import { createFocusSlice } from './slices/focusSlice';
 import { createAppPersistenceStorage, type PersistedAppStore, STORE_STORAGE_KEY } from '../core/persistence/storage';
+import { isPersistedWorkspaceSnapshot, pickPersistedWorkspace } from '../core/persistence/workspace';
 
 function isPersistedAppStore(value: unknown): value is PersistedAppStore {
-  return typeof value === 'object' && value !== null;
+  return isPersistedWorkspaceSnapshot(value);
 }
 
 export const useAppStore = create<AppStore>()(
@@ -100,46 +101,7 @@ export const useAppStore = create<AppStore>()(
           }
           return state as AppStore;
         },
-        partialize: (state) => ({
-          user: state.user,
-          settings: state.settings,
-          theme: state.theme,
-          sidebarCollapsed: state.sidebarCollapsed,
-          taskView: state.taskView,
-          taskFilters: state.taskFilters,
-          calendarView: state.calendarView,
-          tasks: state.tasks,
-          tags: state.tags,
-          habits: state.habits,
-          habitLogs: state.habitLogs,
-          routines: state.routines,
-          activeRoutineSession: state.activeRoutineSession,
-          accounts: state.accounts,
-          transactions: state.transactions,
-          budgets: state.budgets,
-          goals: state.goals,
-          personalGoals: state.personalGoals,
-          goalView: state.goalView,
-          goalFilters: state.goalFilters,
-          events: state.events,
-          weeklyFocus: state.weeklyFocus,
-          weeklyFocusGoalId: state.weeklyFocusGoalId,
-          weeklyTopPriorities: state.weeklyTopPriorities,
-          weeklyPriorityTaskIds: state.weeklyPriorityTaskIds,
-          weeklyNotes: state.weeklyNotes,
-          dailyTop3: state.dailyTop3,
-          dailyHighlightedTaskIds: state.dailyHighlightedTaskIds,
-          dailyIntention: state.dailyIntention,
-          dailyQuickNotes: state.dailyQuickNotes,
-          notes: state.notes,
-          journalEntries: state.journalEntries,
-          journalingContextDate: state.journalingContextDate,
-          focusSessions: state.focusSessions,
-          selectedFocusSessionId: state.selectedFocusSessionId,
-          folders: state.folders,
-          notifications: state.notifications,
-          activities: state.activities,
-        }),
+        partialize: (state) => pickPersistedWorkspace(state),
       }
     )
   )
