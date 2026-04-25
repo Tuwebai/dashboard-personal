@@ -82,7 +82,7 @@ function GoalFormContent({ goal, relatedTasks, onClose }: GoalFormContentProps) 
     <>
       <form onSubmit={handleSubmit} className="space-y-4 pt-2">
         <Input
-          label="Título"
+          label={t('goals.titleLabel')}
           value={form.title}
           onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
           placeholder={t('goals.titlePlaceholder')}
@@ -163,11 +163,11 @@ function GoalFormContent({ goal, relatedTasks, onClose }: GoalFormContentProps) 
         {goal ? (
           <div className="rounded-2xl border border-white/8 bg-white/3 p-4">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-white">Tareas relacionadas</h3>
+              <h3 className="text-sm font-semibold text-white">{t('goals.relatedTasksTitle')}</h3>
               <div className="flex items-center gap-3">
                 <span className="text-xs text-white/35">{relatedTasks.length}</span>
                 <Button type="button" size="sm" variant="outline" onClick={() => setIsTaskModalOpen(true)}>
-                  Nueva tarea
+                  {t('goals.newRelatedTask')}
                 </Button>
               </div>
             </div>

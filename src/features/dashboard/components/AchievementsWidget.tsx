@@ -47,12 +47,12 @@ export function AchievementsWidget({
         <h3 className="font-semibold text-white text-sm mb-3">{t('dashboard.achievements')}</h3>
         <div className="grid grid-cols-3 gap-2">
           {[
-            { icon: '🔥', label: '14-day streak', unlocked: maxStreak >= 14 },
-            { icon: '✅', label: 'Task master', unlocked: tasksCompletedToday >= 3 },
-            { icon: '📚', label: 'Note taker', unlocked: notesThisWeek >= 3 },
-            { icon: '💰', label: 'Saver', unlocked: netWorth > 50000 },
-            { icon: '🧘', label: 'Mindful', unlocked: completedHabits >= 5 },
-            { icon: '⭐', label: 'Overachiever', unlocked: weeklyScore >= 80 },
+            { icon: '🔥', label: t('dashboard.achievement14DayStreak'), unlocked: maxStreak >= 14 },
+            { icon: '✅', label: t('dashboard.achievementTaskMaster'), unlocked: tasksCompletedToday >= 3 },
+            { icon: '📚', label: t('dashboard.achievementNoteTaker'), unlocked: notesThisWeek >= 3 },
+            { icon: '💰', label: t('dashboard.achievementSaver'), unlocked: netWorth > 50000 },
+            { icon: '🧘', label: t('dashboard.achievementMindful'), unlocked: completedHabits >= 5 },
+            { icon: '⭐', label: t('dashboard.achievementOverachiever'), unlocked: weeklyScore >= 80 },
           ].map((a, i) => (
             <div
               key={i}

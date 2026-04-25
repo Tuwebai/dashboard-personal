@@ -124,14 +124,14 @@ export function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  placeholder="you@example.com"
+                  placeholder={t('auth.emailPlaceholder')}
                 />
                 <Input
                   label={t('auth.password')}
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  placeholder="••••••••"
+                  placeholder={t('auth.passwordPlaceholder')}
                 />
                 {mode === 'sign-up' && (
                   <Input
@@ -139,7 +139,7 @@ export function LoginPage() {
                     type="password"
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
-                    placeholder="••••••••"
+                    placeholder={t('auth.passwordPlaceholder')}
                   />
                 )}
               </div>

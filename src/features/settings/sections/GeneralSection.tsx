@@ -159,14 +159,14 @@ export function GeneralSection() {
                 type="password"
                 value={linkPassword}
                 onChange={(e) => setLinkPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t('auth.passwordPlaceholder')}
               />
               <Input
                 label={t('auth.confirmPassword')}
                 type="password"
                 value={confirmLinkPassword}
                 onChange={(e) => setConfirmLinkPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t('auth.passwordPlaceholder')}
               />
             </div>
 

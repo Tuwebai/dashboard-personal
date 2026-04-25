@@ -166,7 +166,7 @@ export function AccountModal({ isOpen, onClose, account }: AccountModalProps) {
           value={form.currency}
           error={errors.currency}
           onChange={(event) => setForm((current) => ({ ...current, currency: event.target.value }))}
-          placeholder="USD"
+          placeholder={t('finances.accountCurrencyPlaceholder')}
           maxLength={3}
         />
 

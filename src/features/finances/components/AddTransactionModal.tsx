@@ -160,7 +160,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
           label={t('finances.amountLabel')}
           type="text"
           inputMode="decimal"
-          placeholder="0.00"
+          placeholder={t('finances.amountPlaceholder')}
           value={newTx.amount}
           onChange={e => setNewTx({...newTx, amount: e.target.value})}
         />
