@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Sidebar } from '../../features/navigation/components/Sidebar';
 import { TopNavbar } from '../../features/navigation/components/TopNavbar';
+import { WorkspaceReadonlyBanner } from '../../shared/ui/WorkspaceReadonlyBanner';
 
 interface DashboardLayoutProps {
   activeModule: string;
@@ -38,6 +39,7 @@ export function DashboardLayout({ activeModule, onNavigate, children }: Dashboar
           onNavigate={onNavigate}
           onToggleSidebar={() => setMobileSidebarOpen(true)}
         />
+        <WorkspaceReadonlyBanner />
         <main className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
       </div>
     </div>

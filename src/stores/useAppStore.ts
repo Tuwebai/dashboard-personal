@@ -19,6 +19,7 @@ import { createFocusSlice } from './slices/focusSlice';
 import { createAppPersistenceStorage, type PersistedAppStore, STORE_STORAGE_KEY } from '../core/persistence/storage';
 import { isPersistedWorkspaceSnapshot, pickPersistedWorkspace } from '../core/persistence/workspace';
 import { shouldUseFirebasePersistence } from '../core/persistence/firebase';
+import { emitWorkspaceReadonlyBlockedEvent } from '../core/persistence/workspaceReadonly';
 
 function isPersistedAppStore(value: unknown): value is PersistedAppStore {
   return isPersistedWorkspaceSnapshot(value);
@@ -30,6 +31,7 @@ export const useAppStore = create<AppStore>()(
       (set, get, api) => {
         const guardedSet = ((...args: Parameters<typeof set>) => {
           if (shouldUseFirebasePersistence() && useAppStore.getState().workspaceReadOnly) {
+            emitWorkspaceReadonlyBlockedEvent();
             return;
           }
 
