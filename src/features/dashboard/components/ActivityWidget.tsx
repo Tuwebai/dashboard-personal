@@ -11,7 +11,7 @@ interface ActivityWidgetProps {
 
 import { memo } from 'react';
 
-export const ActivityWidget = memo(function ActivityWidget({ activities }: ActivityWidgetProps) {
+export const ActivityWidget = memo(function ActivityWidget({ activities = [] }: ActivityWidgetProps) {
   const { t } = useI18n();
   const itemVariants = {
     hidden: { opacity: 0, y: 16 },
