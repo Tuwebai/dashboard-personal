@@ -20,12 +20,41 @@ export function useDashboardTaskStats(tasks: Task[]) {
       value: activeTasks.filter((task) => task.priority === priority && task.status !== 'done').length,
       color: PRIORITY_COLORS[priority],
     })).filter((priority) => priority.value > 0);
+    const topTasks = activeTasks
+      .filter((task) => task.status !== 'done')
+      .sort((left, right) => {
+        const priorityDiff = PRIORITY_ORDER.indexOf(left.priority) - PRIORITY_ORDER.indexOf(right.priority);
+        if (priorityDiff !== 0) {
+          return priorityDiff;
+        }
+
+        if (left.dueDate && right.dueDate) {
+          return left.dueDate.localeCompare(right.dueDate);
+        }
+
+        if (left.dueDate) {
+          return -1;
+        }
+
+        if (right.dueDate) {
+          return 1;
+        }
+
+        return right.createdAt.localeCompare(left.createdAt);
+      })
+      .slice(0, 3)
+      .map((task) => ({
+        id: task.id,
+        title: task.title,
+        priority: task.priority,
+      }));
 
     return {
       today,
       tasksCompletedToday,
       totalTasksToday,
       tasksByPriority,
+      topTasks,
     };
   }, [tasks]);
 }
