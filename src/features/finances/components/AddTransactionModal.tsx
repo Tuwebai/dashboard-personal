@@ -68,7 +68,7 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">Category</label>
+            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">{t('finances.categoryLabel')}</label>
             <Select
               value={newTx.category}
               onChange={e => setNewTx({...newTx, category: e.target.value})}
@@ -83,7 +83,7 @@ export function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProp
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">Account</label>
+            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">{t('finances.accountLabel')}</label>
             <Select
               value={newTx.accountId}
               onChange={e => setNewTx({...newTx, accountId: e.target.value})}

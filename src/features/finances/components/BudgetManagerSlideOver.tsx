@@ -36,7 +36,7 @@ export function BudgetManagerSlideOver({ isOpen, onClose }: BudgetManagerSlideOv
     <SlideOver isOpen={isOpen} onClose={onClose} title={t('finances.manageBudgets')} width="w-96">
       <div className="space-y-6">
         <p className="text-sm text-text-secondary leading-relaxed">
-          Adjust your monthly spending targets to stay on track with your goals.
+          {t('finances.budgetManagerDescription')}
         </p>
         <div className="space-y-4">
           {localBudgets.map(budget => (
@@ -62,7 +62,7 @@ export function BudgetManagerSlideOver({ isOpen, onClose }: BudgetManagerSlideOv
           className="w-full mt-6 h-12 shadow-lg shadow-violet-500/20 font-bold" 
           onClick={handleSave}
         >
-          Save All Changes
+          {t('finances.saveAllChanges')}
         </Button>
       </div>
     </SlideOver>
