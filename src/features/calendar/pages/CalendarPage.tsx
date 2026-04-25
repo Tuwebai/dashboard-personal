@@ -16,6 +16,11 @@ import {
   EventDetailModal, 
   AddEventModal 
 } from '../components';
+import {
+  buildCalendarEventSchedule,
+  mapCalendarEventToFormValues,
+  type CalendarEventFormValues,
+} from '../lib/eventForm';
 
 export default function Calendar() {
   const { 
@@ -27,26 +32,43 @@ export default function Calendar() {
     handleToday 
   } = useCalendarView();
 
-  const { addEvent } = useCalendarEvents();
+  const { addEvent, updateEvent } = useCalendarEvents();
   const { t, lang } = useI18n();
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
-  const handleConfirmAdd = useCallback((eventData: { title: string; startDate: string; startTime: string; duration: string; color: string }) => {
-    const title = eventData.title.trim();
+  const handleCloseAddModal = useCallback(() => {
+    setIsAddModalOpen(false);
+    setEditingEvent(null);
+  }, []);
+
+  const handleConfirmAdd = useCallback((eventData: CalendarEventFormValues) => {
     const duration = Number.parseInt(eventData.duration, 10);
+    const title = eventData.title.trim();
     if (!title || Number.isNaN(duration)) {
       return;
     }
 
-    const start = `${eventData.startDate}T${eventData.startTime}:00`;
-    const end = new Date(new Date(start).getTime() + duration * 60000).toISOString();
-    
+    const schedule = buildCalendarEventSchedule(eventData);
+
+    if (editingEvent) {
+      updateEvent(editingEvent.id, {
+        title,
+        startDate: schedule.startDate,
+        endDate: schedule.endDate,
+        color: eventData.color,
+      });
+      toast.success(t('calendar.updated'));
+      handleCloseAddModal();
+      return;
+    }
+
     addEvent({
       title,
-      startDate: start,
-      endDate: end,
+      startDate: schedule.startDate,
+      endDate: schedule.endDate,
       color: eventData.color,
       category: 'personal',
       recurrence: 'none',
@@ -54,8 +76,19 @@ export default function Calendar() {
       isAllDay: false,
     });
     toast.success(t('calendar.created'));
-    setIsAddModalOpen(false);
-  }, [addEvent, t]);
+    handleCloseAddModal();
+  }, [addEvent, editingEvent, handleCloseAddModal, t, updateEvent]);
+
+  const handleStartCreate = useCallback(() => {
+    setEditingEvent(null);
+    setIsAddModalOpen(true);
+  }, []);
+
+  const handleStartEdit = useCallback((event: CalendarEvent) => {
+    setSelectedEvent(null);
+    setEditingEvent(event);
+    setIsAddModalOpen(true);
+  }, []);
 
   return (
     <div className="flex h-full flex-col space-y-4 pb-6 page-enter md:space-y-6">
@@ -104,7 +137,7 @@ export default function Calendar() {
             variant="primary" 
             className="h-11 w-full px-6 font-bold shadow-lg shadow-violet/20 sm:w-auto" 
             leftIcon={<Plus size={18} />} 
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={handleStartCreate}
           >
             {t('calendar.newEvent')}
           </Button>
@@ -164,7 +197,9 @@ export default function Calendar() {
       {/* Modals */}
       <AddEventModal 
         isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
+        mode={editingEvent ? 'edit' : 'create'}
+        initialValues={editingEvent ? mapCalendarEventToFormValues(editingEvent) : undefined}
+        onClose={handleCloseAddModal} 
         onAdd={handleConfirmAdd} 
       />
 
@@ -172,6 +207,7 @@ export default function Calendar() {
         event={selectedEvent} 
         isOpen={!!selectedEvent} 
         onClose={() => setSelectedEvent(null)} 
+        onEdit={handleStartEdit}
       />
     </div>
   );

@@ -3,14 +3,17 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useI18n } from '../../../../shared/i18n/useI18n';
 import { AddEventForm } from './AddEventForm.tsx';
+import type { CalendarEventFormValues } from '../../lib/eventForm';
 
 interface AddEventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (event: { title: string; startDate: string; startTime: string; duration: string; color: string }) => void;
+  mode?: 'create' | 'edit';
+  initialValues?: CalendarEventFormValues;
+  onAdd: (event: CalendarEventFormValues) => void;
 }
 
-export const AddEventModal = memo(({ isOpen, onClose, onAdd }: AddEventModalProps) => {
+export const AddEventModal = memo(({ isOpen, onClose, mode = 'create', initialValues, onAdd }: AddEventModalProps) => {
   const { t } = useI18n();
 
   const handleClose = useCallback(() => {
@@ -35,7 +38,9 @@ export const AddEventModal = memo(({ isOpen, onClose, onAdd }: AddEventModalProp
             className="relative bg-bg-secondary border border-border w-full max-w-md rounded-2xl p-6 shadow-2xl glass"
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-text-primary">{t('calendar.scheduleEvent')}</h3>
+              <h3 className="text-xl font-bold text-text-primary">
+                {mode === 'edit' ? t('calendar.edit') : t('calendar.scheduleEvent')}
+              </h3>
               <button 
                 onClick={handleClose} 
                 className="p-2 text-text-muted hover:text-text-primary cursor-pointer transition-colors"
@@ -45,7 +50,11 @@ export const AddEventModal = memo(({ isOpen, onClose, onAdd }: AddEventModalProp
               </button>
             </div>
 
-            <AddEventForm onConfirm={onAdd} />
+            <AddEventForm
+              initialValues={initialValues}
+              submitLabel={mode === 'edit' ? t('calendar.edit') : t('calendar.confirm')}
+              onConfirm={onAdd}
+            />
           </motion.div>
         </div>
       )}

@@ -12,9 +12,10 @@ interface EventDetailModalProps {
   event: CalendarEvent | null;
   isOpen: boolean;
   onClose: () => void;
+  onEdit: (event: CalendarEvent) => void;
 }
 
-export function EventDetailModal({ event, isOpen, onClose }: EventDetailModalProps) {
+export function EventDetailModal({ event, isOpen, onClose, onEdit }: EventDetailModalProps) {
   const deleteEvent = useAppStore((state) => state.deleteEvent);
   const { t, lang } = useI18n();
 
@@ -83,7 +84,7 @@ export function EventDetailModal({ event, isOpen, onClose }: EventDetailModalPro
             variant="primary" 
             className="w-full h-11" 
             leftIcon={<Edit3 size={16} />}
-            onClick={() => {}}
+            onClick={() => onEdit(event)}
           >
             {t('calendar.edit')}
           </Button>

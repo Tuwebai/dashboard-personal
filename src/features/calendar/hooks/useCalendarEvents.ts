@@ -6,6 +6,7 @@ import type { CalendarEvent } from '../../../shared/types';
 export function useCalendarEvents() {
   const events = useAppStore(s => s.events);
   const addEvent = useAppStore(s => s.addEvent);
+  const updateEvent = useAppStore(s => s.updateEvent);
   const deleteEvent = useAppStore(s => s.deleteEvent);
 
   const eventsByDate = useMemo(() => {
@@ -45,6 +46,7 @@ export function useCalendarEvents() {
     eventsByDate,
     sortedEvents,
     addEvent,
+    updateEvent,
     deleteEvent,
     getEventsForDay,
     getUpcomingEvents,

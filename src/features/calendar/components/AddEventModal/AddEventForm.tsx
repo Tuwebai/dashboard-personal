@@ -1,27 +1,34 @@
-import { useState, memo } from 'react';
-import { format } from 'date-fns';
+import { useEffect, useState, memo } from 'react';
 import { useI18n } from '../../../../shared/i18n/useI18n';
 import { Button } from '../../../../shared/ui/Button';
 import { Select } from '../../../../shared/ui/Input';
 import { cn } from '../../../../shared/lib/cn';
+import {
+  createDefaultCalendarEventFormValues,
+  type CalendarEventFormValues,
+} from '../../lib/eventForm';
 
 interface EventFormProps {
-  onConfirm: (event: { title: string; startDate: string; startTime: string; duration: string; color: string }) => void;
+  initialValues?: CalendarEventFormValues;
+  submitLabel: string;
+  onConfirm: (event: CalendarEventFormValues) => void;
 }
 
-export const AddEventForm = memo(({ onConfirm }: EventFormProps) => {
+export const AddEventForm = memo(({ initialValues, submitLabel, onConfirm }: EventFormProps) => {
   const { t } = useI18n();
-  const [formData, setFormData] = useState({
-    title: '',
-    startDate: format(new Date(), 'yyyy-MM-dd'),
-    startTime: '09:00',
-    duration: '60',
-    color: '#8b5cf6'
-  });
+  const [formData, setFormData] = useState<CalendarEventFormValues>(
+    initialValues ?? createDefaultCalendarEventFormValues(),
+  );
+
+  useEffect(() => {
+    setFormData(initialValues ?? createDefaultCalendarEventFormValues());
+  }, [initialValues]);
 
   const handleSubmit = () => {
-    if (!formData.title) return;
-    onConfirm(formData);
+    const title = formData.title.trim();
+    if (!title) return;
+
+    onConfirm({ ...formData, title });
   };
 
   const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
@@ -73,8 +80,7 @@ export const AddEventForm = memo(({ onConfirm }: EventFormProps) => {
           <input 
             id="cal-event-time"
             name="event_time"
-            type="text" 
-            placeholder="09:00" 
+            type="time"
             value={formData.startTime} 
             onChange={e => setFormData({...formData, startTime: e.target.value})} 
             className="w-full bg-bg-tertiary border border-border rounded-xl px-3 py-2.5 text-xs text-text-primary outline-none focus:ring-1 focus:ring-violet-500/50" 
@@ -125,7 +131,7 @@ export const AddEventForm = memo(({ onConfirm }: EventFormProps) => {
 
       <div className="pt-4">
         <Button variant="primary" className="w-full h-12 shadow-lg font-bold" onClick={handleSubmit}>
-          {t('calendar.confirm')}
+          {submitLabel}
         </Button>
       </div>
     </div>
