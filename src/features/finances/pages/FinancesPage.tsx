@@ -106,18 +106,18 @@ export default function Finances() {
 
   return (
     <div className="space-y-8 page-enter pb-12 text-scrollbar">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">{t('finances.title')}</h1>
           <p className="text-text-secondary mt-1">{t('finances.subtitle')}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" className="bg-bg-secondary border-border" leftIcon={<Download size={16} />}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+          <Button variant="ghost" className="w-full bg-bg-secondary border-border sm:w-auto" leftIcon={<Download size={16} />}>
             {t('finances.export')}
           </Button>
           <Button 
             variant="ghost" 
-            className="bg-bg-secondary border-border"
+            className="w-full bg-bg-secondary border-border sm:w-auto"
             leftIcon={<Plus size={16} />}
             onClick={handleOpenNewAccount}
           >
@@ -125,7 +125,7 @@ export default function Finances() {
           </Button>
           <Button 
             variant="primary" 
-            className="shadow-lg shadow-violet/20 font-bold" 
+            className="w-full font-bold shadow-lg shadow-violet/20 sm:w-auto" 
             leftIcon={<Plus size={16} />}
             onClick={handleOpenNewTransaction}
           >
@@ -182,12 +182,12 @@ export default function Finances() {
           </section>
 
           <section className="space-y-4">
-            <div className="flex items-center justify-between px-1">
+            <div className="flex items-center justify-between gap-3 px-1">
               <h2 className="text-xl font-bold text-text-primary">
                 {selectedAccountId ? `${t('finances.transactionsFor')} ${accounts.find(a => a.id === selectedAccountId)?.name}` : t('finances.recentTransactions')}
               </h2>
               <div className="flex gap-2">
-                <Button variant="ghost" size="sm" leftIcon={<Filter size={14} />}>{t('finances.filter')}</Button>
+                <Button variant="ghost" size="sm" className="shrink-0" leftIcon={<Filter size={14} />}>{t('finances.filter')}</Button>
               </div>
             </div>
             <TransactionTable 
