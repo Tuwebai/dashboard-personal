@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { 
@@ -10,6 +10,7 @@ import { Button } from '../../../shared/ui/Button';
 import { KANBAN_COLUMNS } from '../../../shared/lib/helpers';
 import type { Task, TaskStatus } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { STORE_STORAGE_KEY } from '../../../core/persistence/storage';
 
 // Subcomponents
 import { TaskToolbar } from '../components/TaskToolbar';
@@ -44,6 +45,19 @@ export function Tasks() {
 
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || taskView !== 'kanban' || window.innerWidth >= 768) {
+      return;
+    }
+
+    const persistedStoreRaw = window.localStorage.getItem(STORE_STORAGE_KEY);
+    const persistedTaskView = persistedStoreRaw ? JSON.parse(persistedStoreRaw)?.state?.taskView : undefined;
+
+    if (persistedTaskView == null) {
+      setTaskView('list');
+    }
+  }, [setTaskView, taskView]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 

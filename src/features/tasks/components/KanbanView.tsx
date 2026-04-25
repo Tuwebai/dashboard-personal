@@ -46,9 +46,9 @@ export function KanbanView({
   } as const;
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-      <div className="flex gap-4 h-full overflow-x-auto pb-4 scrollbar-hide">
+      <div className="flex h-full gap-4 overflow-x-auto pb-4 scrollbar-hide [touch-action:pan-x]">
         {KANBAN_COLUMNS.map(col => (
-          <div key={col.id} className="shrink-0 w-80 flex flex-col h-full bg-white/2 border border-white/5 rounded-2xl p-4">
+          <div key={col.id} className="flex h-full min-w-[280px] shrink-0 flex-col rounded-2xl border border-white/5 bg-white/2 p-4 md:w-80">
             <div className="flex items-center gap-2 mb-4 px-1">
               <div className="w-2 h-2 rounded-full" style={{ background: col.color }} />
               <span className="text-sm font-semibold text-white/70">{statusLabels[col.id]}</span>
