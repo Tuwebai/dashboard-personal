@@ -1,6 +1,7 @@
 ﻿import { useAppStore } from '../../../stores/useAppStore';
 import { HabitCard } from './HabitCard';
 import { AnimatePresence } from 'framer-motion';
+import { useI18n } from '../../../shared/i18n/useI18n';
 
 interface HabitGridProps {
   category: string;
@@ -8,6 +9,7 @@ interface HabitGridProps {
 
 export function HabitGrid({ category }: HabitGridProps) {
   const habits = useAppStore((state) => state.habits);
+  const { t } = useI18n();
   
   const filteredHabits = habits.filter(h => {
     if (category === 'all') return !h.isArchived;
@@ -18,8 +20,8 @@ export function HabitGrid({ category }: HabitGridProps) {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-bg-card border border-border rounded-xl text-white/30">
         <div className="text-4xl mb-4 opacity-50 text-white/20 hover:scale-110 transition-transform">✨</div>
-        <h3 className="text-sm font-semibold text-white/80">No habits found</h3>
-        <p className="text-xs text-white/40 mt-1">Try searching in another category or create a new one.</p>
+        <h3 className="text-sm font-semibold text-white/80">{t('habits.noHabits')}</h3>
+        <p className="text-xs text-white/40 mt-1">{t('habits.noHabitsDesc')}</p>
       </div>
     );
   }
