@@ -1,0 +1,31 @@
+<svg width="4096" height="4096" viewBox="0 0 4096 4096" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="4096" height="4096" rx="1200" fill="#05070D"/>
+  <rect x="256" y="256" width="3584" height="3584" rx="1040" fill="url(#bg05)" stroke="url(#stroke05)" stroke-width="24"/>
+  <circle cx="2048" cy="2048" r="1320" fill="url(#glow05)"/>
+  <circle cx="2048" cy="2048" r="1060" stroke="#F5F3FF" stroke-opacity="0.08" stroke-width="20"/>
+  <path d="M1388 2744L1704 1352L2048 2202L2392 1352L2708 2744" stroke="url(#mark05)" stroke-width="108" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="1704" cy="1352" r="108" fill="#8B5CF6"/>
+  <circle cx="2048" cy="2202" r="108" fill="#F5F3FF"/>
+  <circle cx="2392" cy="1352" r="108" fill="#22D3EE"/>
+  <circle cx="1388" cy="2744" r="108" fill="#A78BFA"/>
+  <circle cx="2708" cy="2744" r="108" fill="#67E8F9"/>
+  <defs>
+    <linearGradient id="bg05" x1="640" y1="512" x2="3456" y2="3584" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="stroke05" x1="512" y1="640" x2="3584" y2="3456" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6" stop-opacity="0.52"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0.52"/>
+    </linearGradient>
+    <radialGradient id="glow05" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(2048 1830) rotate(90) scale(1540)">
+      <stop stop-color="#7C3AED" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#05070D" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mark05" x1="1450" y1="1380" x2="2630" y2="2700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C4B5FD"/>
+      <stop offset="0.5" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -10,6 +10,7 @@ import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { BrandLogo } from '../../../shared/ui/BrandLogo';
+import { DEFAULT_NEXUS_AVATAR } from '../../../shared/lib/defaultAvatar';
 
 interface NavItem {
   id: string;
@@ -81,11 +82,11 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
       )}>
         <div className="relative shrink-0">
           <div className="w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-cyan-500 flex items-center justify-center text-sm font-bold text-white overflow-hidden shrink-0">
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-            ) : (
-              user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
-            )}
+            <img
+              src={user.avatar || DEFAULT_NEXUS_AVATAR}
+              alt={user.name}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-primary pulse-dot" />
         </div>

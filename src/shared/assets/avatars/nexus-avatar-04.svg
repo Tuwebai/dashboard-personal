@@ -1,0 +1,30 @@
+<svg width="4096" height="4096" viewBox="0 0 4096 4096" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="4096" height="4096" rx="1200" fill="#070B14"/>
+  <rect x="248" y="248" width="3600" height="3600" rx="1056" fill="url(#bg04)" stroke="url(#stroke04)" stroke-width="20"/>
+  <circle cx="2048" cy="2048" r="1400" fill="url(#glow04)"/>
+  <path d="M1424 2840L1424 1260L2048 1884L2672 1260V2840" stroke="url(#line04)" stroke-width="96" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1260 2840H2836" stroke="url(#line04)" stroke-width="64" stroke-linecap="round" opacity="0.88"/>
+  <circle cx="1424" cy="1260" r="132" fill="#8B5CF6"/>
+  <circle cx="2048" cy="1884" r="132" fill="#22D3EE"/>
+  <circle cx="2672" cy="1260" r="132" fill="#C4B5FD"/>
+  <path d="M1180 3060C1508 2814 1746 2690 2048 2690C2350 2690 2588 2814 2916 3060" stroke="#F5F3FF" stroke-opacity="0.18" stroke-width="34" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="bg04" x1="512" y1="512" x2="3584" y2="3584" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="stroke04" x1="700" y1="512" x2="3390" y2="3584" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22D3EE" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0.72"/>
+    </linearGradient>
+    <radialGradient id="glow04" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(2048 1760) rotate(90) scale(1600)">
+      <stop stop-color="#06B6D4" stop-opacity="0.14"/>
+      <stop offset="0.45" stop-color="#7C3AED" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#070B14" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="line04" x1="1340" y1="1320" x2="2746" y2="2840" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C4B5FD"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+</svg>

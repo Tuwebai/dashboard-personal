@@ -7,6 +7,7 @@ import { useProfileSettings } from '../hooks/useProfileSettings';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useAppStore } from '../../../stores/useAppStore';
 import { mapFirebaseAuthError } from '../../auth/lib/mapFirebaseAuthError';
+import { DEFAULT_NEXUS_AVATAR } from '../../../shared/lib/defaultAvatar';
 
 export function GeneralSection() {
   const { t } = useI18n();
@@ -81,11 +82,11 @@ export function GeneralSection() {
             className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-2xl font-bold text-white/90 shadow-md sm:h-24 sm:w-24 sm:text-3xl"
             onClick={handleAvatarClick}
           >
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-            ) : (
-              profileData.name.charAt(0).toUpperCase()
-            )}
+            <img
+              src={user.avatar || DEFAULT_NEXUS_AVATAR}
+              alt={user.name}
+              className="w-full h-full object-cover"
+            />
             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
               <Camera size={28} className="text-white transform scale-90 group-hover:scale-100 transition-transform" />
             </div>
