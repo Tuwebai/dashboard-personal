@@ -1,16 +1,19 @@
 import {
   clearPersistenceMode,
-  getPersistenceMode,
   isFirebasePersistenceConfigured,
   setPersistenceMode,
   type PersistenceMode,
 } from '../../../core/persistence/config';
 import { toast } from 'sonner';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { pickPersistedWorkspace } from '../../../core/persistence/workspace';
+import { writeLocalWorkspaceSnapshot } from '../../../core/persistence/storage';
+import { useAppStore } from '../../../stores/useAppStore';
+import { usePersistenceModeValue } from '../../../core/persistence/usePersistenceModeValue';
 
 export function usePersistenceMode() {
   const { t } = useI18n();
-  const currentMode = getPersistenceMode();
+  const currentMode = usePersistenceModeValue();
   const firebaseReady = isFirebasePersistenceConfigured();
 
   const changePersistenceMode = (mode: PersistenceMode) => {
@@ -25,6 +28,7 @@ export function usePersistenceMode() {
 
     if (mode === 'local') {
       clearPersistenceMode();
+      writeLocalWorkspaceSnapshot(pickPersistedWorkspace(useAppStore.getState()));
     } else {
       setPersistenceMode(mode);
     }
@@ -35,9 +39,6 @@ export function usePersistenceMode() {
         : t('settings.persistenceLocalEnabled'),
     );
 
-    window.setTimeout(() => {
-      window.location.reload();
-    }, 700);
   };
 
   return {

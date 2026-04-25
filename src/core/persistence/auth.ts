@@ -1,16 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
-import { shouldUseFirebasePersistence, subscribeToFirebaseAuth } from './firebase';
+import { subscribeToFirebaseAuth } from './firebase';
+import { isFirebasePersistenceConfigured } from './config';
+import { usePersistenceModeValue } from './usePersistenceModeValue';
 import { resetWorkspaceForSession } from './workspace';
 
 export function useFirebaseAuthBootstrap() {
+  const persistenceMode = usePersistenceModeValue();
   const updateUser = useAppStore((state) => state.updateUser);
   const setAuthState = useAppStore((state) => state.setAuthState);
   const setWorkspaceReadOnly = useAppStore((state) => state.setWorkspaceReadOnly);
   const previousUidRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!shouldUseFirebasePersistence()) {
+    if (persistenceMode !== 'firebase' || !isFirebasePersistenceConfigured()) {
       setAuthState({
         authStatus: 'authenticated',
         authProvider: null,
@@ -53,5 +56,5 @@ export function useFirebaseAuthBootstrap() {
       });
       setWorkspaceReadOnly(false);
     });
-  }, [setAuthState, setWorkspaceReadOnly, updateUser]);
+  }, [persistenceMode, setAuthState, setWorkspaceReadOnly, updateUser]);
 }

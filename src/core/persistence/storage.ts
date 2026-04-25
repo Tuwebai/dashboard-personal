@@ -4,6 +4,7 @@ import { getPersistenceMode } from './config';
 
 export type PersistedAppStore = PersistedWorkspaceSnapshot;
 
+export const LOCAL_WORKSPACE_STORAGE_VERSION = 8;
 const STORE_STORAGE_KEY = 'nexus-crm-store';
 
 export function createAppPersistenceStorage(): PersistStorage<PersistedAppStore> | undefined {
@@ -31,6 +32,27 @@ export function createAppPersistenceStorage(): PersistStorage<PersistedAppStore>
       window.localStorage.removeItem(name);
     },
   };
+}
+
+export function writeLocalWorkspaceSnapshot(snapshot: PersistedAppStore) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const payload: StorageValue<PersistedAppStore> = {
+    state: snapshot,
+    version: LOCAL_WORKSPACE_STORAGE_VERSION,
+  };
+
+  window.localStorage.setItem(STORE_STORAGE_KEY, JSON.stringify(payload));
+}
+
+export function clearLocalWorkspaceSnapshot() {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.removeItem(STORE_STORAGE_KEY);
 }
 
 export { STORE_STORAGE_KEY };

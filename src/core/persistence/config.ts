@@ -1,4 +1,5 @@
 export type PersistenceMode = 'local' | 'firebase';
+const PERSISTENCE_MODE_EVENT_NAME = 'nexus-crm:persistence-mode-change';
 
 function getDefaultPersistenceMode(): PersistenceMode {
   return isFirebasePersistenceConfigured() ? 'firebase' : 'local';
@@ -29,6 +30,7 @@ export function setPersistenceMode(mode: PersistenceMode) {
   }
 
   window.localStorage.setItem(PERSISTENCE_MODE_STORAGE_KEY, mode);
+  window.dispatchEvent(new CustomEvent(PERSISTENCE_MODE_EVENT_NAME, { detail: mode }));
 }
 
 export function clearPersistenceMode() {
@@ -37,6 +39,7 @@ export function clearPersistenceMode() {
   }
 
   window.localStorage.removeItem(PERSISTENCE_MODE_STORAGE_KEY);
+  window.dispatchEvent(new CustomEvent(PERSISTENCE_MODE_EVENT_NAME, { detail: getDefaultPersistenceMode() }));
 }
 
 export function isFirebasePersistenceConfigured() {
@@ -46,6 +49,16 @@ export function isFirebasePersistenceConfigured() {
     && import.meta.env.VITE_FIREBASE_PROJECT_ID
     && import.meta.env.VITE_FIREBASE_APP_ID,
   );
+}
+
+export function subscribePersistenceModeChange(onChange: () => void) {
+  if (typeof window === 'undefined') {
+    return () => undefined;
+  }
+
+  const handleChange = () => onChange();
+  window.addEventListener(PERSISTENCE_MODE_EVENT_NAME, handleChange);
+  return () => window.removeEventListener(PERSISTENCE_MODE_EVENT_NAME, handleChange);
 }
 
 export { PERSISTENCE_MODE_STORAGE_KEY };

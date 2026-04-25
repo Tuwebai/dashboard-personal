@@ -16,7 +16,12 @@ import { createPersonalGoalSlice } from './slices/personalGoalSlice';
 import { createWeeklyPlanningSlice } from './slices/weeklyPlanningSlice';
 import { createJournalingSlice } from './slices/journalingSlice';
 import { createFocusSlice } from './slices/focusSlice';
-import { createAppPersistenceStorage, type PersistedAppStore, STORE_STORAGE_KEY } from '../core/persistence/storage';
+import {
+  createAppPersistenceStorage,
+  LOCAL_WORKSPACE_STORAGE_VERSION,
+  type PersistedAppStore,
+  STORE_STORAGE_KEY,
+} from '../core/persistence/storage';
 import { isPersistedWorkspaceSnapshot, pickPersistedWorkspace } from '../core/persistence/workspace';
 import { shouldUseFirebasePersistence } from '../core/persistence/firebase';
 import { emitWorkspaceReadonlyBlockedEvent } from '../core/persistence/workspaceReadonly';
@@ -57,7 +62,7 @@ export const useAppStore = create<AppStore>()(
       {
         name: STORE_STORAGE_KEY,
         storage: createAppPersistenceStorage(),
-        version: 8,
+        version: LOCAL_WORKSPACE_STORAGE_VERSION,
         migrate: (persistedState: unknown, version) => {
           let state = isPersistedAppStore(persistedState) ? persistedState : {};
 

@@ -1,17 +1,19 @@
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
-import { STORE_STORAGE_KEY } from '../../../core/persistence/storage';
 import {
+  getDefaultPersistedWorkspaceSnapshot,
   mergePersistedWorkspace,
   pickPersistedWorkspace,
   sanitizeImportedSnapshot,
 } from '../../../core/persistence/workspace';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { getPersistenceMode } from '../../../core/persistence/config';
-import { writeWorkspaceRemote, wipeRemoteWorkspace } from '../../../core/persistence/remoteWorkspace';
+import { writeWorkspaceRemote } from '../../../core/persistence/remoteWorkspace';
 import { clearWorkspaceCache, writeWorkspaceCache } from '../../../core/persistence/remoteCache';
 import { setLastSyncAt } from '../../../core/persistence/syncMetadata';
+import { writeLocalWorkspaceSnapshot } from '../../../core/persistence/storage';
+import { createScopedInitialSnapshot } from '../../../core/persistence/syncWorkspace';
 
 const MAX_IMPORT_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -23,6 +25,10 @@ export function useDataPortability() {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const applyWorkspaceSnapshot = (snapshot: ReturnType<typeof pickPersistedWorkspace>) => {
+    useAppStore.setState((state) => mergePersistedWorkspace(state, snapshot));
+  };
 
   const exportData = () => {
     setIsExporting(true);
@@ -95,16 +101,16 @@ export function useDataPortability() {
             updatedAt,
             state: normalizedData,
           });
-          useAppStore.setState((state) => mergePersistedWorkspace(state, normalizedData));
+          applyWorkspaceSnapshot(normalizedData);
           writeWorkspaceCache(firebaseUid, normalizedData, updatedAt);
           setLastSyncAt(firebaseUid, updatedAt);
         } else {
-          useAppStore.setState(normalizedData);
+          applyWorkspaceSnapshot(normalizedData);
+          writeLocalWorkspaceSnapshot(normalizedData);
         }
 
         setImportStatus('success');
         toast.success(t('settings.importSuccess'));
-        setTimeout(() => window.location.reload(), 1500);
       } catch {
         setImportStatus('error');
         toast.error(t('settings.importInvalid'));
@@ -121,16 +127,22 @@ export function useDataPortability() {
 
   const wipeAccount = () => {
     const mode = getPersistenceMode();
+    const currentUser = useAppStore.getState().user;
     const firebaseUid = useAppStore.getState().firebaseUid;
 
     if (mode === 'firebase' && firebaseUid) {
-      void wipeRemoteWorkspace(firebaseUid)
+      const emptySnapshot = createScopedInitialSnapshot(firebaseUid, currentUser.email);
+      const updatedAt = new Date().toISOString();
+
+      void writeWorkspaceRemote(firebaseUid, {
+        updatedAt,
+        state: emptySnapshot,
+      })
         .then(() => {
-          clearWorkspaceCache(firebaseUid);
+          applyWorkspaceSnapshot(emptySnapshot);
+          writeWorkspaceCache(firebaseUid, emptySnapshot, updatedAt);
+          setLastSyncAt(firebaseUid, updatedAt);
           toast.success(t('settings.resetRemoteSuccess'));
-          window.setTimeout(() => {
-            window.location.reload();
-          }, 700);
         })
         .catch(() => {
           toast.error(t('settings.resetRemoteError'));
@@ -138,12 +150,11 @@ export function useDataPortability() {
       return;
     }
 
+    const emptySnapshot = getDefaultPersistedWorkspaceSnapshot();
     clearWorkspaceCache();
-    localStorage.removeItem(STORE_STORAGE_KEY);
+    applyWorkspaceSnapshot(emptySnapshot);
+    writeLocalWorkspaceSnapshot(emptySnapshot);
     toast.success(t('settings.resetSuccess'));
-    window.setTimeout(() => {
-      window.location.reload();
-    }, 700);
   };
 
   return {

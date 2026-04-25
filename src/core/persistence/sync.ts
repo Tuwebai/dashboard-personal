@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
-import { shouldUseFirebasePersistence, subscribeToFirebaseAuth } from './firebase';
+import { subscribeToFirebaseAuth } from './firebase';
+import { isFirebasePersistenceConfigured } from './config';
 import {
   isPersistedWorkspaceSnapshot,
   mergePersistedWorkspace,
@@ -20,12 +21,16 @@ import {
   writeWorkspaceRemote,
 } from './remoteWorkspace';
 import { createScopedInitialSnapshot, isRemoteStatePayload } from './syncWorkspace';
+import { usePersistenceModeValue } from './usePersistenceModeValue';
 
 const SYNC_DEBOUNCE_MS = 1200;
 
 export function useFirebasePersistenceSync() {
+  const persistenceMode = usePersistenceModeValue();
+
   useEffect(() => {
-    if (!shouldUseFirebasePersistence()) {
+    if (persistenceMode !== 'firebase' || !isFirebasePersistenceConfigured()) {
+      dispatchSyncStatus('idle');
       return;
     }
 
@@ -234,5 +239,5 @@ export function useFirebasePersistenceSync() {
       teardownSubscriptions();
       authUnsubscribe();
     };
-  }, []);
+  }, [persistenceMode]);
 }
