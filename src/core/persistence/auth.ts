@@ -6,6 +6,7 @@ import { resetWorkspaceForSession } from './workspace';
 export function useFirebaseAuthBootstrap() {
   const updateUser = useAppStore((state) => state.updateUser);
   const setAuthState = useAppStore((state) => state.setAuthState);
+  const setWorkspaceReadOnly = useAppStore((state) => state.setWorkspaceReadOnly);
   const previousUidRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -15,6 +16,7 @@ export function useFirebaseAuthBootstrap() {
         authProvider: null,
         firebaseUid: null,
       });
+      setWorkspaceReadOnly(false);
       return;
     }
 
@@ -30,6 +32,7 @@ export function useFirebaseAuthBootstrap() {
           authProvider: null,
           firebaseUid: null,
         });
+        setWorkspaceReadOnly(false);
         return;
       }
 
@@ -48,6 +51,7 @@ export function useFirebaseAuthBootstrap() {
         authProvider,
         firebaseUid: user.uid,
       });
+      setWorkspaceReadOnly(false);
     });
-  }, [setAuthState, updateUser]);
+  }, [setAuthState, setWorkspaceReadOnly, updateUser]);
 }

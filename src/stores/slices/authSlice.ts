@@ -25,11 +25,21 @@ export const createAuthSlice: StateCreator<
   authStatus: DEFAULT_AUTH_STATUS,
   authProvider: null,
   firebaseUid: null,
+  workspaceReadOnly: false,
   updateSettings: (updates) => set(state => {
+    if (state.workspaceReadOnly) {
+      return;
+    }
     Object.assign(state.settings, updates);
   }),
   updateUser: (updates) => set(state => {
+    if (state.workspaceReadOnly) {
+      return;
+    }
     Object.assign(state.user, updates);
+  }),
+  setWorkspaceReadOnly: (readOnly) => set((state) => {
+    state.workspaceReadOnly = readOnly;
   }),
   setAuthState: (authState) => set((state) => {
     state.authStatus = authState.authStatus;

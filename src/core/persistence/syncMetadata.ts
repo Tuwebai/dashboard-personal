@@ -3,7 +3,15 @@ import { useAppStore } from '../../stores/useAppStore';
 const LAST_SYNC_AT_STORAGE_KEY_PREFIX = 'nexus-crm-last-sync-at';
 const SYNC_EVENT_NAME = 'nexus-crm:persistence-sync';
 
-export type PersistenceSyncStatus = 'idle' | 'hydrating' | 'syncing' | 'synced' | 'error';
+export type PersistenceSyncStatus =
+  | 'idle'
+  | 'auth-resolving'
+  | 'hydrating'
+  | 'ready'
+  | 'syncing'
+  | 'synced'
+  | 'offline-readonly'
+  | 'error';
 
 function getLastSyncAtStorageKey(uid?: string | null) {
   return uid ? `${LAST_SYNC_AT_STORAGE_KEY_PREFIX}:${uid}` : LAST_SYNC_AT_STORAGE_KEY_PREFIX;
@@ -65,8 +73,8 @@ export function pushSyncErrorNotification() {
       {
         id: `sync-error-${Date.now()}`,
         type: 'system',
-        title: 'Sincronización Firebase',
-        message: 'Falló la última sincronización remota. La app sigue usando la copia local.',
+        title: 'Sync remoto',
+        message: 'Falló la última sincronización remota. Se mantiene la última copia confirmada.',
         isRead: false,
         createdAt: now,
       },

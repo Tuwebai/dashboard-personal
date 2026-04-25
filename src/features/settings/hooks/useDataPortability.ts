@@ -3,10 +3,15 @@ import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
 import { STORE_STORAGE_KEY } from '../../../core/persistence/storage';
 import {
+  mergePersistedWorkspace,
   pickPersistedWorkspace,
   sanitizeImportedSnapshot,
 } from '../../../core/persistence/workspace';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { getPersistenceMode } from '../../../core/persistence/config';
+import { writeWorkspaceRemote, wipeRemoteWorkspace } from '../../../core/persistence/remoteWorkspace';
+import { clearWorkspaceCache, writeWorkspaceCache } from '../../../core/persistence/remoteCache';
+import { setLastSyncAt } from '../../../core/persistence/syncMetadata';
 
 const MAX_IMPORT_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -61,7 +66,7 @@ export function useDataPortability() {
     setImportStatus('idle');
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const raw = event.target?.result as string;
         const parsedData = sanitizeImportedSnapshot(JSON.parse(raw));
@@ -70,7 +75,33 @@ export function useDataPortability() {
           throw new Error('Invalid schema');
         }
 
-        useAppStore.setState(parsedData);
+        const mode = getPersistenceMode();
+        const currentUser = useAppStore.getState().user;
+        const firebaseUid = useAppStore.getState().firebaseUid;
+        const normalizedData = firebaseUid
+          ? {
+              ...parsedData,
+              user: {
+                ...parsedData.user,
+                id: firebaseUid,
+                email: currentUser.email,
+              },
+            }
+          : parsedData;
+
+        if (mode === 'firebase' && firebaseUid) {
+          const updatedAt = new Date().toISOString();
+          await writeWorkspaceRemote(firebaseUid, {
+            updatedAt,
+            state: normalizedData,
+          });
+          useAppStore.setState((state) => mergePersistedWorkspace(state, normalizedData));
+          writeWorkspaceCache(firebaseUid, normalizedData, updatedAt);
+          setLastSyncAt(firebaseUid, updatedAt);
+        } else {
+          useAppStore.setState(normalizedData);
+        }
+
         setImportStatus('success');
         toast.success(t('settings.importSuccess'));
         setTimeout(() => window.location.reload(), 1500);
@@ -89,8 +120,27 @@ export function useDataPortability() {
   };
 
   const wipeAccount = () => {
-    toast.success(t('settings.resetSuccess'));
+    const mode = getPersistenceMode();
+    const firebaseUid = useAppStore.getState().firebaseUid;
+
+    if (mode === 'firebase' && firebaseUid) {
+      void wipeRemoteWorkspace(firebaseUid)
+        .then(() => {
+          clearWorkspaceCache(firebaseUid);
+          toast.success(t('settings.resetRemoteSuccess'));
+          window.setTimeout(() => {
+            window.location.reload();
+          }, 700);
+        })
+        .catch(() => {
+          toast.error(t('settings.resetRemoteError'));
+        });
+      return;
+    }
+
+    clearWorkspaceCache();
     localStorage.removeItem(STORE_STORAGE_KEY);
+    toast.success(t('settings.resetSuccess'));
     window.setTimeout(() => {
       window.location.reload();
     }, 700);

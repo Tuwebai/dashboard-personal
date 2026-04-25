@@ -59,10 +59,18 @@ export function SystemSection() {
           <p className="text-sm font-semibold text-white">{t('settings.syncStatus')}</p>
           <p className="mt-1 text-xs text-white/40">
             {currentMode === 'firebase'
-              ? status === 'hydrating'
+              ? status === 'auth-resolving'
+                ? t('settings.syncAuthResolving')
+                : status === 'hydrating'
                 ? t('settings.syncHydrating')
+                : status === 'ready'
+                ? updatedAt
+                  ? t('settings.syncedAt').replace('{time}', formattedUpdatedAt)
+                  : t('settings.syncWaiting')
                 : status === 'syncing'
                 ? t('settings.syncing')
+                : status === 'offline-readonly'
+                ? t('settings.syncOfflineReadonly')
                 : status === 'error'
                   ? t('settings.syncError')
                   : updatedAt
@@ -115,7 +123,7 @@ export function SystemSection() {
               loading={isImporting}
               leftIcon={<Upload size={18} />}
             >
-              Select File
+              {t('settings.restoreBackup')}
             </Button>
           </div>
         </div>
@@ -150,12 +158,14 @@ export function SystemSection() {
            <Archive size={20} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">Version History</p>
-          <p className="text-xs text-white/40">Your database is currently running version 2.4.0 (Stable)</p>
+          <p className="text-sm font-semibold text-white">{t('settings.persistenceOverview')}</p>
+          <p className="text-xs text-white/40">
+            {currentMode === 'firebase' ? t('settings.persistenceFirebaseDesc') : t('settings.persistenceLocalDesc')}
+          </p>
         </div>
         <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-[10px] font-semibold border border-emerald-500/20">
           <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-          Updated Today
+          {currentMode === 'firebase' ? t('settings.persistenceModeRemote') : t('settings.persistenceModeLocal')}
         </div>
       </div>
 
@@ -169,8 +179,10 @@ export function SystemSection() {
             <AlertTriangle size={32} />
           </div>
           <div className="space-y-2">
-            <h4 className="text-xl font-bold text-white">Are you absolutely sure?</h4>
-            <p className="text-sm text-white/40">This process is irreversible. All your personal data will be purged from the browser storage.</p>
+            <h4 className="text-xl font-bold text-white">{t('settings.resetConfirmTitle')}</h4>
+            <p className="text-sm text-white/40">
+              {currentMode === 'firebase' ? t('settings.resetRemoteConfirmDesc') : t('settings.resetLocalConfirmDesc')}
+            </p>
           </div>
           <div className="flex flex-col gap-2">
             <Button 
@@ -178,7 +190,7 @@ export function SystemSection() {
               className="h-11 bg-red-500 hover:bg-red-600 text-white font-bold"
               onClick={wipeAccount}
             >
-              Yes, Delete Everything
+              {t('settings.confirmDestructiveAction')}
             </Button>
             <Button 
               variant="ghost" 

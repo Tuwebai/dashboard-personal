@@ -29,8 +29,10 @@ export interface AuthSlice {
   authStatus: 'loading' | 'authenticated' | 'unauthenticated';
   authProvider: 'anonymous' | 'password' | null;
   firebaseUid: string | null;
+  workspaceReadOnly: boolean;
   updateSettings: (settings: Partial<UserSettings>) => void;
   updateUser: (updates: Partial<typeof CURRENT_USER>) => void;
+  setWorkspaceReadOnly: (readOnly: boolean) => void;
   setAuthState: (state: {
     authStatus: 'loading' | 'authenticated' | 'unauthenticated';
     authProvider: 'anonymous' | 'password' | null;

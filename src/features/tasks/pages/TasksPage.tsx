@@ -10,7 +10,6 @@ import { Button } from '../../../shared/ui/Button';
 import { KANBAN_COLUMNS } from '../../../shared/lib/helpers';
 import type { Task, TaskStatus } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
-import { STORE_STORAGE_KEY } from '../../../core/persistence/storage';
 import { useMediaQuery } from '../../../shared/hooks/useMediaQuery';
 
 // Subcomponents
@@ -52,13 +51,7 @@ export function Tasks() {
     if (typeof window === 'undefined' || taskView !== 'kanban' || !isMobile) {
       return;
     }
-
-    const persistedStoreRaw = window.localStorage.getItem(STORE_STORAGE_KEY);
-    const persistedTaskView = persistedStoreRaw ? JSON.parse(persistedStoreRaw)?.state?.taskView : undefined;
-
-    if (persistedTaskView == null) {
-      setTaskView('list');
-    }
+    setTaskView('list');
   }, [isMobile, setTaskView, taskView]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));

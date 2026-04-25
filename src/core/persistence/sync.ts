@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { useAppStore } from '../../stores/useAppStore';
-import { getFirebaseAuthUser, getFirebaseFirestore, shouldUseFirebasePersistence, subscribeToFirebaseAuth } from './firebase';
+import { shouldUseFirebasePersistence, subscribeToFirebaseAuth } from './firebase';
 import {
   isPersistedWorkspaceSnapshot,
   mergePersistedWorkspace,
@@ -14,43 +13,15 @@ import {
   pushSyncErrorNotification,
   setLastSyncAt,
 } from './syncMetadata';
+import { clearWorkspaceCache, readWorkspaceCache, writeWorkspaceCache } from './remoteCache';
 import {
-  createScopedInitialSnapshot,
-  shouldIgnorePendingRemoteEcho,
-  isRemoteStatePayload,
-  isSnapshotOwnedByUser,
-  shouldApplyRemoteState,
-} from './syncWorkspace';
+  hydrateWorkspaceFromRemote,
+  subscribeWorkspaceRemote,
+  writeWorkspaceRemote,
+} from './remoteWorkspace';
+import { createScopedInitialSnapshot, isRemoteStatePayload } from './syncWorkspace';
 
-const DEFAULT_FIREBASE_DOC_PATH = 'users/{uid}/crm/dashboard';
 const SYNC_DEBOUNCE_MS = 1200;
-
-function getFirebaseDocPath() {
-  const template = import.meta.env.VITE_FIREBASE_PERSISTENCE_DOC_PATH ?? DEFAULT_FIREBASE_DOC_PATH;
-  const uid = getFirebaseAuthUser()?.uid;
-
-  if (!uid) {
-    return '';
-  }
-
-  return template.replace('{uid}', uid);
-}
-
-function getRemoteDocRef() {
-  const firestore = getFirebaseFirestore();
-
-  if (!firestore) {
-    return null;
-  }
-
-  const path = getFirebaseDocPath().split('/').filter(Boolean);
-
-  if (path.length % 2 !== 0 || path.length < 2) {
-    return null;
-  }
-
-  return doc(firestore, path.join('/'));
-}
 
 export function useFirebasePersistenceSync() {
   useEffect(() => {
@@ -58,212 +29,179 @@ export function useFirebasePersistenceSync() {
       return;
     }
 
-    const setAuthState = useAppStore.getState().setAuthState;
     let cancelled = false;
-    let syncTimeout: number | null = null;
-    let remoteHydrated = false;
     let currentUid: string | null = null;
+    let remoteHydrated = false;
+    let syncing = false;
     let pendingLocalUpdatedAt = '';
-    let hasPendingLocalChange = false;
-    let syncSessionToken = 0;
+    let lastConfirmedSnapshot = '';
+    let syncTimeout: number | null = null;
     let storeUnsubscribe: () => void = () => undefined;
     let remoteUnsubscribe: (() => void) | null = null;
 
-    const teardownStoreSubscription = () => {
-      storeUnsubscribe();
-      storeUnsubscribe = () => undefined;
+    const setAuthState = useAppStore.getState().setAuthState;
+    const setWorkspaceReadOnly = useAppStore.getState().setWorkspaceReadOnly;
+
+    const clearSyncTimer = () => {
+      if (syncTimeout) {
+        window.clearTimeout(syncTimeout);
+        syncTimeout = null;
+      }
     };
 
-    const teardownRemoteSubscription = () => {
+    const teardownSubscriptions = () => {
+      clearSyncTimer();
+      storeUnsubscribe();
+      storeUnsubscribe = () => undefined;
       remoteUnsubscribe?.();
       remoteUnsubscribe = null;
     };
 
-    const setupSync = async (uid: string, email: string | null) => {
-      syncSessionToken += 1;
-      const sessionToken = syncSessionToken;
-      const isStaleSession = () => cancelled || currentUid !== uid || syncSessionToken !== sessionToken;
-      const remoteDocRef = getRemoteDocRef();
+    const applySnapshot = (uid: string, snapshot: ReturnType<typeof pickPersistedWorkspace>, updatedAt: string) => {
+      useAppStore.setState((state) => mergePersistedWorkspace(state, snapshot));
+      setLastSyncAt(uid, updatedAt);
+      writeWorkspaceCache(uid, snapshot, updatedAt);
+      lastConfirmedSnapshot = JSON.stringify(snapshot);
+      pendingLocalUpdatedAt = '';
+    };
 
-      if (isStaleSession()) {
-        return;
-      }
+    const enableWriteSync = (uid: string) => {
+      storeUnsubscribe();
+      storeUnsubscribe = useAppStore.subscribe((state) => {
+        if (!remoteHydrated || syncing || useAppStore.getState().workspaceReadOnly || currentUid !== uid) {
+          return;
+        }
 
-      if (!remoteDocRef) {
+        const snapshot = pickPersistedWorkspace(state);
+        const serialized = JSON.stringify(snapshot);
+
+        if (serialized === lastConfirmedSnapshot) {
+          return;
+        }
+
+        clearSyncTimer();
+        syncTimeout = window.setTimeout(() => {
+          if (cancelled || currentUid !== uid || useAppStore.getState().workspaceReadOnly) {
+            return;
+          }
+
+          const updatedAt = new Date().toISOString();
+          syncing = true;
+          pendingLocalUpdatedAt = updatedAt;
+          dispatchSyncStatus('syncing', getLastSyncAt(uid));
+
+          void writeWorkspaceRemote(uid, { updatedAt, state: snapshot })
+            .then(() => {
+              setLastSyncAt(uid, updatedAt);
+              writeWorkspaceCache(uid, snapshot, updatedAt);
+              lastConfirmedSnapshot = serialized;
+              pendingLocalUpdatedAt = '';
+              dispatchSyncStatus('synced', updatedAt);
+            })
+            .catch(() => {
+              pendingLocalUpdatedAt = '';
+              dispatchSyncStatus('error', getLastSyncAt(uid));
+              pushSyncErrorNotification();
+            })
+            .finally(() => {
+              syncing = false;
+            });
+        }, SYNC_DEBOUNCE_MS);
+      });
+    };
+
+    const bootRemoteWorkspace = async (uid: string, email: string | null) => {
+      dispatchSyncStatus('auth-resolving', getLastSyncAt(uid));
+      remoteHydrated = false;
+      setWorkspaceReadOnly(false);
+
+      try {
+        const snapshot = await hydrateWorkspaceFromRemote(uid);
+        if (cancelled || currentUid !== uid) {
+          return;
+        }
+
+        dispatchSyncStatus('hydrating', getLastSyncAt(uid));
+
+        if (!snapshot?.exists()) {
+          const updatedAt = new Date().toISOString();
+          const initialState = createScopedInitialSnapshot(uid, email);
+          await writeWorkspaceRemote(uid, {
+            updatedAt,
+            state: initialState,
+          });
+
+          if (cancelled || currentUid !== uid) {
+            return;
+          }
+
+          applySnapshot(uid, initialState, updatedAt);
+        } else {
+          const data = snapshot.data();
+          if (isRemoteStatePayload(data) && isPersistedWorkspaceSnapshot(data.state)) {
+            applySnapshot(uid, data.state, typeof data.updatedAt === 'string' ? data.updatedAt : new Date().toISOString());
+          } else {
+            throw new Error('persistence/invalid-remote-payload');
+          }
+        }
+
         setAuthState({
           authStatus: 'authenticated',
           authProvider: useAppStore.getState().authProvider,
           firebaseUid: uid,
         });
-        dispatchSyncStatus('error', getLastSyncAt(uid));
-        pushSyncErrorNotification();
-        return;
-      }
+        remoteHydrated = true;
+        dispatchSyncStatus('ready', getLastSyncAt(uid));
 
-      dispatchSyncStatus('hydrating', getLastSyncAt(uid));
+        remoteUnsubscribe?.();
+        remoteUnsubscribe = subscribeWorkspaceRemote(uid, (payload) => {
+          if (cancelled || currentUid !== uid || syncing || !payload) {
+            return;
+          }
 
-      try {
-        const snapshot = await getDoc(remoteDocRef);
+          if (!isRemoteStatePayload(payload) || !isPersistedWorkspaceSnapshot(payload.state)) {
+            return;
+          }
 
-        if (isStaleSession()) {
+          const remoteUpdatedAt = typeof payload.updatedAt === 'string' ? payload.updatedAt : '';
+          if (pendingLocalUpdatedAt && remoteUpdatedAt <= pendingLocalUpdatedAt) {
+            return;
+          }
+
+          if (remoteUpdatedAt && remoteUpdatedAt <= getLastSyncAt(uid)) {
+            return;
+          }
+
+          applySnapshot(uid, payload.state, remoteUpdatedAt || new Date().toISOString());
+          dispatchSyncStatus('ready', getLastSyncAt(uid));
+        });
+
+        enableWriteSync(uid);
+      } catch {
+        if (cancelled || currentUid !== uid) {
           return;
         }
 
-        if (!snapshot.exists()) {
-          const initialUpdatedAt = new Date().toISOString();
-          const localSnapshot = pickPersistedWorkspace(useAppStore.getState());
-          const initialState = isSnapshotOwnedByUser(localSnapshot, uid)
-            ? {
-                ...localSnapshot,
-                user: {
-                  ...localSnapshot.user,
-                  id: uid,
-                  email: email ?? localSnapshot.user.email,
-                },
-              }
-            : createScopedInitialSnapshot(uid, email);
-
-          await setDoc(
-            remoteDocRef,
-            {
-              updatedAt: initialUpdatedAt,
-              state: initialState,
-            },
-            { merge: true },
-          );
-
-          useAppStore.setState((state) => mergePersistedWorkspace(state, initialState));
-          setLastSyncAt(uid, initialUpdatedAt);
-          pendingLocalUpdatedAt = '';
-          hasPendingLocalChange = false;
+        const cached = readWorkspaceCache(uid);
+        if (cached?.snapshot) {
+          useAppStore.setState((state) => mergePersistedWorkspace(state, cached.snapshot));
+          setLastSyncAt(uid, cached.updatedAt);
+          lastConfirmedSnapshot = JSON.stringify(cached.snapshot);
+          remoteHydrated = true;
+          setWorkspaceReadOnly(true);
           setAuthState({
             authStatus: 'authenticated',
             authProvider: useAppStore.getState().authProvider,
             firebaseUid: uid,
           });
-          dispatchSyncStatus('synced', initialUpdatedAt);
-          remoteHydrated = true;
-        } else {
-          const data = snapshot.data();
-
-          if (isRemoteStatePayload(data) && isPersistedWorkspaceSnapshot(data.state)) {
-            const remoteUpdatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : '';
-            const localUpdatedAt = getLastSyncAt(uid);
-
-            if (shouldApplyRemoteState(remoteUpdatedAt, localUpdatedAt)) {
-              useAppStore.setState((currentState) => mergePersistedWorkspace(currentState, data.state));
-              setLastSyncAt(uid, remoteUpdatedAt);
-              pendingLocalUpdatedAt = '';
-              hasPendingLocalChange = false;
-            }
-          }
-        }
-      } catch {
-        if (isStaleSession()) {
+          dispatchSyncStatus('offline-readonly', cached.updatedAt);
           return;
         }
 
-        setAuthState({
-          authStatus: 'authenticated',
-          authProvider: useAppStore.getState().authProvider,
-          firebaseUid: uid,
-        });
+        setWorkspaceReadOnly(true);
         dispatchSyncStatus('error', getLastSyncAt(uid));
         pushSyncErrorNotification();
-        remoteHydrated = true;
-        return;
       }
-
-      if (isStaleSession()) {
-        return;
-      }
-
-      setAuthState({
-        authStatus: 'authenticated',
-        authProvider: useAppStore.getState().authProvider,
-        firebaseUid: uid,
-      });
-      dispatchSyncStatus('synced', getLastSyncAt(uid));
-      remoteHydrated = true;
-      teardownRemoteSubscription();
-      remoteUnsubscribe = onSnapshot(remoteDocRef, (snapshot) => {
-        if (isStaleSession()) {
-          return;
-        }
-
-        if (!snapshot.exists()) {
-          return;
-        }
-
-        const data = snapshot.data();
-        if (!isRemoteStatePayload(data) || !isPersistedWorkspaceSnapshot(data.state)) {
-          return;
-        }
-
-        const remoteUpdatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : '';
-        const localUpdatedAt = getLastSyncAt(uid);
-
-        if (hasPendingLocalChange) {
-          return;
-        }
-
-        if (shouldIgnorePendingRemoteEcho(remoteUpdatedAt, pendingLocalUpdatedAt)) {
-          return;
-        }
-
-        if (!shouldApplyRemoteState(remoteUpdatedAt, localUpdatedAt)) {
-          return;
-        }
-
-        useAppStore.setState((state) => mergePersistedWorkspace(state, data.state));
-        setLastSyncAt(uid, remoteUpdatedAt);
-        pendingLocalUpdatedAt = '';
-        hasPendingLocalChange = false;
-        dispatchSyncStatus('synced', remoteUpdatedAt);
-      });
-
-      teardownStoreSubscription();
-      storeUnsubscribe = useAppStore.subscribe((state) => {
-        if (!remoteHydrated || isStaleSession()) {
-          return;
-        }
-
-        if (syncTimeout) {
-          window.clearTimeout(syncTimeout);
-        }
-
-        hasPendingLocalChange = true;
-        syncTimeout = window.setTimeout(() => {
-          if (isStaleSession()) {
-            return;
-          }
-
-          const updatedAt = new Date().toISOString();
-          pendingLocalUpdatedAt = updatedAt;
-          dispatchSyncStatus('syncing', getLastSyncAt(uid));
-
-          void setDoc(
-            remoteDocRef,
-            {
-              updatedAt,
-              state: pickPersistedWorkspace(state),
-            },
-            { merge: true },
-          )
-            .then(() => {
-              setLastSyncAt(uid, updatedAt);
-              pendingLocalUpdatedAt = '';
-              hasPendingLocalChange = false;
-              dispatchSyncStatus('synced', updatedAt);
-            })
-            .catch(() => {
-              pendingLocalUpdatedAt = '';
-              hasPendingLocalChange = false;
-              dispatchSyncStatus('error', getLastSyncAt(uid));
-              pushSyncErrorNotification();
-            });
-        }, SYNC_DEBOUNCE_MS);
-      });
     };
 
     const authUnsubscribe = subscribeToFirebaseAuth((user) => {
@@ -271,39 +209,29 @@ export function useFirebasePersistenceSync() {
         return;
       }
 
+      teardownSubscriptions();
+      remoteHydrated = false;
+      syncing = false;
+      pendingLocalUpdatedAt = '';
+      lastConfirmedSnapshot = '';
+
       if (!user) {
         const previousUid = currentUid;
         currentUid = null;
-        remoteHydrated = false;
-        pendingLocalUpdatedAt = '';
-        hasPendingLocalChange = false;
-        syncSessionToken += 1;
-        teardownStoreSubscription();
-        teardownRemoteSubscription();
         clearLastSyncAt(previousUid);
+        clearWorkspaceCache(previousUid);
         dispatchSyncStatus('idle');
+        setWorkspaceReadOnly(false);
         return;
       }
 
       currentUid = user.uid;
-      remoteHydrated = false;
-      pendingLocalUpdatedAt = '';
-      hasPendingLocalChange = false;
-      syncSessionToken += 1;
-      teardownStoreSubscription();
-      teardownRemoteSubscription();
-      void setupSync(user.uid, user.email);
+      void bootRemoteWorkspace(user.uid, user.email);
     });
 
     return () => {
       cancelled = true;
-
-      if (syncTimeout) {
-        window.clearTimeout(syncTimeout);
-      }
-
-      teardownStoreSubscription();
-      teardownRemoteSubscription();
+      teardownSubscriptions();
       authUnsubscribe();
     };
   }, []);

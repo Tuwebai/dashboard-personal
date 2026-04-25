@@ -37,13 +37,5 @@ export function sanitizeImportedSnapshot(value: unknown): PersistedWorkspaceSnap
       ...defaults.settings,
       ...value.settings,
     },
-    taskFilters: {
-      ...defaults.taskFilters,
-      ...value.taskFilters,
-    },
-    goalFilters: {
-      ...defaults.goalFilters,
-      ...value.goalFilters,
-    },
   };
 }

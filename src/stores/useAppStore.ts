@@ -18,6 +18,7 @@ import { createJournalingSlice } from './slices/journalingSlice';
 import { createFocusSlice } from './slices/focusSlice';
 import { createAppPersistenceStorage, type PersistedAppStore, STORE_STORAGE_KEY } from '../core/persistence/storage';
 import { isPersistedWorkspaceSnapshot, pickPersistedWorkspace } from '../core/persistence/workspace';
+import { shouldUseFirebasePersistence } from '../core/persistence/firebase';
 
 function isPersistedAppStore(value: unknown): value is PersistedAppStore {
   return isPersistedWorkspaceSnapshot(value);
@@ -26,21 +27,31 @@ function isPersistedAppStore(value: unknown): value is PersistedAppStore {
 export const useAppStore = create<AppStore>()(
   immer(
     persist(
-      (...a) => ({
-        ...createAuthSlice(...a),
-        ...createUISlice(...a),
-        ...createTaskSlice(...a),
-        ...createHabitSlice(...a),
-        ...createRoutineSlice(...a),
-        ...createFinanceSlice(...a),
-        ...createCalendarSlice(...a),
-        ...createWeeklyPlanningSlice(...a),
-        ...createNoteSlice(...a),
-        ...createJournalingSlice(...a),
-        ...createFocusSlice(...a),
-        ...createActivitySlice(...a),
-        ...createPersonalGoalSlice(...a),
-      }),
+      (set, get, api) => {
+        const guardedSet = ((...args: Parameters<typeof set>) => {
+          if (shouldUseFirebasePersistence() && useAppStore.getState().workspaceReadOnly) {
+            return;
+          }
+
+          return set(...args);
+        }) as typeof set;
+
+        return {
+          ...createAuthSlice(set, get, api),
+          ...createUISlice(set, get, api),
+          ...createTaskSlice(guardedSet, get, api),
+          ...createHabitSlice(guardedSet, get, api),
+          ...createRoutineSlice(guardedSet, get, api),
+          ...createFinanceSlice(guardedSet, get, api),
+          ...createCalendarSlice(guardedSet, get, api),
+          ...createWeeklyPlanningSlice(guardedSet, get, api),
+          ...createNoteSlice(guardedSet, get, api),
+          ...createJournalingSlice(guardedSet, get, api),
+          ...createFocusSlice(guardedSet, get, api),
+          ...createActivitySlice(guardedSet, get, api),
+          ...createPersonalGoalSlice(guardedSet, get, api),
+        };
+      },
       {
         name: STORE_STORAGE_KEY,
         storage: createAppPersistenceStorage(),
