@@ -56,7 +56,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
   return (
     <motion.aside
       className={cn(
-        'flex flex-col h-full bg-[#0f0f0f] border-r border-[#1e1e1e] relative overflow-hidden',
+        'flex flex-col h-full bg-bg-primary border-r border-border relative overflow-hidden',
         mobile && 'z-50 w-[240px] max-w-[85vw] shadow-2xl'
       )}
       animate={{ width: mobile ? 240 : isCollapsed ? 72 : 240 }}
@@ -67,13 +67,13 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
 
       {/* Logo */}
-      <div className="flex items-center h-16 px-4 border-b border-[#1e1e1e] shrink-0 overflow-hidden">
+      <div className="flex items-center h-16 px-4 border-b border-border shrink-0 overflow-hidden">
         <BrandLogo collapsed={isCollapsed} className="transition-all duration-300" />
       </div>
 
       {/* User Profile */}
       <div className={cn(
-        'flex items-center gap-3 px-4 py-4 border-b border-[#1e1e1e] shrink-0',
+        'flex items-center gap-3 px-4 py-4 border-b border-border shrink-0',
         isCollapsed && 'justify-center px-2'
       )}>
         <div className="relative shrink-0">
@@ -84,7 +84,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
               user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
             )}
           </div>
-          <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#0f0f0f] pulse-dot" />
+          <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-bg-primary pulse-dot" />
         </div>
         <AnimatePresence>
           {!isCollapsed && (
@@ -161,7 +161,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
       </nav>
 
       {/* Bottom Items */}
-      <div className="px-3 py-3 space-y-0.5 border-t border-[#1e1e1e] shrink-0">
+      <div className="px-3 py-3 space-y-0.5 border-t border-border shrink-0">
         {BOTTOM_ITEMS.map((item) => {
           const isActive = activeModule === item.id;
           const Icon = item.icon;

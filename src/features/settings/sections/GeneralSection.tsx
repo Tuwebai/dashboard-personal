@@ -90,7 +90,7 @@ export function GeneralSection() {
               <Camera size={28} className="text-white transform scale-90 group-hover:scale-100 transition-transform" />
             </div>
           </div>
-          <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-violet-500 rounded-full flex items-center justify-center text-white shadow-md ring-4 ring-[#161616] pointer-events-none">
+          <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-violet-500 rounded-full flex items-center justify-center text-white shadow-md ring-4 ring-bg-card pointer-events-none">
             <Camera size={14} />
           </div>
         </div>

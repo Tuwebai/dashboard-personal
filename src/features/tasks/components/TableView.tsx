@@ -34,7 +34,7 @@ export function TableView({ tasks, onEdit, onDelete, onComplete }: TableViewProp
   return (
     <div className="overflow-auto h-full border border-white/5 rounded-2xl bg-white/[0.01] scrollbar-hide">
       <table className="w-full text-sm border-collapse">
-        <thead className="sticky top-0 bg-[#0f0f0f] border-b border-white/10 z-10">
+        <thead className="sticky top-0 bg-bg-primary border-b border-white/10 z-10">
           <tr>
             <th className="text-left px-5 py-4 text-white/30 font-bold text-[10px] uppercase tracking-[0.2em] w-12"></th>
             <th className="text-left px-5 py-4 text-white/30 font-bold text-[10px] uppercase tracking-[0.2em]">{t('tasks.fieldTitle')}</th>

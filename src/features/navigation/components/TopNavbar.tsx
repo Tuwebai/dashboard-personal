@@ -99,7 +99,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
   }, [activeFocusSession, now]);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-[#1e1e1e] bg-bg-primary/80 px-4 backdrop-blur-xl md:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-bg-primary/80 px-4 backdrop-blur-xl md:px-6">
       <button
         type="button"
         onClick={onToggleSidebar}
@@ -224,7 +224,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                     </button>
                   )}
                 </div>
-                <div className="max-h-80 overflow-y-auto divide-y divide-[#1e1e1e]">
+                <div className="max-h-80 overflow-y-auto divide-y divide-border">
                   {notifications.length === 0 ? (
                     <div className="p-4 text-center text-white/40 text-sm">
                       No notifications

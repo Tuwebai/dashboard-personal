@@ -188,7 +188,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
             onClick={() => setCommandPaletteOpen(false)}
           />
           <motion.div
-            className="relative w-full max-w-xl bg-[#141414] border border-border rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-xl bg-bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
             initial={{ opacity: 0, scale: 0.96, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}
@@ -241,7 +241,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2.5 border-t border-[#1e1e1e] flex items-center gap-4 text-[11px] text-white/25">
+            <div className="px-4 py-2.5 border-t border-border flex items-center gap-4 text-[11px] text-white/25">
               <span className="flex items-center gap-1">
                 <kbd className="px-1 bg-white/5 border border-white/10 rounded">↑↓</kbd>
                 navigate
