@@ -45,58 +45,58 @@ export const useAppStore = create<AppStore>()(
         storage: createAppPersistenceStorage(),
         version: 8,
         migrate: (persistedState: unknown, version) => {
-          const state = isPersistedAppStore(persistedState) ? persistedState : {};
+          let state = isPersistedAppStore(persistedState) ? persistedState : {};
 
           if (version < 2) {
-            return {
+            state = {
               ...state,
               personalGoals: [],
               goalView: 'kanban',
               goalFilters: { horizon: '', status: '', priority: '' },
-            } as AppStore;
+            };
           }
           if (version < 3) {
-            return {
+            state = {
               ...state,
               weeklyFocus: '',
               weeklyFocusGoalId: '',
               weeklyTopPriorities: ['', '', ''],
               weeklyPriorityTaskIds: ['', '', ''],
               weeklyNotes: '',
-            } as AppStore;
+            };
           }
           if (version < 4) {
-            return {
+            state = {
               ...state,
               dailyTop3: ['', '', ''],
               dailyIntention: '',
               dailyQuickNotes: '',
-            } as AppStore;
+            };
           }
           if (version < 5) {
-            return {
+            state = {
               ...state,
               dailyHighlightedTaskIds: ['', '', ''],
-            } as AppStore;
+            };
           }
           if (version < 6) {
-            return {
+            state = {
               ...state,
               journalEntries: [],
-            } as AppStore;
+            };
           }
           if (version < 7) {
-            return {
+            state = {
               ...state,
               journalingContextDate: '',
-            } as AppStore;
+            };
           }
           if (version < 8) {
-            return {
+            state = {
               ...state,
               focusSessions: [],
               selectedFocusSessionId: null,
-            } as AppStore;
+            };
           }
           return state as AppStore;
         },
