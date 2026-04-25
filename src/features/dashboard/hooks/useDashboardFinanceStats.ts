@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 import type { FinancialAccount, Transaction } from '../../../shared/types';
 import { getDerivedAccounts } from '../../finances/lib/accounts';
@@ -9,45 +9,53 @@ export function useDashboardFinanceStats(accounts: FinancialAccount[], transacti
     const derivedAccounts = getDerivedAccounts(accounts, transactions);
     const netWorth = derivedAccounts.reduce((sum, account) => sum + account.derivedBalance, 0);
 
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentTransactions = transactions.filter((transaction) => new Date(transaction.date) >= thirtyDaysAgo);
-    const netFlow30d = recentTransactions.reduce((acc, transaction) => {
-      if (transaction.type === 'income') return acc + transaction.amount;
-      if (transaction.type === 'expense') return acc - transaction.amount;
-      return acc;
-    }, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const pastNetWorth = netWorth - netFlow30d;
-    let netWorthTrend = 0;
-    if (pastNetWorth > 0) {
-      netWorthTrend = (netFlow30d / pastNetWorth) * 100;
-    } else if (netWorth > 0) {
-      netWorthTrend = 100;
-    }
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const previousTransactions = transactions.filter((transaction) => new Date(transaction.date) < thirtyDaysAgo);
+    const previousAccounts = getDerivedAccounts(accounts, previousTransactions);
+    const previousNetWorth = previousAccounts.reduce((sum, account) => sum + account.derivedBalance, 0);
+
+    const netWorthTrend =
+      previousNetWorth === 0
+        ? 0
+        : ((netWorth - previousNetWorth) / Math.abs(previousNetWorth)) * 100;
 
     const isTrendPositive = netWorthTrend >= 0;
     const TrendIcon = isTrendPositive ? TrendingUp : TrendingDown;
-    const sortedTransactions = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    const balanceHistory = sortedTransactions.reduce<{ date: string; balance: number }[]>((history, transaction) => {
-      const previousBalance = history[history.length - 1]?.balance ?? 0;
-      const nextBalance =
-        transaction.type === 'income'
-          ? previousBalance + transaction.amount
-          : transaction.type === 'expense'
-            ? previousBalance - transaction.amount
-            : previousBalance;
+    const recentTransactions = transactions
+      .filter((transaction) => new Date(transaction.date) >= thirtyDaysAgo)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-      history.push({
-        date: format(new Date(transaction.date), 'dd MMM'),
-        balance: nextBalance,
+    const balanceHistory: { date: string; balance: number }[] = [];
+    let runningBalance = previousNetWorth;
+    let cursor = new Date(thirtyDaysAgo);
+
+    while (cursor <= today) {
+      const dayKey = format(cursor, 'yyyy-MM-dd');
+      const dayTransactions = recentTransactions.filter(
+        (transaction) => format(new Date(transaction.date), 'yyyy-MM-dd') === dayKey,
+      );
+
+      runningBalance += dayTransactions.reduce((total, transaction) => {
+        if (transaction.type === 'income') return total + transaction.amount;
+        if (transaction.type === 'expense') return total - transaction.amount;
+        return total;
+      }, 0);
+
+      balanceHistory.push({
+        date: format(cursor, 'dd MMM'),
+        balance: runningBalance,
       });
 
-      return history;
-    }, []);
+      cursor = addDays(cursor, 1);
+    }
 
     const monthlyCashFlowMap = new Map<string, { month: string; income: number; expenses: number; savings: number }>();
-    sortedTransactions.forEach((transaction) => {
+    [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).forEach((transaction) => {
       const monthKey = format(new Date(transaction.date), 'MMM');
       const current = monthlyCashFlowMap.get(monthKey) ?? {
         month: monthKey,

@@ -11,9 +11,10 @@ interface FinanceWidgetsProps {
   netWorthTrend: number;
   TrendIcon: LucideIcon;
   balanceHistory: { date: string; balance: number }[];
+  setActiveModule: (module: string) => void;
 }
 
-export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, balanceHistory }: FinanceWidgetsProps) {
+export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, balanceHistory, setActiveModule }: FinanceWidgetsProps) {
   const { t } = useI18n();
   const itemVariants = {
     hidden: { opacity: 0, y: 16 },
@@ -22,7 +23,12 @@ export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, bala
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      <motion.div variants={itemVariants} className="bg-bg-card border border-border rounded-xl p-5">
+      <motion.button
+        type="button"
+        variants={itemVariants}
+        onClick={() => setActiveModule('finances')}
+        className="w-full rounded-xl border border-border bg-bg-card p-5 text-left transition-all hover:border-white/10"
+      >
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-semibold text-white text-sm">{t('dashboard.netWorth')}</h3>
@@ -64,7 +70,7 @@ export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, bala
         ) : (
           <EmptyState icon={TrendIcon} message={t('dashboard.noFinances')} minHeight={120} />
         )}
-      </motion.div>
+      </motion.button>
     </div>
   );
 }
