@@ -2,11 +2,11 @@ import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Wallet, CreditCard } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 import { cn } from '../../../shared/lib/cn';
+import { useI18n } from '../../../shared/i18n/useI18n';
 
 export function FinanceSummary() {
-  const { accounts, transactions } = useAppStore();
-  
-  const totalBalance = accounts.reduce((acc, curr) => acc + curr.balance, 0);
+  const { t } = useI18n();
+  const { transactions } = useAppStore();
   
   // Simple month-to-date income/expense logic
   const now = new Date();
@@ -44,10 +44,10 @@ export function FinanceSummary() {
   const savingsRateTrend = calculateTrend(savingsRate, lastIncome > 0 ? ((lastIncome - lastExpenses) / lastIncome) * 100 : 0);
 
   const stats = [
-    { label: 'Net Worth', value: totalBalance, icon: <Wallet className="text-violet-400" />, trend: '+0%', isValue: true }, // Net worth trend would need historical balance data
-    { label: 'Monthly Income', value: income, icon: <TrendingUp className="text-emerald-400" />, trend: incomeTrend, isValue: true },
-    { label: 'Monthly Expenses', value: expenses, icon: <TrendingDown className="text-rose-400" />, trend: expensesTrend, isValue: true },
-    { label: 'Savings Rate', value: savingsRateFormatted, icon: <CreditCard className="text-blue-400" />, trend: savingsRateTrend, isValue: false },
+    { label: t('finances.currentBalance'), value: income - expenses, icon: <Wallet className="text-violet-400" />, trend: '+0%', isValue: true },
+    { label: t('finances.monthlyIncome'), value: income, icon: <TrendingUp className="text-emerald-400" />, trend: incomeTrend, isValue: true },
+    { label: t('finances.monthlyExpenses'), value: expenses, icon: <TrendingDown className="text-rose-400" />, trend: expensesTrend, isValue: true },
+    { label: t('finances.savingsRate'), value: savingsRateFormatted, icon: <CreditCard className="text-blue-400" />, trend: savingsRateTrend, isValue: false },
   ];
 
   const formatCurrency = (val: number) => {
