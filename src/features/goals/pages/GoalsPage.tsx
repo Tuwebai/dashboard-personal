@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
+import { useI18n } from '../../../shared/i18n/useI18n';
 import { GoalEmptyState } from '../components/GoalEmptyState';
 import { GoalKanbanView } from '../components/GoalKanbanView';
 import { GoalListView } from '../components/GoalListView';
@@ -12,7 +14,8 @@ import { GoalsHeader } from '../components/GoalsHeader';
 import type { PersonalGoal } from '../types';
 
 export function GoalsPage() {
-  const { personalGoals, tasks, goalFilters, setGoalFilters, goalView, setGoalView } = useAppStore(
+  const { t } = useI18n();
+  const { personalGoals, tasks, goalFilters, setGoalFilters, goalView, setGoalView, deletePersonalGoal } = useAppStore(
     useShallow((state) => ({
       personalGoals: state.personalGoals,
       tasks: state.tasks,
@@ -20,6 +23,7 @@ export function GoalsPage() {
       setGoalFilters: state.setGoalFilters,
       goalView: state.goalView,
       setGoalView: state.setGoalView,
+      deletePersonalGoal: state.deletePersonalGoal,
     }))
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,6 +46,15 @@ export function GoalsPage() {
     setIsModalOpen(true);
   };
 
+  const handleDelete = (goal: PersonalGoal) => {
+    deletePersonalGoal(goal.id);
+    if (editingGoal?.id === goal.id) {
+      setEditingGoal(null);
+      setIsModalOpen(false);
+    }
+    toast.success(t('goals.deleted'));
+  };
+
   const getRelatedTasks = (goalId: string) => tasks.filter((task) => task.goalId === goalId && !task.isArchived);
   const getRelatedTaskCount = (goalId: string) => getRelatedTasks(goalId).length;
 
@@ -52,10 +65,18 @@ export function GoalsPage() {
 
       {hasGoals ? (
         <section>
-          {goalView === 'kanban' && <GoalKanbanView goals={filteredGoals} onEdit={handleEdit} getRelatedTaskCount={getRelatedTaskCount} />}
-          {goalView === 'list' && <GoalListView goals={filteredGoals} onEdit={handleEdit} getRelatedTaskCount={getRelatedTaskCount} />}
-          {goalView === 'matrix' && <GoalMatrixView goals={filteredGoals} onEdit={handleEdit} getRelatedTaskCount={getRelatedTaskCount} />}
-          {goalView === 'table' && <GoalTableView goals={filteredGoals} onEdit={handleEdit} getRelatedTaskCount={getRelatedTaskCount} />}
+          {goalView === 'kanban' && (
+            <GoalKanbanView goals={filteredGoals} onEdit={handleEdit} onDelete={handleDelete} getRelatedTaskCount={getRelatedTaskCount} />
+          )}
+          {goalView === 'list' && (
+            <GoalListView goals={filteredGoals} onEdit={handleEdit} onDelete={handleDelete} getRelatedTaskCount={getRelatedTaskCount} />
+          )}
+          {goalView === 'matrix' && (
+            <GoalMatrixView goals={filteredGoals} onEdit={handleEdit} onDelete={handleDelete} getRelatedTaskCount={getRelatedTaskCount} />
+          )}
+          {goalView === 'table' && (
+            <GoalTableView goals={filteredGoals} onEdit={handleEdit} onDelete={handleDelete} getRelatedTaskCount={getRelatedTaskCount} />
+          )}
         </section>
       ) : (
         <GoalEmptyState />

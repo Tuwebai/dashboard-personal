@@ -1,13 +1,16 @@
 import { Target } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '../../../shared/lib/cn';
 import type { PersonalGoal } from '../types';
 import { GoalProgressBar } from './GoalProgressBar';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useAppStore } from '../../../stores/useAppStore';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 interface GoalCardProps {
   goal: PersonalGoal;
   onEdit?: (goal: PersonalGoal) => void;
+  onDelete?: (goal: PersonalGoal) => void;
   relatedTaskCount?: number;
 }
 
@@ -18,9 +21,10 @@ const STATUS_STYLES: Record<PersonalGoal['status'], string> = {
   completed: 'bg-emerald-500/15 text-emerald-300',
 };
 
-export function GoalCard({ goal, onEdit, relatedTaskCount = 0 }: GoalCardProps) {
+export function GoalCard({ goal, onEdit, onDelete, relatedTaskCount = 0 }: GoalCardProps) {
   const { t } = useI18n();
   const setWeeklyFocusGoal = useAppStore((state) => state.setWeeklyFocusGoal);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const horizonLabels = {
     weekly: t('goals.horizonWeekly'),
     monthly: t('goals.horizonMonthly'),
@@ -95,8 +99,28 @@ export function GoalCard({ goal, onEdit, relatedTaskCount = 0 }: GoalCardProps) 
           >
             {t('goals.edit')}
           </button>
+          {onDelete ? (
+            <button
+              type="button"
+              onClick={() => setConfirmOpen(true)}
+              className="text-xs font-medium text-rose-300 transition-colors hover:text-rose-200"
+            >
+              {t('goals.delete')}
+            </button>
+          ) : null}
         </div>
       ) : null}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title={t('goals.deleteTitle')}
+        message={t('goals.deleteMessage')}
+        confirmLabel={t('goals.delete')}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={() => {
+          onDelete?.(goal);
+          setConfirmOpen(false);
+        }}
+      />
     </article>
   );
 }

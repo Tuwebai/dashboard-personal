@@ -5,10 +5,11 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 interface GoalKanbanViewProps {
   goals: PersonalGoal[];
   onEdit: (goal: PersonalGoal) => void;
+  onDelete: (goal: PersonalGoal) => void;
   getRelatedTaskCount: (goalId: string) => number;
 }
 
-export function GoalKanbanView({ goals, onEdit, getRelatedTaskCount }: GoalKanbanViewProps) {
+export function GoalKanbanView({ goals, onEdit, onDelete, getRelatedTaskCount }: GoalKanbanViewProps) {
   const { t } = useI18n();
   const columns: Array<{ key: PersonalGoal['status']; label: string }> = [
     { key: 'planned', label: t('goals.columnPlanned') },
@@ -27,7 +28,9 @@ export function GoalKanbanView({ goals, onEdit, getRelatedTaskCount }: GoalKanba
           <div className="space-y-3">
             {goals
               .filter((goal) => goal.status === column.key)
-              .map((goal) => <GoalCard key={goal.id} goal={goal} onEdit={onEdit} relatedTaskCount={getRelatedTaskCount(goal.id)} />)}
+              .map((goal) => (
+                <GoalCard key={goal.id} goal={goal} onEdit={onEdit} onDelete={onDelete} relatedTaskCount={getRelatedTaskCount(goal.id)} />
+              ))}
           </div>
         </section>
       ))}
