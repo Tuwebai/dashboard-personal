@@ -6,6 +6,7 @@ import { formatCurrency } from '../../../shared/lib/helpers';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { format } from 'date-fns';
 import { Trash2, Calendar, Landmark, Tag, Edit3 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface TransactionDetailModalProps {
   transaction: Transaction | null;
@@ -43,6 +44,7 @@ export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }:
 
   const handleDelete = () => {
     deleteTransaction(transaction.id);
+    toast.success(t('finances.transactionDeleted'));
     onClose();
   };
 

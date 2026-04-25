@@ -3,6 +3,7 @@ import { Button } from '../../../shared/ui/Button';
 import { CalendarEvent } from '../../../shared/types';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import { Trash2, Clock, MapPin, Edit3, Type } from 'lucide-react';
@@ -21,6 +22,7 @@ export function EventDetailModal({ event, isOpen, onClose }: EventDetailModalPro
 
   const handleDelete = () => {
     deleteEvent(event.id);
+    toast.success(t('calendar.eventDeleted'));
     onClose();
   };
 

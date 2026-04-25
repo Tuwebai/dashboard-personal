@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useProfileSettings } from '../hooks/useProfileSettings';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useAppStore } from '../../../stores/useAppStore';
+import { mapFirebaseAuthError } from '../../auth/lib/mapFirebaseAuthError';
 
 export function GeneralSection() {
   const { t } = useI18n();
@@ -18,6 +19,15 @@ export function GeneralSection() {
   const [linkPassword, setLinkPassword] = useState('');
   const [confirmLinkPassword, setConfirmLinkPassword] = useState('');
   const [isLinking, setIsLinking] = useState(false);
+
+  const handleSaveProfile = async () => {
+    try {
+      await saveProfile();
+      toast.success(t('settings.profileSaved'));
+    } catch {
+      toast.error(t('settings.profileSaveError'));
+    }
+  };
 
   const handleLinkGuestAccount = async () => {
     const normalizedEmail = profileData.email.trim();
@@ -40,10 +50,19 @@ export function GeneralSection() {
       setLinkPassword('');
       setConfirmLinkPassword('');
       handleFieldChange('email', normalizedEmail);
-    } catch {
-      toast.error(t('auth.genericError'));
+    } catch (error) {
+      toast.error(mapFirebaseAuthError(error, t));
     } finally {
       setIsLinking(false);
+    }
+  };
+
+  const onAvatarFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      await handleAvatarFileChange(event);
+      toast.success(t('settings.avatarUpdated'));
+    } catch {
+      toast.error(t('settings.avatarUpdateError'));
     }
   };
 
@@ -54,7 +73,7 @@ export function GeneralSection() {
           <input 
             type="file" 
             ref={fileInputRef} 
-            onChange={handleAvatarFileChange} 
+            onChange={(event) => { void onAvatarFileChange(event); }} 
             className="hidden" 
             accept="image/*" 
           />
@@ -102,7 +121,7 @@ export function GeneralSection() {
             <Button 
               variant="primary" 
               className="h-10 w-full min-w-[140px] px-6 font-bold shadow-md md:w-auto md:px-8"
-              onClick={saveProfile}
+              onClick={() => { void handleSaveProfile(); }}
               loading={isSaving}
               leftIcon={saved ? <Check size={18} /> : undefined}
             >

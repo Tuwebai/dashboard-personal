@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import { 
   Play, Clock, MoreHorizontal, Edit3, Trash2, RotateCcw
 } from 'lucide-react';
@@ -7,6 +8,7 @@ import { Button } from '../../../shared/ui/Button';
 import { useAppStore } from '../../../stores/useAppStore';
 import type { Routine, RoutineType } from '../../../shared/types';
 import { ROUTINE_ICONS, TYPE_COLORS } from './constants';
+import { useI18n } from '../../../shared/i18n/useI18n';
 
 interface RoutineCardProps {
   routine: Routine;
@@ -15,6 +17,7 @@ interface RoutineCardProps {
 }
 
 export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
+  const { t } = useI18n();
   const { startRoutineSession, deleteRoutine } = useAppStore();
   const [showMenu, setShowMenu] = useState(false);
   const Icon = ROUTINE_ICONS[routine.type as RoutineType];
@@ -23,6 +26,7 @@ export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
     e.stopPropagation();
     if (confirm(`Are you sure you want to delete "${routine.name}"?`)) {
       deleteRoutine(routine.id);
+      toast.success(t('routines.routineDeleted'));
     }
     setShowMenu(false);
   };

@@ -1,15 +1,18 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Flame, Trash2, MoreVertical, Edit3, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
 import type { Habit } from '../../../shared/types';
 import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useState } from 'react';
+import { useI18n } from '../../../shared/i18n/useI18n';
 
 interface HabitCardProps {
   habit: Habit;
 }
 
 export function HabitCard({ habit }: HabitCardProps) {
+  const { t } = useI18n();
   const { habitLogs, logHabit, deleteHabit } = useAppStore();
   const [showMenu, setShowMenu] = useState(false);
   
@@ -31,6 +34,7 @@ export function HabitCard({ habit }: HabitCardProps) {
     e.stopPropagation();
     deleteHabit(habit.id);
     setShowMenu(false);
+    toast.success(t('habits.habitDeleted'));
   };
 
   return (

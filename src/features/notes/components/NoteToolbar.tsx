@@ -1,4 +1,5 @@
 import { Star, Share2, MoreHorizontal, Archive, Trash2, Pin } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
 import { cn } from '../../../shared/lib/cn';
 import { useState } from 'react';
@@ -9,7 +10,6 @@ export function NoteToolbar() {
   const { t } = useI18n();
   const { notes, selectedNoteId, updateNote, deleteNote } = useAppStore();
   const [showMenu, setShowMenu] = useState(false);
-  const [showShareToast, setShowShareToast] = useState(false);
 
   const note = notes.find(n => n.id === selectedNoteId);
 
@@ -26,18 +26,23 @@ export function NoteToolbar() {
   const handleArchive = () => {
     updateNote(note.id, { isArchived: !note.isArchived });
     setShowMenu(false);
+    toast.success(t(note.isArchived ? 'notes.noteRestored' : 'notes.noteArchived'));
   };
 
   const handleDelete = () => {
     deleteNote(note.id);
     setShowMenu(false);
+    toast.success(t('notes.noteDeleted'));
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    setShowShareToast(true);
-    setTimeout(() => setShowShareToast(false), 2000);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success(t('notes.linkCopied'));
+    } catch {
+      toast.error(t('notes.shareFailed'));
+    }
   };
 
   return (
@@ -122,18 +127,6 @@ export function NoteToolbar() {
         </div>
       </div>
 
-      <AnimatePresence>
-        {showShareToast && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-[-60px] left-1/2 -translate-x-1/2 bg-bg-secondary border border-border px-4 py-2 rounded-full shadow-2xl z-50 glass"
-          >
-            <p className="text-xs font-bold text-violet-400">Link copied to clipboard!</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar as CalendarIcon, ChevronRight, Clock, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useCalendarEvents } from '../../hooks/useCalendarEvents';
 import { useI18n } from '../../../../shared/i18n/useI18n';
 import { formatWithLocale, parseDateString } from '../../utils/dateUtils';
@@ -63,7 +64,7 @@ export const AgendaView = memo(({ onEventClick }: AgendaViewProps) => {
 
                     <div className="flex items-center gap-2">
                       <button 
-                        onClick={(e) => { e.stopPropagation(); deleteEvent(event.id); }}
+                        onClick={(e) => { e.stopPropagation(); deleteEvent(event.id); toast.success(t('calendar.eventDeleted')); }}
                         className="p-2 text-text-muted hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
                       >
                         <Trash2 size={16} />

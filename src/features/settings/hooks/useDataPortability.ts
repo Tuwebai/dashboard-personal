@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
+import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
 import { STORE_STORAGE_KEY } from '../../../core/persistence/storage';
+import { useI18n } from '../../../shared/i18n/useI18n';
 const MAX_IMPORT_SIZE_BYTES = 5 * 1024 * 1024;
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -16,6 +18,7 @@ function isValidImportData(value: unknown): value is Record<string, unknown> {
 }
 
 export function useDataPortability() {
+  const { t } = useI18n();
   const store = useAppStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -36,8 +39,10 @@ export function useDataPortability() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      toast.success(t('settings.exportSuccess'));
     } catch {
       setImportStatus('error');
+      toast.error(t('settings.exportError'));
     } finally {
       setIsExporting(false);
     }
@@ -52,6 +57,7 @@ export function useDataPortability() {
     if (!file) return;
     if (file.size > MAX_IMPORT_SIZE_BYTES) {
       setImportStatus('error');
+      toast.error(t('settings.importTooLarge'));
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -70,12 +76,14 @@ export function useDataPortability() {
         if (isValidImportData(parsedData)) {
            useAppStore.setState(parsedData);
            setImportStatus('success');
+           toast.success(t('settings.importSuccess'));
            setTimeout(() => window.location.reload(), 1500);
         } else {
            throw new Error('Invalid schema');
         }
       } catch {
         setImportStatus('error');
+        toast.error(t('settings.importInvalid'));
       } finally {
         setIsImporting(false);
         // Reset input
@@ -88,8 +96,11 @@ export function useDataPortability() {
   };
 
   const wipeAccount = () => {
+    toast.success(t('settings.resetSuccess'));
     localStorage.removeItem(STORE_STORAGE_KEY);
-    window.location.reload();
+    window.setTimeout(() => {
+      window.location.reload();
+    }, 700);
   };
 
   return {

@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { Calendar as CalendarIcon, Clock, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useCalendarView } from '../../hooks/useCalendarView';
 import { useCalendarEvents } from '../../hooks/useCalendarEvents';
 import { useI18n } from '../../../../shared/i18n/useI18n';
@@ -45,7 +46,7 @@ export const AgendaSidePanel = memo(() => {
                   </div>
                 </div>
                 <button 
-                  onClick={() => deleteEvent(event.id)}
+                  onClick={() => { deleteEvent(event.id); toast.success(t('calendar.eventDeleted')); }}
                   className="p-1.5 text-text-muted hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
                 >
                   <Trash2 size={14} />

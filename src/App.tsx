@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { useEffect, useLayoutEffect } from 'react';
+import { Toaster } from 'sonner';
 import { useAppStore } from './stores/useAppStore';
 import { DashboardLayout } from './layouts/dashboard-layout/DashboardLayout';
 import { Dashboard } from './features/dashboard/pages/DashboardPage';
@@ -113,8 +115,10 @@ export default function App() {
     }
   };
 
+  let content: ReactNode;
+
   if (authStatus === 'loading') {
-    return (
+    content = (
       <div className="flex min-h-screen items-center justify-center bg-bg-primary text-white">
         <div className="rounded-3xl border border-white/10 bg-bg-card px-8 py-6 text-center shadow-2xl shadow-black/30">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-300/80">
@@ -124,15 +128,20 @@ export default function App() {
         </div>
       </div>
     );
-  }
-
-  if (authStatus !== 'authenticated') {
-    return <LoginPage />;
+  } else if (authStatus !== 'authenticated') {
+    content = <LoginPage />;
+  } else {
+    content = (
+      <DashboardLayout activeModule={activeModule} onNavigate={handleNavigate}>
+        {renderModule()}
+      </DashboardLayout>
+    );
   }
 
   return (
-    <DashboardLayout activeModule={activeModule} onNavigate={handleNavigate}>
-      {renderModule()}
-    </DashboardLayout>
+    <>
+      {content}
+      <Toaster position="top-right" richColors theme="dark" />
+    </>
   );
 }

@@ -20,29 +20,40 @@ export function useProfileSettings() {
 
   const saveProfile = async () => {
     setIsSaving(true);
-    // Simulate API save
-    await new Promise(resolve => setTimeout(resolve, 800));
-    updateUser(profileData);
-    setIsSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      updateUser(profileData);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Convert to Base64 for local storage
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      updateUser({ avatar: base64 });
-    };
-    reader.readAsDataURL(file);
+    await new Promise<void>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result;
+
+        if (typeof result !== 'string') {
+          reject(new Error('avatar-read-failed'));
+          return;
+        }
+
+        updateUser({ avatar: result });
+        resolve();
+      };
+      reader.onerror = () => reject(new Error('avatar-read-failed'));
+      reader.readAsDataURL(file);
+    });
   };
 
   return {

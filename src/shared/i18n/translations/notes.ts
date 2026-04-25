@@ -16,6 +16,11 @@ export const notesTranslations = {
     'notes.untitled': 'Untitled Note',
     'notes.noContent': 'No additional text',
     'notes.placeholder': 'Start writing your thoughts here...',
+    'notes.noteArchived': 'Note archived.',
+    'notes.noteRestored': 'Note restored.',
+    'notes.noteDeleted': 'Note deleted.',
+    'notes.linkCopied': 'Link copied.',
+    'notes.shareFailed': 'We could not copy the link.',
   },
   es: {
     'notes.new': 'Crear nota nueva',
@@ -32,5 +37,10 @@ export const notesTranslations = {
     'notes.untitled': 'Nota sin título',
     'notes.noContent': 'Sin contenido adicional',
     'notes.placeholder': 'Comienza a escribir tus pensamientos aquí...',
+    'notes.noteArchived': 'Nota archivada.',
+    'notes.noteRestored': 'Nota restaurada.',
+    'notes.noteDeleted': 'Nota eliminada.',
+    'notes.linkCopied': 'Enlace copiado.',
+    'notes.shareFailed': 'No pudimos copiar el enlace.',
   },
 } as const satisfies TranslationDictionary;

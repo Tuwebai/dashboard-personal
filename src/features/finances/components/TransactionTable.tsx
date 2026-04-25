@@ -1,5 +1,6 @@
 import { useAppStore } from '../../../stores/useAppStore';
 import { ShoppingCart, Coffee, CreditCard, ArrowUpRight, Landmark, Zap, Car, Trash2, LucideIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import { cn } from '../../../shared/lib/cn';
 import { format } from 'date-fns';
 import type { Transaction } from '../../../shared/types';
@@ -85,7 +86,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                   </td>
                   <td className="px-4 py-4">
                     <button 
-                      onClick={(e) => { e.stopPropagation(); deleteTransaction(tx.id); }}
+                      onClick={(e) => { e.stopPropagation(); deleteTransaction(tx.id); toast.success(t('finances.transactionDeleted')); }}
                       className="p-2 text-text-muted hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all"
                     >
                       <Trash2 size={14} />
