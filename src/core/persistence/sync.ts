@@ -64,6 +64,7 @@ export function useFirebasePersistenceSync() {
     let remoteHydrated = false;
     let currentUid: string | null = null;
     let pendingLocalUpdatedAt = '';
+    let syncSessionToken = 0;
     let storeUnsubscribe: () => void = () => undefined;
     let remoteUnsubscribe: (() => void) | null = null;
 
@@ -78,7 +79,14 @@ export function useFirebasePersistenceSync() {
     };
 
     const setupSync = async (uid: string, email: string | null) => {
+      syncSessionToken += 1;
+      const sessionToken = syncSessionToken;
+      const isStaleSession = () => cancelled || currentUid !== uid || syncSessionToken !== sessionToken;
       const remoteDocRef = getRemoteDocRef();
+
+      if (isStaleSession()) {
+        return;
+      }
 
       if (!remoteDocRef) {
         setAuthState({
@@ -96,9 +104,11 @@ export function useFirebasePersistenceSync() {
       try {
         const snapshot = await getDoc(remoteDocRef);
 
-        if (cancelled) {
-          remoteHydrated = true;
-        } else if (!snapshot.exists()) {
+        if (isStaleSession()) {
+          return;
+        }
+
+        if (!snapshot.exists()) {
           const initialUpdatedAt = new Date().toISOString();
           const localSnapshot = pickPersistedWorkspace(useAppStore.getState());
           const initialState = isSnapshotOwnedByUser(localSnapshot, uid)
@@ -146,6 +156,10 @@ export function useFirebasePersistenceSync() {
           }
         }
       } catch {
+        if (isStaleSession()) {
+          return;
+        }
+
         setAuthState({
           authStatus: 'authenticated',
           authProvider: useAppStore.getState().authProvider,
@@ -154,6 +168,10 @@ export function useFirebasePersistenceSync() {
         dispatchSyncStatus('error', getLastSyncAt(uid));
         pushSyncErrorNotification();
         remoteHydrated = true;
+        return;
+      }
+
+      if (isStaleSession()) {
         return;
       }
 
@@ -166,6 +184,10 @@ export function useFirebasePersistenceSync() {
       remoteHydrated = true;
       teardownRemoteSubscription();
       remoteUnsubscribe = onSnapshot(remoteDocRef, (snapshot) => {
+        if (isStaleSession()) {
+          return;
+        }
+
         if (!snapshot.exists()) {
           return;
         }
@@ -194,7 +216,7 @@ export function useFirebasePersistenceSync() {
 
       teardownStoreSubscription();
       storeUnsubscribe = useAppStore.subscribe((state) => {
-        if (!remoteHydrated) {
+        if (!remoteHydrated || isStaleSession()) {
           return;
         }
 
@@ -203,6 +225,10 @@ export function useFirebasePersistenceSync() {
         }
 
         syncTimeout = window.setTimeout(() => {
+          if (isStaleSession()) {
+            return;
+          }
+
           const updatedAt = new Date().toISOString();
           pendingLocalUpdatedAt = updatedAt;
           dispatchSyncStatus('syncing', getLastSyncAt(uid));
@@ -239,6 +265,7 @@ export function useFirebasePersistenceSync() {
         currentUid = null;
         remoteHydrated = false;
         pendingLocalUpdatedAt = '';
+        syncSessionToken += 1;
         teardownStoreSubscription();
         teardownRemoteSubscription();
         clearLastSyncAt(previousUid);
@@ -249,6 +276,7 @@ export function useFirebasePersistenceSync() {
       currentUid = user.uid;
       remoteHydrated = false;
       pendingLocalUpdatedAt = '';
+      syncSessionToken += 1;
       teardownStoreSubscription();
       teardownRemoteSubscription();
       void setupSync(user.uid, user.email);
