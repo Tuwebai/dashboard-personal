@@ -81,10 +81,10 @@ export function RoutineModal({ isOpen, onClose, routine }: RoutineModalProps) {
 
     if (routine) {
       updateRoutine(routine.id, routineData);
-      toast.success(t('routines.updated'));
+      toast.success(t('routines.routineUpdated'));
     } else {
       addRoutine(routineData);
-      toast.success(t('routines.created'));
+      toast.success(t('routines.routineCreated'));
     }
     onClose();
   };

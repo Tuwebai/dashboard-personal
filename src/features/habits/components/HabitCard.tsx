@@ -7,6 +7,8 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { useState } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
+import { Modal } from '../../../shared/ui/Modal';
+import { Input, Select } from '../../../shared/ui/Input';
 
 interface HabitCardProps {
   habit: Habit;
@@ -14,9 +16,16 @@ interface HabitCardProps {
 
 export function HabitCard({ habit }: HabitCardProps) {
   const { t } = useI18n();
-  const { habitLogs, logHabit, deleteHabit } = useAppStore();
+  const { habitLogs, logHabit, deleteHabit, updateHabit } = useAppStore();
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: habit.name,
+    category: habit.category,
+    icon: habit.icon,
+    color: habit.color,
+  });
   
   // Get last 7 days of logs
   const days = Array.from({ length: 7 }, (_, i) => {
@@ -36,6 +45,29 @@ export function HabitCard({ habit }: HabitCardProps) {
     e.stopPropagation();
     setShowMenu(false);
     setIsDeleteOpen(true);
+  };
+
+  const handleEditOpen = () => {
+    setFormData({
+      name: habit.name,
+      category: habit.category,
+      icon: habit.icon,
+      color: habit.color,
+    });
+    setShowMenu(false);
+    setIsEditOpen(true);
+  };
+
+  const handleUpdate = () => {
+    if (!formData.name.trim()) return;
+    updateHabit(habit.id, {
+      name: formData.name,
+      category: formData.category,
+      icon: formData.icon,
+      color: formData.color,
+    });
+    setIsEditOpen(false);
+    toast.success(t('habits.habitUpdated'));
   };
 
   const confirmDelete = () => {
@@ -87,9 +119,12 @@ export function HabitCard({ habit }: HabitCardProps) {
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   className="absolute right-0 mt-2 w-48 bg-bg-card border border-border rounded-xl shadow-2xl p-2 z-50"
                 >
-                  <button className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left">
+                  <button
+                    onClick={handleEditOpen}
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left"
+                  >
                     <Edit3 size={16} />
-                    <span>Edit Habit</span>
+                    <span>{t('habits.edit')}</span>
                   </button>
                   <button className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left">
                     <RotateCcw size={16} />
@@ -149,6 +184,81 @@ export function HabitCard({ habit }: HabitCardProps) {
         title={t('habits.deleteTitle')}
         message={t('habits.deleteMessage')}
       />
+      <Modal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        title={t('habits.editHabit')}
+        size="sm"
+      >
+        <div className="space-y-6">
+          <div className="space-y-3 rounded-xl border border-border bg-bg-card p-6">
+            <div
+              className="mb-4 text-center text-4xl transition-transform duration-200 hover:scale-110"
+              style={{ color: formData.color }}
+            >
+              {formData.icon}
+            </div>
+            <div className="flex justify-center gap-2">
+              {['✨', '💧', '🥗', '🧘', '📖', '💻'].map((emoji) => (
+                <button
+                  key={emoji}
+                  onClick={() => setFormData({ ...formData, icon: emoji })}
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-200',
+                    formData.icon === emoji
+                      ? 'border-violet-500/30 bg-violet-500/20 text-violet-400'
+                      : 'border-transparent bg-white/5 text-white/40 hover:bg-white/10'
+                  )}
+                  type="button"
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+            <div className="mt-4 flex justify-center gap-2">
+              {['#7c3aed', '#06b6d4', '#22c55e', '#f59e0b', '#ef4444', '#ec4899'].map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setFormData({ ...formData, color })}
+                  className={cn(
+                    'h-8 w-8 rounded-full border-2 transition-all duration-200',
+                    formData.color === color ? 'scale-110 border-white' : 'border-white/10'
+                  )}
+                  style={{ backgroundColor: color }}
+                  type="button"
+                />
+              ))}
+            </div>
+          </div>
+
+          <Input
+            label={t('habits.habitName')}
+            placeholder={t('habits.habitPlaceholder')}
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+
+          <Select
+            label={t('habits.category')}
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value as Habit['category'] })}
+            options={[
+              { value: 'health', label: t('habits.category_health') },
+              { value: 'mind', label: t('habits.category_mind') },
+              { value: 'work', label: t('habits.category_work') },
+              { value: 'finance', label: t('habits.category_finance') },
+            ]}
+          />
+
+          <button
+            type="button"
+            onClick={handleUpdate}
+            className="flex h-11 w-full items-center justify-center rounded-xl bg-violet-500 text-sm font-semibold text-white shadow-xl shadow-violet-500/20 transition hover:bg-violet-400"
+          >
+            {t('habits.saveChanges')}
+          </button>
+        </div>
+      </Modal>
 
       <div className="pt-4 border-t border-border flex items-center justify-between relative z-10">
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-bold">

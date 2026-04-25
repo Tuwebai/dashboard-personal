@@ -36,7 +36,7 @@ export default function Habits() {
       isBoolean: true,
       isArchived: false,
     });
-    toast.success(t('habits.created'));
+    toast.success(t('habits.habitCreated'));
     setNewHabit({ name: '', category: 'health', icon: '✨', color: '#7c3aed' });
     setIsModalOpen(false);
   };
