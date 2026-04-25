@@ -26,7 +26,6 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
   const expenses = monthlyTx.filter(tx => tx.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
   const projectedSavings = (income - expenses) * 12;
 
-  // Aggregate by category
   const categoriesMap: Record<string, number> = {};
   monthlyTx.filter(tx => tx.type === 'expense').forEach(tx => {
     categoriesMap[tx.category] = (categoriesMap[tx.category] || 0) + tx.amount;
@@ -43,20 +42,39 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
   };
 
   const topCategory = categoryEntries[0]?.[0] || 'expenses';
+  const categoryLabel = (() => {
+    switch (topCategory) {
+      case 'Food':
+        return t('finances.categoryFood');
+      case 'Shopping':
+        return t('finances.categoryShopping');
+      case 'Entertainment':
+        return t('finances.categoryEntertainment');
+      case 'Transport':
+        return t('finances.categoryTransport');
+      case 'Other':
+        return t('finances.categoryOther');
+      default:
+        return topCategory;
+    }
+  })();
+  const insightText = expenses > 0
+    ? `${t('finances.analysisInsightPrefix')} "${categoryLabel}". ${t('finances.analysisInsightSuffix')} ${formatCurrency(categoriesMap[topCategory] * 0.1)} ${t('finances.analysisInsightEnd')}`
+    : t('finances.analysisInsightEmpty');
 
   return (
     <SlideOver isOpen={isOpen} onClose={onClose} title={t('finances.analysis')} width="w-full sm:w-[450px]">
       <div className="space-y-8">
         <div className="p-6 bg-linear-to-br from-violet-600/20 to-cyan-600/20 border border-violet-500/20 rounded-3xl">
-          <h4 className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-2">Projected Yearly Savings</h4>
+          <h4 className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-2">{t('finances.analysisProjectedSavings')}</h4>
           <p className="text-2xl font-bold text-text-primary">{formatCurrency(projectedSavings)}</p>
-          <p className="text-[11px] text-text-secondary mt-1">Based on your current monthly spending patterns.</p>
+          <p className="text-[11px] text-text-secondary mt-1">{t('finances.analysisProjectedSavingsDesc')}</p>
         </div>
         
         <div className="space-y-4">
           <h4 className="text-sm font-bold text-text-primary px-1 flex items-center gap-2">
             <BarChart3 size={16} className="text-violet-400" />
-            Spending by Category
+            {t('finances.analysisSpendingByCategory')}
           </h4>
           <div className="space-y-3">
             {categoryEntries.length > 0 ? categoryEntries.map(([cat, amount]) => {
@@ -77,19 +95,16 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
               );
             }) : (
               <div className="p-8 text-center text-text-muted text-xs opacity-50 border border-dashed border-border rounded-2xl">
-                No expense data for this month
+                {t('finances.analysisNoExpenseData')}
               </div>
             )}
           </div>
         </div>
 
         <div className="p-5 bg-white/3 rounded-2xl border border-border border-dashed">
-          <h5 className="text-xs font-bold text-text-primary mb-2">Analysis Insight</h5>
+          <h5 className="text-xs font-bold text-text-primary mb-2">{t('finances.analysisInsight')}</h5>
           <p className="text-[11px] text-text-secondary leading-relaxed opacity-70">
-            {expenses > 0 
-              ? `Consider monitoring your '${topCategory}' expenses more closely. Reducing this by 10% could add ${formatCurrency(categoriesMap[topCategory] * 0.1)} to your monthly savings.`
-              : "Start adding your transactions to see personalized financial insights and spending patterns."
-            }
+            {insightText}
           </p>
         </div>
       </div>
