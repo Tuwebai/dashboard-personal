@@ -35,6 +35,34 @@ const buildTransactionState = (transaction: Transaction | null | undefined, acco
       }
     : buildInitialTransactionState(accountId);
 
+const parseTransactionAmount = (value: string): number => {
+  const normalized = value.replace(/\s/g, '');
+
+  if (!normalized) {
+    return Number.NaN;
+  }
+
+  const separators = [...normalized.matchAll(/[.,]/g)];
+
+  if (separators.length === 0) {
+    return Number(normalized);
+  }
+
+  const lastSeparator = separators[separators.length - 1];
+  const separatorIndex = lastSeparator.index ?? -1;
+  const decimalDigits = normalized.length - separatorIndex - 1;
+  const treatAsDecimal = decimalDigits > 0 && decimalDigits <= 2;
+
+  if (!treatAsDecimal) {
+    return Number(normalized.replace(/[.,]/g, ''));
+  }
+
+  const integerPart = normalized.slice(0, separatorIndex).replace(/[.,]/g, '');
+  const decimalPart = normalized.slice(separatorIndex + 1).replace(/[.,]/g, '');
+
+  return Number(`${integerPart}.${decimalPart}`);
+};
+
 export function AddTransactionModal({ isOpen, onClose, transaction }: AddTransactionModalProps) {
   const { t } = useI18n();
   const { accounts, addTransaction, updateTransaction } = useAppStore();
@@ -55,10 +83,12 @@ export function AddTransactionModal({ isOpen, onClose, transaction }: AddTransac
 
   const handleAdd = () => {
     if (!newTx.description || !newTx.amount) return;
+    const amount = parseTransactionAmount(newTx.amount);
+    if (Number.isNaN(amount)) return;
 
     const payload = {
       description: newTx.description,
-      amount: parseFloat(newTx.amount),
+      amount,
       type: newTx.type,
       category: newTx.category,
       accountId: newTx.accountId,
@@ -101,7 +131,8 @@ export function AddTransactionModal({ isOpen, onClose, transaction }: AddTransac
 
         <Input 
           label={t('finances.amountLabel')}
-          type="number"
+          type="text"
+          inputMode="decimal"
           placeholder="0.00"
           value={newTx.amount}
           onChange={e => setNewTx({...newTx, amount: e.target.value})}
