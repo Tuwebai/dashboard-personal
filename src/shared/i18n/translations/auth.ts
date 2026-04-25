@@ -3,7 +3,7 @@ import type { TranslationDictionary } from './types';
 export const authTranslations = {
   en: {
     'auth.title': 'Welcome back',
-    'auth.subtitle': 'Access your personal dashboard with Firebase Auth.',
+    'auth.subtitle': 'Keep your goals, finances, notes, and routines in one focused place.',
     'auth.continueAnonymous': 'Continue as guest',
     'auth.signIn': 'Sign in',
     'auth.signUp': 'Create account',
@@ -24,10 +24,12 @@ export const authTranslations = {
     'auth.anonymousBadge': 'Guest mode',
     'auth.linkedSuccess': 'Guest account linked successfully.',
     'auth.sessionRequired': 'You need a valid session to continue.',
+    'auth.valueBadge': 'Your command center',
+    'auth.valueDescription': 'Organize tasks, track finances, capture notes, and keep your routines moving without losing focus.',
   },
   es: {
     'auth.title': 'Bienvenido de nuevo',
-    'auth.subtitle': 'Accedé a tu dashboard personal con Firebase Auth.',
+    'auth.subtitle': 'Mantené tus metas, finanzas, notas y rutinas en un solo lugar enfocado.',
     'auth.continueAnonymous': 'Continuar como invitado',
     'auth.signIn': 'Ingresar',
     'auth.signUp': 'Crear cuenta',
@@ -48,5 +50,7 @@ export const authTranslations = {
     'auth.anonymousBadge': 'Modo invitado',
     'auth.linkedSuccess': 'La cuenta invitada se vinculó correctamente.',
     'auth.sessionRequired': 'Necesitás una sesión válida para continuar.',
+    'auth.valueBadge': 'Tu centro de control',
+    'auth.valueDescription': 'Organizá tareas, seguí tus finanzas, capturá notas y sostené tus rutinas sin perder foco.',
   },
 } as const satisfies TranslationDictionary;

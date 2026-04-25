@@ -4,6 +4,7 @@ import { Input } from '../../../shared/ui/Input';
 import { Button } from '../../../shared/ui/Button';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useAppStore } from '../../../stores/useAppStore';
+import { BrandLogo } from '../../../shared/ui/BrandLogo';
 
 type AuthMode = 'sign-in' | 'sign-up';
 
@@ -89,13 +90,8 @@ export function LoginPage() {
         <div className="grid w-full overflow-hidden rounded-3xl border border-white/10 bg-bg-card shadow-2xl shadow-black/30 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="hidden flex-col justify-between border-r border-white/10 bg-linear-to-br from-violet-600/15 via-bg-card to-cyan-600/10 p-10 lg:flex">
             <div className="space-y-4">
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/20 text-lg font-bold text-violet-300">
-                N
-              </div>
+              <BrandLogo className="h-10 w-auto" />
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-300/80">
-                  NexusCRM
-                </p>
                 <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">
                   {t('auth.title')}
                 </h1>
@@ -106,10 +102,10 @@ export function LoginPage() {
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">
-                {authProvider === 'anonymous' ? t('auth.anonymousBadge') : 'Firebase Auth'}
+                {authProvider === 'anonymous' ? t('auth.anonymousBadge') : t('auth.valueBadge')}
               </p>
               <p className="mt-3 text-sm leading-6 text-white/70">
-                Firestore persiste tu dashboard por UID y mantiene tu estado sincronizado entre sesiones.
+                {t('auth.valueDescription')}
               </p>
             </div>
           </div>
@@ -117,9 +113,7 @@ export function LoginPage() {
           <div className="p-6 sm:p-8 lg:p-10">
             <div className="mx-auto max-w-md space-y-6">
               <div className="space-y-2 lg:hidden">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-300/80">
-                  NexusCRM
-                </p>
+                <BrandLogo className="h-9 w-auto" />
                 <h1 className="text-3xl font-bold tracking-tight text-white">
                   {t('auth.title')}
                 </h1>
