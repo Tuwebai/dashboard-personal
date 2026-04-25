@@ -2,6 +2,7 @@ import { lazy, Suspense, type ReactNode } from 'react';
 import { useEffect, useLayoutEffect } from 'react';
 import { Toaster } from 'sonner';
 import { useAppStore } from './stores/useAppStore';
+import { useShallow } from 'zustand/react/shallow';
 import { DashboardLayout } from './layouts/dashboard-layout/DashboardLayout';
 import { useFirebaseAuthBootstrap } from './core/persistence/auth';
 import { useFirebasePersistenceSync } from './core/persistence/sync';
@@ -25,7 +26,16 @@ const Settings = lazy(() => import('./features/settings/pages/SettingsPage').the
 const LoginPage = lazy(() => import('./features/auth/pages/LoginPage').then(m => ({ default: m.LoginPage })));
 
 export default function App() {
-  const { theme, settings, activeModule, setActiveModule, authStatus } = useAppStore();
+  const { theme, compactMode, accentColor, activeModule, setActiveModule, authStatus } = useAppStore(
+    useShallow((state) => ({
+      theme: state.theme,
+      compactMode: state.settings.compactMode,
+      accentColor: state.settings.accentColor,
+      activeModule: state.activeModule,
+      setActiveModule: state.setActiveModule,
+      authStatus: state.authStatus,
+    })),
+  );
   useFirebaseAuthBootstrap();
   useFirebasePersistenceSync();
 
@@ -38,15 +48,15 @@ export default function App() {
     }
 
     // Sync Compact Mode
-    if (settings.compactMode) {
+    if (compactMode) {
       document.documentElement.classList.add('compact-mode');
     } else {
       document.documentElement.classList.remove('compact-mode');
     }
 
     // Sync Accent Color natively
-    document.documentElement.style.setProperty('--color-primary', settings.accentColor);
-  }, [theme, settings.compactMode, settings.accentColor]);
+    document.documentElement.style.setProperty('--color-primary', accentColor);
+  }, [theme, compactMode, accentColor]);
 
   // Initial sync from URL
   useEffect(() => {

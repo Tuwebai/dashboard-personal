@@ -1,7 +1,18 @@
 import { useAppStore } from '../../../stores/useAppStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export function useAppearanceSettings() {
-  const { theme, toggleTheme, settings, updateSettings } = useAppStore();
+  const { theme, accentColor, sidebarCollapsed, compactMode, toggleTheme, updateSettings } = useAppStore(
+    useShallow((state) => ({
+      theme: state.theme,
+      accentColor: state.settings.accentColor,
+      sidebarCollapsed: state.settings.sidebarCollapsed,
+      compactMode: state.settings.compactMode,
+      toggleTheme: state.toggleTheme,
+      updateSettings: state.updateSettings,
+    })),
+  );
+  const settings = { accentColor, sidebarCollapsed, compactMode };
 
   const handleAccentChange = (color: string) => {
     updateSettings({ accentColor: color });

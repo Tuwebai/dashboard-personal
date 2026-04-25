@@ -19,7 +19,6 @@ const MAX_IMPORT_SIZE_BYTES = 5 * 1024 * 1024;
 
 export function useDataPortability() {
   const { t } = useI18n();
-  const store = useAppStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isExporting, setIsExporting] = useState(false);
@@ -30,10 +29,12 @@ export function useDataPortability() {
     useAppStore.setState((state) => mergePersistedWorkspace(state, snapshot));
   };
 
+  const getWorkspaceSnapshot = () => pickPersistedWorkspace(useAppStore.getState());
+
   const exportData = () => {
     setIsExporting(true);
     try {
-      const data = JSON.stringify(pickPersistedWorkspace(store), null, 2);
+      const data = JSON.stringify(getWorkspaceSnapshot(), null, 2);
       const blob = new Blob([data], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');

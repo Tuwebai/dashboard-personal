@@ -1,28 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search, LayoutDashboard, CheckSquare, Zap,
-  RotateCcw, DollarSign, Calendar, FileText,
-  Settings, Plus, ArrowRight
-} from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
-import { cn } from '../../../shared/lib/cn';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useShallow } from 'zustand/react/shallow';
-
-interface CommandOption {
-  id: string;
-  title: string;
-  description?: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  category: 'navigation' | 'action';
-  shortcut?: string;
-  action: () => void;
-}
-
-interface CommandPaletteProps {
-  onNavigate: (module: string) => void;
-}
+import { CommandPaletteFooter } from './command-palette/CommandPaletteFooter';
+import { buildCommandPaletteCommands } from './command-palette/commands';
+import { CommandPaletteResults } from './command-palette/CommandPaletteResults';
+import type { CommandPaletteProps } from './command-palette/types';
 
 export function CommandPalette({ onNavigate }: CommandPaletteProps) {
   const { t } = useI18n();
@@ -36,110 +21,26 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     })),
   );
 
-  const allCommands: CommandOption[] = [
-    {
-      id: 'nav_dashboard',
-      title: t('nav.overview'),
-      icon: LayoutDashboard,
-      category: 'navigation',
-      shortcut: 'G D',
-      action: () => { onNavigate('dashboard'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'nav_tasks',
-      title: t('nav.tasks'),
-      icon: CheckSquare,
-      category: 'navigation',
-      shortcut: 'G T',
-      action: () => { onNavigate('tasks'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'nav_habits',
-      title: t('nav.habits'),
-      icon: Zap,
-      category: 'navigation',
-      shortcut: 'G H',
-      action: () => { onNavigate('habits'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'nav_routines',
-      title: t('nav.routines'),
-      icon: RotateCcw,
-      category: 'navigation',
-      shortcut: 'G R',
-      action: () => { onNavigate('routines'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'nav_finances',
-      title: t('nav.finances'),
-      icon: DollarSign,
-      category: 'navigation',
-      shortcut: 'G F',
-      action: () => { onNavigate('finances'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'nav_calendar',
-      title: t('nav.calendar'),
-      icon: Calendar,
-      category: 'navigation',
-      shortcut: 'G C',
-      action: () => { onNavigate('calendar'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'nav_notes',
-      title: t('nav.notes'),
-      icon: FileText,
-      category: 'navigation',
-      shortcut: 'G N',
-      action: () => { onNavigate('notes'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'nav_settings',
-      title: t('nav.settings'),
-      icon: Settings,
-      category: 'navigation',
-      action: () => { onNavigate('settings'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'action_task',
-      title: t('tasks.createNew'),
-      description: 'Create a new task',
-      icon: Plus,
-      category: 'action',
-      action: () => { onNavigate('tasks'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'action_note',
-      title: 'New Note',
-      description: 'Create a new note',
-      icon: Plus,
-      category: 'action',
-      action: () => { onNavigate('notes'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'action_event',
-      title: 'New Event',
-      description: 'Add calendar event',
-      icon: Plus,
-      category: 'action',
-      action: () => { onNavigate('calendar'); setCommandPaletteOpen(false); },
-    },
-    {
-      id: 'action_expense',
-      title: 'Log Expense',
-      description: 'Record a new transaction',
-      icon: Plus,
-      category: 'action',
-      action: () => { onNavigate('finances'); setCommandPaletteOpen(false); },
-    },
-  ];
+  const closePalette = useCallback(() => {
+    setCommandPaletteOpen(false);
+  }, [setCommandPaletteOpen]);
 
-  const filtered = query.trim()
-    ? allCommands.filter(cmd =>
-        cmd.title.toLowerCase().includes(query.toLowerCase()) ||
-        cmd.description?.toLowerCase().includes(query.toLowerCase())
-      )
-    : allCommands;
+  const allCommands = useMemo(
+    () => buildCommandPaletteCommands(t, onNavigate, closePalette),
+    [closePalette, onNavigate, t],
+  );
+
+  const filtered = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) {
+      return allCommands;
+    }
+
+    return allCommands.filter((command) =>
+      command.title.toLowerCase().includes(normalizedQuery)
+      || command.description?.toLowerCase().includes(normalizedQuery),
+    );
+  }, [allCommands, query]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -175,12 +76,9 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     } else if (e.key === 'Enter') {
       filtered[selectedIndex]?.action();
     } else if (e.key === 'Escape') {
-      setCommandPaletteOpen(false);
+      closePalette();
     }
   };
-
-  const navCommands = filtered.filter(c => c.category === 'navigation');
-  const actionCommands = filtered.filter(c => c.category === 'action');
 
   return (
     <AnimatePresence>
@@ -191,7 +89,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setCommandPaletteOpen(false)}
+            onClick={closePalette}
           />
           <motion.div
             className="relative w-full max-w-xl bg-bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
@@ -216,115 +114,18 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
               </kbd>
             </div>
 
-            {/* Results */}
-            <div className="max-h-80 overflow-y-auto p-2">
-              {filtered.length === 0 ? (
-                <div className="text-center py-8 text-white/30 text-sm">
-                  No results found for "{query}"
-                </div>
-              ) : (
-                <>
-                  {navCommands.length > 0 && (
-                    <CommandGroup
-                      title={t('common.navigation')}
-                      commands={navCommands}
-                      allFiltered={filtered}
-                      selectedIndex={selectedIndex}
-                      setSelectedIndex={setSelectedIndex}
-                    />
-                  )}
-                  {actionCommands.length > 0 && (
-                    <CommandGroup
-                      title={t('common.actions')}
-                      commands={actionCommands}
-                      allFiltered={filtered}
-                      selectedIndex={selectedIndex}
-                      setSelectedIndex={setSelectedIndex}
-                    />
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="px-4 py-2.5 border-t border-border flex items-center gap-4 text-[11px] text-white/25">
-              <span className="flex items-center gap-1">
-                <kbd className="px-1 bg-white/5 border border-white/10 rounded">↑↓</kbd>
-                navigate
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1 bg-white/5 border border-white/10 rounded">↵</kbd>
-                select
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1 bg-white/5 border border-white/10 rounded">esc</kbd>
-                close
-              </span>
-            </div>
+            <CommandPaletteResults
+              filteredCommands={filtered}
+              query={query}
+              selectedIndex={selectedIndex}
+              setSelectedIndex={setSelectedIndex}
+              navigationTitle={t('common.navigation')}
+              actionsTitle={t('common.actions')}
+            />
+            <CommandPaletteFooter />
           </motion.div>
         </div>
       )}
     </AnimatePresence>
-  );
-}
-
-function CommandGroup({
-  title,
-  commands,
-  allFiltered,
-  selectedIndex,
-  setSelectedIndex,
-}: {
-  title: string;
-  commands: CommandOption[];
-  allFiltered: CommandOption[];
-  selectedIndex: number;
-  setSelectedIndex: (i: number) => void;
-}) {
-  return (
-    <div className="mb-2">
-      <p className="text-[11px] font-semibold text-white/25 uppercase tracking-wider px-3 py-1.5">
-        {title}
-      </p>
-      {commands.map(cmd => {
-        const globalIdx = allFiltered.findIndex(c => c.id === cmd.id);
-        const isSelected = globalIdx === selectedIndex;
-        const Icon = cmd.icon;
-        return (
-          <button
-            key={cmd.id}
-            onClick={cmd.action}
-            onMouseEnter={() => setSelectedIndex(globalIdx)}
-            className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all',
-              isSelected ? 'bg-violet-500/15 text-white' : 'text-white/70 hover:bg-white/5'
-            )}
-          >
-            <div className={cn(
-              'w-7 h-7 rounded-lg flex items-center justify-center shrink-0',
-              isSelected ? 'bg-violet-500/20' : 'bg-white/5'
-            )}>
-              <Icon size={15} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">{cmd.title}</p>
-              {cmd.description && (
-                <p className="text-xs text-white/40">{cmd.description}</p>
-              )}
-            </div>
-            {cmd.shortcut && (
-              <div className="flex gap-1">
-                {cmd.shortcut.split(' ').map((k, i) => (
-                  <kbd key={i} className="px-1.5 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] font-mono text-white/30">
-                    {k}
-                  </kbd>
-                ))}
-              </div>
-            )}
-            {isSelected && <ArrowRight size={14} className="text-violet-400 shrink-0" />}
-          </button>
-        );
-      })}
-    </div>
   );
 }
