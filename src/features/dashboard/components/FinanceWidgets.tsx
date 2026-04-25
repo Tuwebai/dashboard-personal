@@ -10,7 +10,7 @@ interface FinanceWidgetsProps {
   isTrendPositive: boolean;
   netWorthTrend: number;
   TrendIcon: LucideIcon;
-  balanceHistory: { date: string; balance: number }[];
+  balanceHistory: { date: string; dateKey: string; balance: number }[];
   setActiveModule: (module: string) => void;
 }
 
@@ -56,6 +56,9 @@ export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, bala
                 contentStyle={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 8, fontSize: 12 }}
                 labelStyle={{ color: '#888' }}
                 itemStyle={{ color: '#a78bfa' }}
+                labelFormatter={(label: React.ReactNode, payload) =>
+                  payload?.[0]?.payload?.dateKey ?? label
+                }
                 formatter={(v: unknown) => [formatCurrency(Number(v)), 'Balance']}
               />
               <Area

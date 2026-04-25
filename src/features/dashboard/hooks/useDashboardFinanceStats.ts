@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 import type { FinancialAccount, Transaction } from '../../../shared/types';
 import { getDerivedAccounts } from '../../finances/lib/accounts';
@@ -20,29 +20,33 @@ export function useDashboardFinanceStats(accounts: FinancialAccount[], transacti
     const previousAccounts = getDerivedAccounts(accounts, previousTransactions);
     const previousNetWorth = previousAccounts.reduce((sum, account) => sum + account.derivedBalance, 0);
 
-    const balanceHistory: { date: string; balance: number }[] = [];
-    let runningBalance = 0;
+    const dailyNetFlow = sortedTransactions.reduce((map, transaction) => {
+      const dateKey = format(new Date(transaction.date), 'yyyy-MM-dd');
+      const current = map.get(dateKey) ?? 0;
+      const amount =
+        transaction.type === 'income'
+          ? transaction.amount
+          : transaction.type === 'expense'
+            ? -transaction.amount
+            : 0;
 
-    sortedTransactions.forEach((transaction) => {
-      if (transaction.type === 'income') {
-        runningBalance += transaction.amount;
-      } else if (transaction.type === 'expense') {
-        runningBalance -= transaction.amount;
-      }
+      map.set(dateKey, current + amount);
+      return map;
+    }, new Map<string, number>());
 
-      if (new Date(transaction.date) >= thirtyDaysAgo) {
-        balanceHistory.push({
-          date: format(new Date(transaction.date), 'dd MMM'),
-          balance: runningBalance,
-        });
-      }
-    });
+    const balanceHistory: { date: string; dateKey: string; balance: number }[] = [];
+    let runningBalance = previousNetWorth;
+    let cursor = new Date(thirtyDaysAgo);
 
-    if (balanceHistory.length === 0 || balanceHistory[0].date !== format(thirtyDaysAgo, 'dd MMM')) {
-      balanceHistory.unshift({
-        date: format(thirtyDaysAgo, 'dd MMM'),
-        balance: previousNetWorth,
+    while (cursor <= today) {
+      const dateKey = format(cursor, 'yyyy-MM-dd');
+      runningBalance += dailyNetFlow.get(dateKey) ?? 0;
+      balanceHistory.push({
+        date: format(cursor, 'dd MMM'),
+        dateKey,
+        balance: runningBalance,
       });
+      cursor = addDays(cursor, 1);
     }
 
     const trendBase = balanceHistory[0]?.balance ?? 0;
