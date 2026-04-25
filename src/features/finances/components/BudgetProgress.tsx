@@ -1,18 +1,20 @@
 import { motion } from 'framer-motion';
 import type { Budget } from '../../../shared/types';
 import { cn } from '../../../shared/lib/cn';
+import { useAppStore } from '../../../stores/useAppStore';
+import { useI18n } from '../../../shared/i18n/useI18n';
+import { formatFinanceCurrency, getPrimaryFinanceCurrency } from '../lib/currency';
 
 interface BudgetProgressProps {
   budget: Budget;
 }
 
 export function BudgetProgress({ budget }: BudgetProgressProps) {
+  const { lang } = useI18n();
+  const accounts = useAppStore((state) => state.accounts);
   const percent = Math.min((budget.spent / budget.amount) * 100, 100);
   const isHigh = percent >= budget.alertThreshold;
-  
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
-  };
+  const defaultCurrency = getPrimaryFinanceCurrency(accounts);
 
   return (
     <div className="space-y-3">
@@ -23,10 +25,10 @@ export function BudgetProgress({ budget }: BudgetProgressProps) {
         </div>
         <div className="text-xs text-text-muted font-mono">
           <span className={cn("font-bold text-text-primary", isHigh && "text-rose-400")}>
-            {formatCurrency(budget.spent)}
+            {formatFinanceCurrency(budget.spent, defaultCurrency, lang, { maximumFractionDigits: 0 })}
           </span>
           {" / "}
-          {formatCurrency(budget.amount)}
+          {formatFinanceCurrency(budget.amount, defaultCurrency, lang, { maximumFractionDigits: 0 })}
         </div>
       </div>
       

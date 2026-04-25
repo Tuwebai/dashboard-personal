@@ -9,6 +9,7 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { Fragment, useState } from 'react';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { useShallow } from 'zustand/react/shallow';
+import { formatFinanceCurrency, getPrimaryFinanceCurrency, getTransactionCurrency } from '../lib/currency';
 
 interface TransactionTableProps {
   limit?: number;
@@ -26,7 +27,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 };
 
 export function TransactionTable({ limit, accountId, onRowClick }: TransactionTableProps) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { transactions, accounts, deleteTransaction } = useAppStore(
     useShallow((state) => ({
       transactions: state.transactions,
@@ -41,10 +42,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
     : transactions;
 
   const displayTransactions = limit ? filteredTransactions.slice(0, limit) : filteredTransactions;
-
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-  };
+  const defaultCurrency = getPrimaryFinanceCurrency(accounts);
 
   const confirmDelete = () => {
     if (!pendingDeleteId) return;
@@ -101,7 +99,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                         "text-sm font-bold font-mono",
                         isIncome ? "text-emerald-400" : "text-rose-400"
                       )}>
-                        {isIncome ? '+' : '-'}{formatCurrency(tx.amount)}
+                        {isIncome ? '+' : '-'}{formatFinanceCurrency(tx.amount, getTransactionCurrency(tx, accounts, defaultCurrency), lang)}
                       </span>
                     </td>
                     <td className="px-4 py-4">
@@ -154,7 +152,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                               "text-sm font-bold font-mono",
                               isIncome ? "text-emerald-400" : "text-rose-400"
                             )}>
-                              {isIncome ? '+' : '-'}{formatCurrency(tx.amount)}
+                              {isIncome ? '+' : '-'}{formatFinanceCurrency(tx.amount, getTransactionCurrency(tx, accounts, defaultCurrency), lang)}
                             </span>
                             <button
                               onClick={(e) => { e.stopPropagation(); setPendingDeleteId(tx.id); }}

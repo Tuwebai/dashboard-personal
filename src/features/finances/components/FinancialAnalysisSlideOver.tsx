@@ -3,6 +3,7 @@ import { BarChart3 } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { parseStoredDate } from '../../../shared/lib/date';
+import { formatFinanceCurrency, getPrimaryFinanceCurrency } from '../lib/currency';
 
 interface FinancialAnalysisSlideOverProps {
   isOpen: boolean;
@@ -10,8 +11,9 @@ interface FinancialAnalysisSlideOverProps {
 }
 
 export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysisSlideOverProps) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const transactions = useAppStore((state) => state.transactions);
+  const accounts = useAppStore((state) => state.accounts);
 
   const now = new Date();
   const currentMonth = now.getMonth();
@@ -36,10 +38,7 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
     .slice(0, 5);
 
   const totalMonthlyExpenses = expenses || 1; // avoid division by zero
-
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-  };
+  const defaultCurrency = getPrimaryFinanceCurrency(accounts);
 
   const topCategory = categoryEntries[0]?.[0] || 'expenses';
   const categoryLabel = (() => {
@@ -59,7 +58,7 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
     }
   })();
   const insightText = expenses > 0
-    ? `${t('finances.analysisInsightPrefix')} "${categoryLabel}". ${t('finances.analysisInsightSuffix')} ${formatCurrency(categoriesMap[topCategory] * 0.1)} ${t('finances.analysisInsightEnd')}`
+    ? `${t('finances.analysisInsightPrefix')} "${categoryLabel}". ${t('finances.analysisInsightSuffix')} ${formatFinanceCurrency(categoriesMap[topCategory] * 0.1, defaultCurrency, lang)} ${t('finances.analysisInsightEnd')}`
     : t('finances.analysisInsightEmpty');
 
   return (
@@ -67,7 +66,7 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
       <div className="space-y-8">
         <div className="p-6 bg-linear-to-br from-violet-600/20 to-cyan-600/20 border border-violet-500/20 rounded-3xl">
           <h4 className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-2">{t('finances.analysisProjectedSavings')}</h4>
-          <p className="text-2xl font-bold text-text-primary">{formatCurrency(projectedSavings)}</p>
+          <p className="text-2xl font-bold text-text-primary">{formatFinanceCurrency(projectedSavings, defaultCurrency, lang)}</p>
           <p className="text-[11px] text-text-secondary mt-1">{t('finances.analysisProjectedSavingsDesc')}</p>
         </div>
         
@@ -89,7 +88,9 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
                         style={{ width: `${percent}%` }} 
                       />
                     </div>
-                    <span className="text-xs font-bold text-text-primary w-8 text-right">{percent}%</span>
+                    <span className="text-xs font-bold text-text-primary min-w-20 text-right">
+                      {formatFinanceCurrency(amount, defaultCurrency, lang)}
+                    </span>
                   </div>
                 </div>
               );

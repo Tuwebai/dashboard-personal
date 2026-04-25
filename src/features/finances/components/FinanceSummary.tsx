@@ -4,11 +4,13 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { cn } from '../../../shared/lib/cn';
 import { parseStoredDate } from '../../../shared/lib/date';
 import { useI18n } from '../../../shared/i18n/useI18n';
-import { formatCurrency } from '../../../shared/lib/helpers';
+import { formatFinanceCurrency, getPrimaryFinanceCurrency } from '../lib/currency';
 
 export function FinanceSummary() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const transactions = useAppStore((state) => state.transactions);
+  const accounts = useAppStore((state) => state.accounts);
+  const defaultCurrency = getPrimaryFinanceCurrency(accounts);
   
   // Simple month-to-date income/expense logic
   const now = new Date();
@@ -87,7 +89,7 @@ export function FinanceSummary() {
           <div className="space-y-1">
             <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">{stat.label}</span>
             <div className={cn("text-2xl font-bold", stat.valueClassName)}>
-              {stat.isValue ? formatCurrency(stat.value as number) : stat.value}
+              {stat.isValue ? formatFinanceCurrency(stat.value as number, defaultCurrency, lang) : stat.value}
             </div>
           </div>
         </motion.div>

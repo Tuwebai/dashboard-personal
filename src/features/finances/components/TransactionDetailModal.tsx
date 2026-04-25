@@ -2,7 +2,6 @@ import { Modal } from '../../../shared/ui/Modal';
 import { Button } from '../../../shared/ui/Button';
 import { Transaction } from '../../../shared/types';
 import { useAppStore } from '../../../stores/useAppStore';
-import { formatCurrency } from '../../../shared/lib/helpers';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { format } from 'date-fns';
 import { parseStoredDate } from '../../../shared/lib/date';
@@ -11,6 +10,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { useShallow } from 'zustand/react/shallow';
+import { formatFinanceCurrency, getPrimaryFinanceCurrency, getTransactionCurrency } from '../lib/currency';
 
 interface TransactionDetailModalProps {
   transaction: Transaction | null;
@@ -39,7 +39,7 @@ const getCategoryLabel = (category: string, t: (key: string) => string) => {
 };
 
 export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }: TransactionDetailModalProps) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { deleteTransaction, accounts } = useAppStore(
     useShallow((state) => ({
       deleteTransaction: state.deleteTransaction,
@@ -51,6 +51,7 @@ export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }:
   if (!transaction) return null;
 
   const account = accounts.find(a => a.id === transaction.accountId);
+  const defaultCurrency = getPrimaryFinanceCurrency(accounts);
 
   const handleDelete = () => {
     setIsDeleteOpen(true);
@@ -69,7 +70,7 @@ export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }:
       <div className="space-y-6">
         <div className="text-center py-6">
           <div className={`text-3xl font-bold font-mono ${transaction.type === 'income' ? 'text-emerald-400' : 'text-white'}`}>
-            {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+            {transaction.type === 'income' ? '+' : '-'}{formatFinanceCurrency(transaction.amount, getTransactionCurrency(transaction, accounts, defaultCurrency), lang)}
           </div>
           <p className="text-text-secondary text-sm mt-1">{transaction.description}</p>
         </div>

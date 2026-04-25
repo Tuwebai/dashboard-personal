@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { Landmark, CreditCard, Coins, PiggyBank, Pencil, Star, Trash2, type LucideIcon } from 'lucide-react';
 import { Button } from '../../../shared/ui/Button';
-import { formatCurrency } from '../../../shared/lib/helpers';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import type { MouseEvent } from 'react';
 import type { DerivedFinancialAccount } from '../lib/accounts';
+import { formatFinanceCurrency } from '../lib/currency';
 
 interface AccountCardProps {
   account: DerivedFinancialAccount;
@@ -41,7 +41,7 @@ const getAccountTypeLabel = (type: string, t: (key: string) => string) => {
 
 export function AccountCard({ account, isSelected = false, onEdit, onDelete, onSetDefault }: AccountCardProps) {
   const Icon = ACCOUNT_ICONS[account.type] || Landmark;
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const handleAction = (event: MouseEvent<HTMLButtonElement>, callback: () => void) => {
     event.stopPropagation();
     callback();
@@ -69,7 +69,7 @@ export function AccountCard({ account, isSelected = false, onEdit, onDelete, onS
       
       <div className="mt-4 relative z-10 space-y-3">
         <div className="text-xl font-mono font-bold text-text-primary tracking-tight">
-          {formatCurrency(account.derivedBalance, account.currency)}
+          {formatFinanceCurrency(account.derivedBalance, account.currency, lang)}
         </div>
         <div className="flex flex-wrap gap-2">
           {account.isDefault && (
