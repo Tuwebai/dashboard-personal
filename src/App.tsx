@@ -1,11 +1,12 @@
 import { lazy, Suspense, type ReactNode } from 'react';
-import { useEffect, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Toaster } from 'sonner';
 import { useAppStore } from './stores/useAppStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DashboardLayout } from './layouts/dashboard-layout/DashboardLayout';
 import { useFirebaseAuthBootstrap } from './core/persistence/auth';
 import { useFirebasePersistenceSync } from './core/persistence/sync';
+import { useAppNavigationSync } from './core/navigation/useAppNavigationSync';
 import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
 import { PageSkeleton } from './shared/ui/PageSkeleton';
 
@@ -38,6 +39,7 @@ export default function App() {
   );
   useFirebaseAuthBootstrap();
   useFirebasePersistenceSync();
+  useAppNavigationSync(activeModule, authStatus, setActiveModule);
 
   useLayoutEffect(() => {
     // Sync Theme
@@ -57,43 +59,6 @@ export default function App() {
     // Sync Accent Color natively
     document.documentElement.style.setProperty('--color-primary', accentColor);
   }, [theme, compactMode, accentColor]);
-
-  // Initial sync from URL
-  useEffect(() => {
-    const path = window.location.pathname.slice(1);
-    if (path && path !== 'login' && path !== activeModule) {
-      setActiveModule(path);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authStatus]);
-
-  useEffect(() => {
-    const handlePopState = () => {
-      const path = window.location.pathname.slice(1);
-      if (path && path !== 'login') {
-        setActiveModule(path);
-        return;
-      }
-
-      setActiveModule('dashboard');
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [setActiveModule]);
-
-  // Sync URL when activeModule changes (e.g. from widgets)
-  useEffect(() => {
-    const path = authStatus !== 'authenticated'
-      ? '/login'
-      : activeModule === 'dashboard'
-        ? '/'
-        : `/${activeModule}`;
-
-    if (window.location.pathname !== path) {
-      window.history.pushState({ module: activeModule }, '', path);
-    }
-  }, [activeModule, authStatus]);
 
   const handleNavigate = (module: string) => {
     setActiveModule(module);
