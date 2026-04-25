@@ -12,8 +12,8 @@ export function DashboardLayout({ activeModule, onNavigate, children }: Dashboar
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-bg-primary overflow-hidden">
-      <div className="hidden lg:flex">
+    <div className="flex h-dvh min-h-0 bg-bg-primary overflow-hidden">
+      <div className="hidden min-h-0 lg:flex">
         <Sidebar activeModule={activeModule} onNavigate={onNavigate} />
       </div>
       {mobileSidebarOpen ? (
@@ -32,13 +32,13 @@ export function DashboardLayout({ activeModule, onNavigate, children }: Dashboar
           />
         </div>
       ) : null}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <TopNavbar
           activeModule={activeModule}
           onNavigate={onNavigate}
           onToggleSidebar={() => setMobileSidebarOpen(true)}
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        <main className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

@@ -65,7 +65,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
   return (
     <motion.aside
       className={cn(
-        'flex flex-col h-full bg-bg-primary border-r border-border relative overflow-hidden',
+        'relative flex h-dvh min-h-0 flex-col self-stretch overflow-hidden border-r border-border bg-bg-primary',
         mobile && 'z-50 w-[240px] max-w-[85vw] shadow-2xl'
       )}
       animate={{ width: mobile ? 240 : isCollapsed ? 72 : 240 }}
@@ -76,13 +76,14 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
 
       {/* Logo */}
-      <div className="flex items-center h-16 px-4 border-b border-border shrink-0 overflow-hidden">
+      <div className="flex h-14 items-center overflow-hidden border-b border-border px-4 shrink-0 md:h-16">
         <BrandLogo collapsed={isCollapsed} className="transition-all duration-300" />
       </div>
 
       {/* User Profile */}
       <div className={cn(
         'flex items-center gap-3 px-4 py-4 border-b border-border shrink-0',
+        mobile && 'px-4 py-3',
         isCollapsed && 'justify-center px-2'
       )}>
         <div className="relative shrink-0">
@@ -111,7 +112,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
 
       {/* Nav Items */}
-      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5 min-h-0">
         {navItems.map((item) => {
           const isActive = activeModule === item.id;
           const Icon = item.icon;
@@ -123,7 +124,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
                 if (mobile) onCloseMobile?.();
               }}
               className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative cursor-pointer',
+                'group relative flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 cursor-pointer md:py-2.5',
                 isActive
                   ? 'bg-violet-500/15 text-violet-400'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/5',
@@ -170,7 +171,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
       </nav>
 
       {/* Bottom Items */}
-      <div className="px-3 py-3 space-y-0.5 border-t border-border shrink-0">
+      <div className="shrink-0 space-y-0.5 border-t border-border px-3 py-2 md:py-3">
         {BOTTOM_ITEMS.map((item) => {
           const isActive = activeModule === item.id;
           const Icon = item.icon;
@@ -182,7 +183,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
                 if (mobile) onCloseMobile?.();
               }}
               className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer',
+                'flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 cursor-pointer md:py-2.5',
                 isActive
                   ? 'bg-violet-500/15 text-violet-400'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/5',
@@ -210,7 +211,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
         <button
           className={cn(
-            'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 cursor-pointer',
+            'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 cursor-pointer md:py-2.5',
             isCollapsed && 'justify-center px-0'
           )}
           aria-label={t('common.help')}
@@ -237,7 +238,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
             if (mobile) onCloseMobile?.();
           }}
           className={cn(
-            'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-red-400/80 hover:bg-red-500/5 transition-all duration-200 cursor-pointer',
+            'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-white/30 hover:text-red-400/80 hover:bg-red-500/5 transition-all duration-200 cursor-pointer md:py-2.5',
             isCollapsed && 'justify-center px-0'
           )}
           aria-label={t('nav.signOut')}
@@ -263,7 +264,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
           <button
             onClick={toggleSidebar}
             className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 mt-2 cursor-pointer',
+               'mt-2 flex w-full items-center gap-3 rounded-xl px-3 py-2 text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 cursor-pointer md:py-2.5',
               isCollapsed && 'justify-center px-0'
             )}
             aria-label={isCollapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
