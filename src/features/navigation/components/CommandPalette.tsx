@@ -8,6 +8,7 @@ import {
 import { useAppStore } from '../../../stores/useAppStore';
 import { cn } from '../../../shared/lib/cn';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { useShallow } from 'zustand/react/shallow';
 
 interface CommandOption {
   id: string;
@@ -28,7 +29,12 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { commandPaletteOpen, setCommandPaletteOpen } = useAppStore();
+  const { commandPaletteOpen, setCommandPaletteOpen } = useAppStore(
+    useShallow((state) => ({
+      commandPaletteOpen: state.commandPaletteOpen,
+      setCommandPaletteOpen: state.setCommandPaletteOpen,
+    })),
+  );
 
   const allCommands: CommandOption[] = [
     {

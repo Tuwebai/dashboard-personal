@@ -19,7 +19,8 @@ interface RoutineCardProps {
 
 export function RoutineCard({ routine, onSelect, onEdit }: RoutineCardProps) {
   const { t } = useI18n();
-  const { startRoutineSession, deleteRoutine } = useAppStore();
+  const startRoutineSession = useAppStore((state) => state.startRoutineSession);
+  const deleteRoutine = useAppStore((state) => state.deleteRoutine);
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const Icon = ROUTINE_ICONS[routine.type as RoutineType];

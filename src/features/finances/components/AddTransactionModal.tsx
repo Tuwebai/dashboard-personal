@@ -7,6 +7,7 @@ import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { Transaction } from '../../../shared/types';
+import { useShallow } from 'zustand/react/shallow';
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -67,7 +68,13 @@ const parseTransactionAmount = (value: string): number => {
 
 export function AddTransactionModal({ isOpen, onClose, transaction, initialAccountId }: AddTransactionModalProps) {
   const { t } = useI18n();
-  const { accounts, addTransaction, updateTransaction } = useAppStore();
+  const { accounts, addTransaction, updateTransaction } = useAppStore(
+    useShallow((state) => ({
+      accounts: state.accounts,
+      addTransaction: state.addTransaction,
+      updateTransaction: state.updateTransaction,
+    })),
+  );
   const defaultAccountId = initialAccountId || accounts[0]?.id || '';
   const [newTx, setNewTx] = useState(() => buildTransactionState(transaction, defaultAccountId));
 

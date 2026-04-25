@@ -10,7 +10,7 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ weeklyScore }: DashboardHeaderProps) {
-  const { user } = useAppStore();
+  const user = useAppStore((state) => state.user);
   const { t, lang } = useI18n();
   const [currentTime, setCurrentTime] = useState(new Date());
 

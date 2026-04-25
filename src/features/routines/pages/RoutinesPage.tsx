@@ -9,11 +9,17 @@ import { RoutineModal } from '../components/RoutineModal';
 import { RoutineEmptyState } from '../components/RoutineEmptyState';
 import type { Routine } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { useShallow } from 'zustand/react/shallow';
 
 export function Routines() {
-  const { 
-    routines, activeRoutineSession, completeRoutineStep, endRoutineSession 
-  } = useAppStore();
+  const { routines, activeRoutineSession, completeRoutineStep, endRoutineSession } = useAppStore(
+    useShallow((state) => ({
+      routines: state.routines,
+      activeRoutineSession: state.activeRoutineSession,
+      completeRoutineStep: state.completeRoutineStep,
+      endRoutineSession: state.endRoutineSession,
+    })),
+  );
   const { t } = useI18n();
   
   const [selectedRoutine, setSelectedRoutine] = useState<Routine | null>(null);

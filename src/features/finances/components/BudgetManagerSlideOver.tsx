@@ -11,7 +11,8 @@ interface BudgetManagerSlideOverProps {
 
 export function BudgetManagerSlideOver({ isOpen, onClose }: BudgetManagerSlideOverProps) {
   const { t } = useI18n();
-  const { budgets, updateBudget } = useAppStore();
+  const budgets = useAppStore((state) => state.budgets);
+  const updateBudget = useAppStore((state) => state.updateBudget);
   const [localBudgets, setLocalBudgets] = useState(budgets);
 
   useEffect(() => {

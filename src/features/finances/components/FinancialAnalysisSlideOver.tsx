@@ -10,7 +10,7 @@ interface FinancialAnalysisSlideOverProps {
 
 export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysisSlideOverProps) {
   const { t } = useI18n();
-  const { transactions } = useAppStore();
+  const transactions = useAppStore((state) => state.transactions);
 
   const now = new Date();
   const currentMonth = now.getMonth();

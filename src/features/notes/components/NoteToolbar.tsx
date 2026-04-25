@@ -6,10 +6,18 @@ import { useState } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
+import { useShallow } from 'zustand/react/shallow';
 
 export function NoteToolbar() {
   const { t } = useI18n();
-  const { notes, selectedNoteId, updateNote, deleteNote } = useAppStore();
+  const { notes, selectedNoteId, updateNote, deleteNote } = useAppStore(
+    useShallow((state) => ({
+      notes: state.notes,
+      selectedNoteId: state.selectedNoteId,
+      updateNote: state.updateNote,
+      deleteNote: state.deleteNote,
+    })),
+  );
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 

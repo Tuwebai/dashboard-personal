@@ -7,6 +7,7 @@ import type { Transaction } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useState } from 'react';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
+import { useShallow } from 'zustand/react/shallow';
 
 interface TransactionTableProps {
   limit?: number;
@@ -25,7 +26,12 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 
 export function TransactionTable({ limit, accountId, onRowClick }: TransactionTableProps) {
   const { t } = useI18n();
-  const { transactions, deleteTransaction } = useAppStore();
+  const { transactions, deleteTransaction } = useAppStore(
+    useShallow((state) => ({
+      transactions: state.transactions,
+      deleteTransaction: state.deleteTransaction,
+    })),
+  );
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   
   const filteredTransactions = accountId 

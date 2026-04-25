@@ -6,6 +6,7 @@ import { Input, Select } from '../../../shared/ui/Input';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import type { AccountType, FinancialAccount } from '../../../shared/types';
+import { useShallow } from 'zustand/react/shallow';
 
 interface AccountModalProps {
   isOpen: boolean;
@@ -65,7 +66,13 @@ const buildFormState = (
 
 export function AccountModal({ isOpen, onClose, account }: AccountModalProps) {
   const { t } = useI18n();
-  const { accounts, addAccount, updateAccount } = useAppStore();
+  const { accounts, addAccount, updateAccount } = useAppStore(
+    useShallow((state) => ({
+      accounts: state.accounts,
+      addAccount: state.addAccount,
+      updateAccount: state.updateAccount,
+    })),
+  );
   const [form, setForm] = useState<AccountFormState>(() => buildFormState(account, accounts.length > 0));
   const [errors, setErrors] = useState<Partial<Record<keyof AccountFormState, string>>>({});
 

@@ -14,7 +14,9 @@ interface RoutineSessionOverlayProps {
 
 export function RoutineSessionOverlay({ activeRoutine }: RoutineSessionOverlayProps) {
   const { t } = useI18n();
-  const { activeRoutineSession, completeRoutineStep, endRoutineSession } = useAppStore();
+  const activeRoutineSession = useAppStore((state) => state.activeRoutineSession);
+  const completeRoutineStep = useAppStore((state) => state.completeRoutineStep);
+  const endRoutineSession = useAppStore((state) => state.endRoutineSession);
 
   if (!activeRoutine || !activeRoutineSession) return null;
 

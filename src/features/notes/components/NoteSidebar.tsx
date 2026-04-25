@@ -4,6 +4,7 @@ import { cn } from '../../../shared/lib/cn';
 import { format } from 'date-fns';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import type { NoteFilter } from '../pages/NotesPage';
+import { useShallow } from 'zustand/react/shallow';
 
 interface NoteSidebarProps {
   activeFilter: NoteFilter;
@@ -12,7 +13,17 @@ interface NoteSidebarProps {
 }
 
 export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange }: NoteSidebarProps) {
-  const { notes, selectedNoteId, setSelectedNote, noteSearch, setNoteSearch, addNote, folders } = useAppStore();
+  const { notes, selectedNoteId, setSelectedNote, noteSearch, setNoteSearch, addNote, folders } = useAppStore(
+    useShallow((state) => ({
+      notes: state.notes,
+      selectedNoteId: state.selectedNoteId,
+      setSelectedNote: state.setSelectedNote,
+      noteSearch: state.noteSearch,
+      setNoteSearch: state.setNoteSearch,
+      addNote: state.addNote,
+      folders: state.folders,
+    })),
+  );
   const { t } = useI18n();
 
   const filteredNotes = notes.filter(note => {

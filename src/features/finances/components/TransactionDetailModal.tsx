@@ -9,6 +9,7 @@ import { Trash2, Calendar, Landmark, Tag, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
+import { useShallow } from 'zustand/react/shallow';
 
 interface TransactionDetailModalProps {
   transaction: Transaction | null;
@@ -38,7 +39,12 @@ const getCategoryLabel = (category: string, t: (key: string) => string) => {
 
 export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }: TransactionDetailModalProps) {
   const { t } = useI18n();
-  const { deleteTransaction, accounts } = useAppStore();
+  const { deleteTransaction, accounts } = useAppStore(
+    useShallow((state) => ({
+      deleteTransaction: state.deleteTransaction,
+      accounts: state.accounts,
+    })),
+  );
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   if (!transaction) return null;

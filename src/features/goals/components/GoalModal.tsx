@@ -56,7 +56,8 @@ interface GoalFormContentProps {
 }
 
 function GoalFormContent({ goal, relatedTasks, onClose }: GoalFormContentProps) {
-  const { addPersonalGoal, updatePersonalGoal } = useAppStore();
+  const addPersonalGoal = useAppStore((state) => state.addPersonalGoal);
+  const updatePersonalGoal = useAppStore((state) => state.updatePersonalGoal);
   const { t } = useI18n();
   const [form, setForm] = useState<GoalFormState>(() => buildGoalFormState(goal));
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);

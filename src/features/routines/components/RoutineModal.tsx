@@ -19,7 +19,8 @@ interface RoutineModalProps {
 
 export function RoutineModal({ isOpen, onClose, routine }: RoutineModalProps) {
   const { t } = useI18n();
-  const { addRoutine, updateRoutine } = useAppStore();
+  const addRoutine = useAppStore((state) => state.addRoutine);
+  const updateRoutine = useAppStore((state) => state.updateRoutine);
   const [formData, setFormData] = useState<Omit<Routine, 'id' | 'createdAt' | 'totalDuration'>>({
     name: '',
     type: 'custom',

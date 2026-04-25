@@ -7,7 +7,7 @@ import { formatCurrency } from '../../../shared/lib/helpers';
 
 export function FinanceSummary() {
   const { t } = useI18n();
-  const { transactions } = useAppStore();
+  const transactions = useAppStore((state) => state.transactions);
   
   // Simple month-to-date income/expense logic
   const now = new Date();

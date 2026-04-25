@@ -8,7 +8,7 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 export type NoteFilter = 'all' | 'favorites' | 'trash' | 'folder';
 
 export default function Notes() {
-  const { selectedNoteId } = useAppStore();
+  const selectedNoteId = useAppStore((state) => state.selectedNoteId);
   const { t } = useI18n();
   const [activeFilter, setActiveFilter] = useState<NoteFilter>('all');
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);

@@ -12,7 +12,7 @@ interface RoutineDetailModalProps {
 }
 
 export function RoutineDetailModal({ routine, onClose, onEdit }: RoutineDetailModalProps) {
-  const { startRoutineSession } = useAppStore();
+  const startRoutineSession = useAppStore((state) => state.startRoutineSession);
 
   if (!routine) return null;
 
