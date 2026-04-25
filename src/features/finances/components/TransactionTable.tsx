@@ -78,7 +78,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                   <td className="px-6 py-4 text-right">
                     <span className={cn(
                       "text-sm font-bold font-mono",
-                      isIncome ? "text-emerald-400" : "text-text-primary"
+                      isIncome ? "text-emerald-400" : "text-rose-400"
                     )}>
                       {isIncome ? '+' : '-'}{formatCurrency(tx.amount)}
                     </span>
