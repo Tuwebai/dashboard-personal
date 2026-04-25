@@ -9,6 +9,7 @@ interface DailyTop3CardProps {
   suggestedTasks: Task[];
   setDailyTop3: (index: number, value: string) => void;
   setDailyHighlightedTask: (index: number, taskId: string) => void;
+  onSaved: () => void;
 }
 
 export function DailyTop3Card({
@@ -17,6 +18,7 @@ export function DailyTop3Card({
   suggestedTasks,
   setDailyTop3,
   setDailyHighlightedTask,
+  onSaved,
 }: DailyTop3CardProps) {
   const { t } = useI18n();
 
@@ -40,7 +42,10 @@ export function DailyTop3Card({
             </label>
             <input
               value={item}
-              onChange={(event) => setDailyTop3(index, event.target.value)}
+              onChange={(event) => {
+                setDailyTop3(index, event.target.value);
+                onSaved();
+              }}
               placeholder={t('dailyPlanning.top3Placeholder')}
               className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
             />
@@ -48,7 +53,10 @@ export function DailyTop3Card({
             <div className="mt-3 flex items-center gap-2">
               <Select
                 value={dailyHighlightedTaskIds[index] ?? ''}
-                onChange={(event) => setDailyHighlightedTask(index, event.target.value)}
+                onChange={(event) => {
+                  setDailyHighlightedTask(index, event.target.value);
+                  onSaved();
+                }}
                 options={[
                   { value: '', label: t('dailyPlanning.selectTaskPlaceholder') },
                   ...suggestedTasks.map((task) => ({ value: task.id, label: task.title })),
@@ -57,7 +65,10 @@ export function DailyTop3Card({
 
               {dailyHighlightedTaskIds[index] ? (
                 <button
-                  onClick={() => setDailyHighlightedTask(index, '')}
+                  onClick={() => {
+                    setDailyHighlightedTask(index, '');
+                    onSaved();
+                  }}
                   className="rounded-xl border border-white/10 p-2 text-white/50 transition-colors hover:text-white"
                   aria-label={t('dailyPlanning.clearTask')}
                 >

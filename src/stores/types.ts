@@ -60,6 +60,9 @@ export interface TaskSlice {
   selectedTaskId: string | null;
   taskFilters: { priority: string; status: string; tags: string[]; search: string };
   tags: Tag[];
+  addTag: (tag: Omit<Tag, 'id'>) => void;
+  updateTag: (id: string, updates: Partial<Omit<Tag, 'id'>>) => void;
+  deleteTag: (id: string) => void;
   addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;

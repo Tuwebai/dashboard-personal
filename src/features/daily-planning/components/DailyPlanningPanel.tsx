@@ -6,8 +6,10 @@ import { DailyHighlightedTasksCard } from './DailyHighlightedTasksCard';
 import { DailyNotesCards } from './DailyNotesCards';
 import { DailySuggestionsCard } from './DailySuggestionsCard';
 import { DailyTop3Card } from './DailyTop3Card';
+import { usePlanningAutosaveToast } from '../../weekly-planning/hooks/usePlanningAutosaveToast';
 
 export function DailyPlanningPanel() {
+  const scheduleSavedToast = usePlanningAutosaveToast();
   const setActiveModule = useAppStore((state) => state.setActiveModule);
   const tasks = useAppStore((state) => state.tasks);
   const dailyTop3 = useAppStore((state) => state.dailyTop3);
@@ -81,6 +83,7 @@ export function DailyPlanningPanel() {
         suggestedTasks={suggestedTasks}
         setDailyTop3={setDailyTop3}
         setDailyHighlightedTask={setDailyHighlightedTask}
+        onSaved={scheduleSavedToast}
       />
 
       <DailyNotesCards
@@ -89,6 +92,7 @@ export function DailyPlanningPanel() {
         setDailyIntention={setDailyIntention}
         setDailyQuickNotes={setDailyQuickNotes}
         onOpenJournaling={openJournaling}
+        onSaved={scheduleSavedToast}
       />
 
       <DailyHighlightedTasksCard

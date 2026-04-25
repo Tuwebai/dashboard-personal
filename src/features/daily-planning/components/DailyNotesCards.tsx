@@ -8,6 +8,7 @@ interface DailyNotesCardsProps {
   setDailyIntention: (value: string) => void;
   setDailyQuickNotes: (value: string) => void;
   onOpenJournaling: () => void;
+  onSaved: () => void;
 }
 
 export function DailyNotesCards({
@@ -16,6 +17,7 @@ export function DailyNotesCards({
   setDailyIntention,
   setDailyQuickNotes,
   onOpenJournaling,
+  onSaved,
 }: DailyNotesCardsProps) {
   const { t } = useI18n();
 
@@ -34,7 +36,10 @@ export function DailyNotesCards({
 
         <textarea
           value={dailyIntention}
-          onChange={(event) => setDailyIntention(event.target.value)}
+          onChange={(event) => {
+            setDailyIntention(event.target.value);
+            onSaved();
+          }}
           placeholder={t('dailyPlanning.intentionPlaceholder')}
           className="mt-5 min-h-32 w-full rounded-2xl border border-dashed border-white/10 bg-black/10 p-5 text-sm text-white/75 outline-none transition-colors placeholder:text-white/30 focus:border-amber-500/40"
         />
@@ -53,7 +58,10 @@ export function DailyNotesCards({
 
         <textarea
           value={dailyQuickNotes}
-          onChange={(event) => setDailyQuickNotes(event.target.value)}
+          onChange={(event) => {
+            setDailyQuickNotes(event.target.value);
+            onSaved();
+          }}
           placeholder={t('dailyPlanning.quickNotesPlaceholder')}
           className="mt-5 min-h-40 w-full rounded-2xl border border-dashed border-white/10 bg-black/10 p-5 text-sm text-white/75 outline-none transition-colors placeholder:text-white/30 focus:border-emerald-500/40"
         />

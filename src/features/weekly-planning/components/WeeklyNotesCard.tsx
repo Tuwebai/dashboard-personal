@@ -1,11 +1,13 @@
 import { NotebookText } from 'lucide-react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useAppStore } from '../../../stores/useAppStore';
+import { usePlanningAutosaveToast } from '../hooks/usePlanningAutosaveToast';
 
 export function WeeklyNotesCard() {
   const { t } = useI18n();
   const weeklyNotes = useAppStore((state) => state.weeklyNotes);
   const setWeeklyNotes = useAppStore((state) => state.setWeeklyNotes);
+  const scheduleSavedToast = usePlanningAutosaveToast();
 
   return (
     <section className="rounded-2xl border border-white/8 bg-white/4 p-5">
@@ -21,7 +23,10 @@ export function WeeklyNotesCard() {
 
       <textarea
         value={weeklyNotes}
-        onChange={(event) => setWeeklyNotes(event.target.value)}
+        onChange={(event) => {
+          setWeeklyNotes(event.target.value);
+          scheduleSavedToast();
+        }}
         placeholder={t('weeklyPlanning.notesEmpty')}
         className="mt-5 min-h-40 w-full rounded-2xl border border-dashed border-white/10 bg-black/10 p-5 text-sm text-white/75 outline-none transition-colors placeholder:text-white/30 focus:border-emerald-500/40"
       />

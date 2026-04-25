@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useAppStore } from '../../../stores/useAppStore';
 import { Select } from '../../../shared/ui/Input';
+import { usePlanningAutosaveToast } from '../hooks/usePlanningAutosaveToast';
 
 export function WeeklyFocusCard() {
   const { t } = useI18n();
@@ -11,6 +12,7 @@ export function WeeklyFocusCard() {
   const setWeeklyFocus = useAppStore((state) => state.setWeeklyFocus);
   const setWeeklyFocusGoal = useAppStore((state) => state.setWeeklyFocusGoal);
   const personalGoals = useAppStore((state) => state.personalGoals);
+  const scheduleSavedToast = usePlanningAutosaveToast();
   const goalOptions = useMemo(
     () => [
       { value: '', label: t('weeklyPlanning.focusGoalPlaceholder') },
@@ -34,13 +36,19 @@ export function WeeklyFocusCard() {
       <Select
         label={t('weeklyPlanning.focusGoal')}
         value={weeklyFocusGoalId}
-        onChange={(event) => setWeeklyFocusGoal(event.target.value)}
+        onChange={(event) => {
+          setWeeklyFocusGoal(event.target.value);
+          scheduleSavedToast();
+        }}
         options={goalOptions}
       />
 
       <textarea
         value={weeklyFocus}
-        onChange={(event) => setWeeklyFocus(event.target.value)}
+        onChange={(event) => {
+          setWeeklyFocus(event.target.value);
+          scheduleSavedToast();
+        }}
         placeholder={t('weeklyPlanning.focusEmpty')}
         className="mt-4 min-h-32 w-full rounded-2xl border border-dashed border-white/10 bg-black/10 p-5 text-sm text-white/80 outline-none transition-colors placeholder:text-white/30 focus:border-violet-500/40"
       />

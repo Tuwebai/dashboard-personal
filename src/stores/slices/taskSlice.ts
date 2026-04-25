@@ -17,6 +17,31 @@ export const createTaskSlice: StateCreator<
   taskFilters: { priority: '', status: '', tags: [], search: '' },
   tags: [],
 
+  addTag: (tagData) => set(state => {
+    state.tags.unshift({
+      ...tagData,
+      id: genId(),
+    });
+  }),
+
+  updateTag: (id, updates) => set(state => {
+    const tag = state.tags.find(item => item.id === id);
+    if (tag) {
+      Object.assign(tag, updates);
+      state.tasks.forEach(task => {
+        task.tags = task.tags.map(taskTag => taskTag.id === id ? { ...taskTag, ...updates } : taskTag);
+      });
+    }
+  }),
+
+  deleteTag: (id) => set(state => {
+    state.tags = state.tags.filter(tag => tag.id !== id);
+    state.tasks.forEach(task => {
+      task.tags = task.tags.filter(tag => tag.id !== id);
+    });
+    state.taskFilters.tags = state.taskFilters.tags.filter(tagId => tagId !== id);
+  }),
+
   addTask: (taskData) => set(state => {
     const now = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
     state.tasks.unshift({

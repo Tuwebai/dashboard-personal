@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { 
-  User, Palette, Bell, 
+  User, Palette, Bell, Tag,
   Database, Keyboard, Globe, Info,
   type LucideIcon
 } from 'lucide-react';
@@ -13,9 +13,10 @@ import { SystemSection } from '../sections/SystemSection';
 import { ShortcutsSection } from '../sections/ShortcutsSection';
 import { LanguageSection } from '../sections/LanguageSection';
 import { AboutSection } from '../sections/AboutSection';
+import { TagsSection } from '../sections/TagsSection';
 
 interface Section {
-  id: 'general' | 'appearance' | 'notifications' | 'system' | 'shortcuts' | 'language' | 'about';
+  id: 'general' | 'appearance' | 'notifications' | 'system' | 'tags' | 'shortcuts' | 'language' | 'about';
   labelKey: string;
   icon: LucideIcon;
   descKey: string;
@@ -26,6 +27,7 @@ const SECTIONS: Section[] = [
   { id: 'appearance', labelKey: 'settings.appearance', icon: Palette, descKey: 'settings.appearanceDesc' },
   { id: 'notifications', labelKey: 'settings.notifications', icon: Bell, descKey: 'settings.notificationsDesc' },
   { id: 'system', labelKey: 'settings.system', icon: Database, descKey: 'settings.systemDesc' },
+  { id: 'tags', labelKey: 'settings.tags', icon: Tag, descKey: 'settings.tagsDesc' },
   { id: 'shortcuts', labelKey: 'settings.shortcuts', icon: Keyboard, descKey: 'settings.shortcutsDesc' },
   { id: 'language', labelKey: 'settings.language', icon: Globe, descKey: 'settings.languageDesc' },
   { id: 'about', labelKey: 'settings.about', icon: Info, descKey: 'settings.aboutDesc' },
@@ -43,6 +45,7 @@ export function Settings() {
       case 'appearance': return <AppearanceSection />;
       case 'notifications': return <NotificationSection />;
       case 'system': return <SystemSection />;
+      case 'tags': return <TagsSection />;
       case 'shortcuts': return <ShortcutsSection />;
       case 'language': return <LanguageSection />;
       case 'about': return <AboutSection />;
