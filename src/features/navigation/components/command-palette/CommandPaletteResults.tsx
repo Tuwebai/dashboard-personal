@@ -1,5 +1,6 @@
 import type { CommandOption } from './types';
 import { CommandPaletteSection } from './CommandPaletteSection';
+import { useI18n } from '../../../../shared/i18n/useI18n';
 
 interface CommandPaletteResultsProps {
   filteredCommands: CommandOption[];
@@ -18,6 +19,7 @@ export function CommandPaletteResults({
   navigationTitle,
   actionsTitle,
 }: CommandPaletteResultsProps) {
+  const { t } = useI18n();
   const navigationCommands = filteredCommands.filter((command) => command.category === 'navigation');
   const actionCommands = filteredCommands.filter((command) => command.category === 'action');
 
@@ -25,7 +27,7 @@ export function CommandPaletteResults({
     <div className="max-h-80 overflow-y-auto p-2">
       {filteredCommands.length === 0 ? (
         <div className="text-center py-8 text-white/30 text-sm">
-          No results found for "{query}"
+          {t('common.commandNoResults')} "{query}"
         </div>
       ) : (
         <>
