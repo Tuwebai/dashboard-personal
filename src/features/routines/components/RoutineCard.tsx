@@ -84,7 +84,7 @@ export const RoutineCard = memo(function RoutineCard({ routine, onSelect, onEdit
                     className="w-full flex items-center gap-2.5 p-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left"
                   >
                     <Edit3 size={14} />
-                    <span>Edit Routine</span>
+                    <span>{t('routines.editRoutine')}</span>
                   </button>
                   <div className="h-1px bg-border my-1 mx-1" />
                   <button 
@@ -92,7 +92,7 @@ export const RoutineCard = memo(function RoutineCard({ routine, onSelect, onEdit
                     className="w-full flex items-center gap-2.5 p-2 rounded-lg text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left"
                   >
                     <Trash2 size={14} />
-                    <span>Delete</span>
+                    <span>{t('routines.delete')}</span>
                   </button>
                 </motion.div>
               </>
@@ -103,14 +103,14 @@ export const RoutineCard = memo(function RoutineCard({ routine, onSelect, onEdit
       
       <div className="space-y-1">
         <h3 className="text-lg font-bold text-text-primary group-hover:text-violet-400 transition-colors">{routine.name}</h3>
-        <div className="flex items-center gap-3 text-text-secondary text-xs">
+          <div className="flex items-center gap-3 text-text-secondary text-xs">
           <div className="flex items-center gap-1">
             <Clock size={12} />
-            <span>{routine.totalDuration}m total</span>
+            <span>{routine.totalDuration}m {t('routines.totalMinutes')}</span>
           </div>
           <div className="flex items-center gap-1">
             <RotateCcw size={12} />
-            <span>{routine.steps.length} steps</span>
+            <span>{routine.steps.length} {t('routines.steps')}</span>
           </div>
         </div>
       </div>
