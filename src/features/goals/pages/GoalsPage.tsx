@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
 import { GoalEmptyState } from '../components/GoalEmptyState';
 import { GoalKanbanView } from '../components/GoalKanbanView';
@@ -11,12 +12,16 @@ import { GoalsHeader } from '../components/GoalsHeader';
 import type { PersonalGoal } from '../types';
 
 export function GoalsPage() {
-  const personalGoals = useAppStore((state) => state.personalGoals);
-  const tasks = useAppStore((state) => state.tasks);
-  const goalFilters = useAppStore((state) => state.goalFilters);
-  const setGoalFilters = useAppStore((state) => state.setGoalFilters);
-  const goalView = useAppStore((state) => state.goalView);
-  const setGoalView = useAppStore((state) => state.setGoalView);
+  const { personalGoals, tasks, goalFilters, setGoalFilters, goalView, setGoalView } = useAppStore(
+    useShallow((state) => ({
+      personalGoals: state.personalGoals,
+      tasks: state.tasks,
+      goalFilters: state.goalFilters,
+      setGoalFilters: state.setGoalFilters,
+      goalView: state.goalView,
+      setGoalView: state.setGoalView,
+    }))
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<PersonalGoal | null>(null);
   const filteredGoals = personalGoals.filter((goal) => {

@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { 
   useSensor, useSensors, PointerSensor, type DragEndEvent 
 } from '@dnd-kit/core';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
 import { Button } from '../../../shared/ui/Button';
 import { KANBAN_COLUMNS } from '../../../shared/lib/helpers';
@@ -24,7 +25,21 @@ export function Tasks() {
     tasks, taskView, setTaskView, deleteTask,
     completeTask, moveTask, taskFilters, setTaskFilters, toggleSubtask,
     selectedTaskId, setSelectedTask,
-  } = useAppStore();
+  } = useAppStore(
+    useShallow((state) => ({
+      tasks: state.tasks,
+      taskView: state.taskView,
+      setTaskView: state.setTaskView,
+      deleteTask: state.deleteTask,
+      completeTask: state.completeTask,
+      moveTask: state.moveTask,
+      taskFilters: state.taskFilters,
+      setTaskFilters: state.setTaskFilters,
+      toggleSubtask: state.toggleSubtask,
+      selectedTaskId: state.selectedTaskId,
+      setSelectedTask: state.setSelectedTask,
+    }))
+  );
   const { t } = useI18n();
 
   const [addModalOpen, setAddModalOpen] = useState(false);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
 import { Button } from '../../../shared/ui/Button';
 import { Modal } from '../../../shared/ui/Modal';
@@ -19,7 +20,11 @@ export default function Habits() {
     color: '#7c3aed',
   });
 
-  const { addHabit } = useAppStore();
+  const { addHabit } = useAppStore(
+    useShallow((state) => ({
+      addHabit: state.addHabit,
+    }))
+  );
   const { t } = useI18n();
 
   const handleAddHabit = () => {

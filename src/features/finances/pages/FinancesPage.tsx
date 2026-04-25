@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Plus, Download, Filter, BarChart3, Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useShallow } from 'zustand/react/shallow';
 import { Button } from '../../../shared/ui/Button';
 import { FinanceSummary } from '../components/FinanceSummary';
 import { AccountCard } from '../components/AccountCard';
@@ -18,7 +19,15 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { getDerivedAccounts, type DerivedFinancialAccount } from '../lib/accounts';
 
 export default function Finances() {
-  const { accounts, transactions, budgets, updateAccount, deleteAccount } = useAppStore();
+  const { accounts, transactions, budgets, updateAccount, deleteAccount } = useAppStore(
+    useShallow((state) => ({
+      accounts: state.accounts,
+      transactions: state.transactions,
+      budgets: state.budgets,
+      updateAccount: state.updateAccount,
+      deleteAccount: state.deleteAccount,
+    }))
+  );
   const { t } = useI18n();
   
   // UI State

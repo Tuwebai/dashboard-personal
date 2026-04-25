@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { format, isToday, parseISO } from 'date-fns';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
 import { getHabitStats, PRIORITY_COLORS } from '../../../shared/lib/helpers';
 import { TrendingUp, TrendingDown } from 'lucide-react';
@@ -8,7 +9,20 @@ import { getDerivedAccounts } from '../../finances/lib/accounts';
 const PRIORITY_ORDER = ['critical', 'high', 'medium', 'low'] as const;
 
 export function useDashboardStats() {
-  const { tasks, habits, habitLogs, accounts, transactions, notes, events, activities, setActiveModule, logHabit } = useAppStore();
+  const { tasks, habits, habitLogs, accounts, transactions, notes, events, activities, setActiveModule, logHabit } = useAppStore(
+    useShallow((state) => ({
+      tasks: state.tasks,
+      habits: state.habits,
+      habitLogs: state.habitLogs,
+      accounts: state.accounts,
+      transactions: state.transactions,
+      notes: state.notes,
+      events: state.events,
+      activities: state.activities,
+      setActiveModule: state.setActiveModule,
+      logHabit: state.logHabit,
+    }))
+  );
 
   const stats = useMemo(() => {
     const today = format(new Date(), 'yyyy-MM-dd');
