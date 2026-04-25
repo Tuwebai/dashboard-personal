@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Modal } from '../../../shared/ui/Modal';
 import { Button } from '../../../shared/ui/Button';
@@ -88,18 +88,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
   const accountIds = useMemo(() => accounts.map(({ id }) => id), [accounts]);
   const defaultAccountId = resolveDefaultAccountId(accountIds, initialAccountId);
   const [newTx, setNewTx] = useState(() => buildTransactionState(transaction, defaultAccountId));
-
-  useEffect(() => {
-    setNewTx(buildTransactionState(transaction, defaultAccountId));
-  }, [defaultAccountId, transaction]);
-
-  useEffect(() => {
-    if (transaction || newTx.accountId || !defaultAccountId) {
-      return;
-    }
-
-    setNewTx((current) => ({ ...current, accountId: defaultAccountId }));
-  }, [defaultAccountId, newTx.accountId, transaction]);
+  const resolvedAccountId = newTx.accountId || defaultAccountId;
 
   const categoryOptions = useMemo(
     () => [
@@ -117,7 +106,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
     if (!newTx.description || !newTx.amount) return;
     const amount = parseTransactionAmount(newTx.amount);
     if (Number.isNaN(amount)) return;
-    if (!newTx.accountId) {
+    if (!resolvedAccountId) {
       toast.error(t('finances.transactionAccountRequired'));
       return;
     }
@@ -127,7 +116,7 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
       amount,
       type: newTx.type,
       category: newTx.category,
-      accountId: newTx.accountId,
+      accountId: resolvedAccountId,
       date: newTx.date,
     };
 
@@ -186,12 +175,12 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">{t('finances.accountLabel')}</label>
-            <Select
-              value={newTx.accountId}
-              onChange={e => setNewTx({...newTx, accountId: e.target.value})}
-              options={accounts.map(acc => ({ value: acc.id, label: acc.name }))}
-            />
+              <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest px-1">{t('finances.accountLabel')}</label>
+              <Select
+               value={resolvedAccountId}
+                onChange={e => setNewTx({...newTx, accountId: e.target.value})}
+                options={accounts.map(acc => ({ value: acc.id, label: acc.name }))}
+              />
           </div>
         </div>
 

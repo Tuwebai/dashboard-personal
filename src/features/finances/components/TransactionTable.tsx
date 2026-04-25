@@ -3,6 +3,7 @@ import { ShoppingCart, Coffee, CreditCard, ArrowUpRight, Landmark, Zap, Car, Tra
 import { toast } from 'sonner';
 import { cn } from '../../../shared/lib/cn';
 import { format } from 'date-fns';
+import { parseStoredDate } from '../../../shared/lib/date';
 import type { Transaction } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { Fragment, useState } from 'react';
@@ -93,7 +94,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                       <span className="text-xs bg-bg-tertiary px-2 py-1 rounded-lg border border-border/50 text-text-secondary">{tx.category}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs text-text-muted">{format(new Date(tx.date), 'MMM d, yyyy')}</span>
+                      <span className="text-xs text-text-muted">{format(parseStoredDate(tx.date), 'MMM d, yyyy')}</span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <span className={cn(
@@ -137,7 +138,7 @@ export function TransactionTable({ limit, accountId, onRowClick }: TransactionTa
                             <div className="min-w-0">
                               <p className="truncate text-sm font-semibold text-text-primary">{tx.description}</p>
                               <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-text-muted">
-                                <span>{format(new Date(tx.date), 'MMM d, yyyy')}</span>
+                                <span>{format(parseStoredDate(tx.date), 'MMM d, yyyy')}</span>
                                 <span className="rounded-lg border border-border/50 bg-bg-tertiary px-2 py-1 text-[11px] text-text-secondary">
                                   {tx.category}
                                 </span>

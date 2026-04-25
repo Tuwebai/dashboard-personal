@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Wallet, CreditCard } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 import { cn } from '../../../shared/lib/cn';
+import { parseStoredDate } from '../../../shared/lib/date';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { formatCurrency } from '../../../shared/lib/helpers';
 
@@ -15,7 +16,7 @@ export function FinanceSummary() {
   const currentYear = now.getFullYear();
   
   const monthlyTx = transactions.filter(tx => {
-    const d = new Date(tx.date);
+    const d = parseStoredDate(tx.date);
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   });
   
@@ -27,7 +28,7 @@ export function FinanceSummary() {
   // Calculate trends (Current Month vs Previous Month)
   const lastMonth = new Date(currentYear, currentMonth - 1, 1);
   const lastMonthTx = transactions.filter(tx => {
-    const d = new Date(tx.date);
+    const d = parseStoredDate(tx.date);
     return d.getMonth() === lastMonth.getMonth() && d.getFullYear() === lastMonth.getFullYear();
   });
 

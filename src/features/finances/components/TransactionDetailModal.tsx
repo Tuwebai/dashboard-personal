@@ -5,6 +5,7 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { formatCurrency } from '../../../shared/lib/helpers';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { format } from 'date-fns';
+import { parseStoredDate } from '../../../shared/lib/date';
 import { Trash2, Calendar, Landmark, Tag, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -79,7 +80,7 @@ export function TransactionDetailModal({ transaction, isOpen, onClose, onEdit }:
               <Calendar size={16} className="text-violet-400" />
               <span className="text-xs font-bold text-text-muted uppercase tracking-widest">{t('finances.dateLabel')}</span>
             </div>
-            <span className="text-sm font-semibold text-text-primary">{format(new Date(transaction.date), 'MMMM d, yyyy')}</span>
+            <span className="text-sm font-semibold text-text-primary">{format(parseStoredDate(transaction.date), 'MMMM d, yyyy')}</span>
           </div>
 
           <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-border">

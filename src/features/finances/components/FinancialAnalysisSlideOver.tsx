@@ -2,6 +2,7 @@ import { SlideOver } from '../../../shared/ui/Modal';
 import { BarChart3 } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { parseStoredDate } from '../../../shared/lib/date';
 
 interface FinancialAnalysisSlideOverProps {
   isOpen: boolean;
@@ -17,7 +18,7 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
   const currentYear = now.getFullYear();
 
   const monthlyTx = transactions.filter(tx => {
-    const d = new Date(tx.date);
+    const d = parseStoredDate(tx.date);
     return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
   });
 

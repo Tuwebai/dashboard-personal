@@ -30,7 +30,7 @@ export function useFirebaseAuthBootstrap() {
         return;
       }
 
-      if (previousUidRef.current !== user.uid) {
+      if (previousUidRef.current && previousUidRef.current !== user.uid) {
         resetWorkspaceForSession(user.uid, user.email);
       }
 
