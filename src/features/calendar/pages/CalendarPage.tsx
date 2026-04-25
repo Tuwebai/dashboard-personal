@@ -52,50 +52,51 @@ export default function Calendar() {
   }, [addEvent, t]);
 
   return (
-    <div className="h-full flex flex-col space-y-6 page-enter pb-6">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-text-primary tracking-tight">{t('calendar.title')}</h1>
-          <div className="flex items-center bg-bg-secondary border border-border rounded-2xl p-1.5 shadow-2xl glass-strong">
-            <button 
-              onClick={() => setViewType('month')} 
-              className={cn(
-                "p-2.5 rounded-xl transition-all duration-300 flex items-center gap-2 cursor-pointer", 
-                viewType === 'month' 
-                  ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30 scale-105" 
-                  : "text-text-muted hover:text-text-primary hover:bg-white/5"
-              )}
-              aria-label={t('calendar.month')}
-            >
-              <CalendarIcon size={18} />
-              {viewType === 'month' && <span className="text-xs font-bold pr-1">{t('calendar.month')}</span>}
-            </button>
-            <button 
-              onClick={() => setViewType('agenda')} 
-              className={cn(
-                "p-2.5 rounded-xl transition-all duration-300 flex items-center gap-2 cursor-pointer", 
-                viewType === 'agenda' 
-                  ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30 scale-105" 
-                  : "text-text-muted hover:text-text-primary hover:bg-white/5"
-              )}
-              aria-label={t('calendar.agenda')}
-            >
-              <List size={18} />
-              {viewType === 'agenda' && <span className="text-xs font-bold pr-1">{t('calendar.agenda')}</span>}
-            </button>
+    <div className="flex h-full flex-col space-y-4 pb-6 page-enter md:space-y-6">
+      <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <h1 className="truncate text-2xl font-bold tracking-tight text-text-primary md:text-3xl">{t('calendar.title')}</h1>
+            <div className="flex w-full items-center rounded-2xl border border-border bg-bg-secondary p-1.5 shadow-2xl glass-strong sm:w-auto">
+              <button 
+                onClick={() => setViewType('month')} 
+                className={cn(
+                  "flex flex-1 items-center justify-center gap-2 rounded-xl p-2.5 transition-all duration-300 cursor-pointer sm:flex-none", 
+                  viewType === 'month' 
+                    ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30 scale-105" 
+                    : "text-text-muted hover:text-text-primary hover:bg-white/5"
+                )}
+                aria-label={t('calendar.month')}
+              >
+                <CalendarIcon size={18} />
+                {viewType === 'month' && <span className="text-xs font-bold pr-1">{t('calendar.month')}</span>}
+              </button>
+              <button 
+                onClick={() => setViewType('agenda')} 
+                className={cn(
+                  "flex flex-1 items-center justify-center gap-2 rounded-xl p-2.5 transition-all duration-300 cursor-pointer sm:flex-none", 
+                  viewType === 'agenda' 
+                    ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30 scale-105" 
+                    : "text-text-muted hover:text-text-primary hover:bg-white/5"
+                )}
+                aria-label={t('calendar.agenda')}
+              >
+                <List size={18} />
+                {viewType === 'agenda' && <span className="text-xs font-bold pr-1">{t('calendar.agenda')}</span>}
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center bg-bg-secondary border border-border rounded-xl overflow-hidden shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center overflow-hidden rounded-xl border border-border bg-bg-secondary shadow-sm">
             <button onClick={handlePrevMonth} className="p-2.5 hover:bg-white/5 text-text-muted transition-colors border-r border-border cursor-pointer"><ChevronLeft size={18} /></button>
-            <button onClick={handleToday} className="px-4 py-2 text-sm font-bold text-text-primary hover:bg-white/5 transition-colors cursor-pointer">{t('calendar.today')}</button>
+            <button onClick={handleToday} className="flex-1 px-4 py-2 text-sm font-bold text-text-primary hover:bg-white/5 transition-colors cursor-pointer sm:flex-none">{t('calendar.today')}</button>
             <button onClick={handleNextMonth} className="p-2.5 hover:bg-white/5 text-text-muted transition-colors border-l border-border cursor-pointer"><ChevronRight size={18} /></button>
           </div>
           <Button 
             variant="primary" 
-            className="shadow-lg shadow-violet/20 h-11 px-6 font-bold" 
+            className="h-11 w-full px-6 font-bold shadow-lg shadow-violet/20 sm:w-auto" 
             leftIcon={<Plus size={18} />} 
             onClick={() => setIsAddModalOpen(true)}
           >
@@ -104,7 +105,6 @@ export default function Calendar() {
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 min-h-0 relative">
         <AnimatePresence mode="popLayout">
           {viewType === 'month' ? (
@@ -114,12 +114,12 @@ export default function Calendar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="grid grid-cols-1 xl:grid-cols-4 gap-6 h-full"
+              className="grid h-full grid-cols-1 gap-4 md:gap-6 xl:grid-cols-4"
             >
-              <div className="xl:col-span-3 h-full">
+              <div className="h-full xl:col-span-3">
                 <div className="bg-bg-secondary border border-border rounded-3xl overflow-hidden glass h-full flex flex-col shadow-2xl relative">
-                  <div className="p-6 border-b border-border flex items-center justify-between bg-white/2">
-                    <h2 className="text-xl font-bold text-text-primary">
+                  <div className="flex items-center justify-between border-b border-border bg-white/2 p-4 md:p-6">
+                    <h2 className="text-lg font-bold text-text-primary md:text-xl">
                       {formatWithLocale(currentDate, 'MMMM yyyy', lang)}
                     </h2>
                   </div>
@@ -128,7 +128,7 @@ export default function Calendar() {
                   </div>
                 </div>
               </div>
-              <div className="xl:col-span-1 h-full min-h-[400px]">
+              <div className="h-64 min-h-[256px] md:h-72 xl:col-span-1 xl:h-full xl:min-h-[400px]">
                 <AgendaSidePanel />
               </div>
             </motion.div>

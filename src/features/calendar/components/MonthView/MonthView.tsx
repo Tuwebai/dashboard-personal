@@ -18,10 +18,10 @@ export const MonthView = memo(({ onEventClick }: MonthViewProps) => {
   const { days, monthStart } = useMemo(() => getMonthDays(currentDate), [currentDate]);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       <WeekdayHeader />
       
-      <div className="flex-1 grid grid-cols-7 min-h-0 divide-x divide-y divide-border border-b border-border overflow-y-auto scrollbar-thin">
+      <div className="grid min-h-0 flex-1 grid-cols-7 divide-x divide-y divide-border overflow-y-auto border-b border-border scrollbar-thin">
         {days.map((day, i) => {
           const dateKey = getDateKey(day);
           const dayEvents = eventsByDate[dateKey] || [];

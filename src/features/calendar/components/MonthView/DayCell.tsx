@@ -25,7 +25,7 @@ export const DayCell = memo(({
     <div 
       onClick={() => onSelect(dateKey)}
       className={cn(
-        "min-h-[100px] md:min-h-[120px] p-2 transition-colors flex flex-col gap-1.5 cursor-pointer relative",
+        "relative flex min-h-[60px] cursor-pointer flex-col gap-1 p-1.5 transition-colors md:min-h-[100px] md:gap-1.5 md:p-2",
         !isCurrentMonth ? "bg-black/10 opacity-20" : "bg-transparent hover:bg-white/2",
         isSelected && isCurrentMonth && "bg-violet-500/5 ring-1 ring-inset ring-violet-500/20",
         index < 7 && "border-t-0"
@@ -33,7 +33,7 @@ export const DayCell = memo(({
     >
       <div className="flex justify-end">
         <span className={cn(
-          "w-7 h-7 flex items-center justify-center text-xs font-bold rounded-full transition-transform",
+          "flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold transition-transform md:h-7 md:w-7 md:text-xs",
           isDayToday ? "bg-violet-500 text-white shadow-lg shadow-violet-500/20" : 
           isSelected && isCurrentMonth ? "text-violet-400" : "text-text-muted"
         )}>
@@ -42,11 +42,11 @@ export const DayCell = memo(({
       </div>
       
       <div className="flex-1 space-y-1 overflow-hidden">
-        {events.slice(0, 2).map((event) => (
+        {events.slice(0, 1).map((event) => (
           <div 
             key={event.id}
             onClick={(e) => { e.stopPropagation(); onEventClick(event); }}
-            className="px-2 py-0.5 rounded-md text-[9px] font-bold border truncate transition-all hover:brightness-110 active:scale-95"
+            className="truncate rounded-md border px-1.5 py-0.5 text-[8px] font-bold leading-tight transition-all hover:brightness-110 active:scale-95 md:px-2 md:text-[9px]"
             style={{ 
               backgroundColor: `${event.color}10`, 
               borderColor: `${event.color}20`,
@@ -56,9 +56,9 @@ export const DayCell = memo(({
             {event.title}
           </div>
         ))}
-        {events.length > 2 && (
-          <div className="text-[8px] text-text-muted font-bold px-1 opacity-60">
-            + {events.length - 2}
+        {events.length > 1 && (
+          <div className="px-1 text-[8px] font-bold text-text-muted opacity-60">
+            +{events.length - 1}
           </div>
         )}
       </div>
