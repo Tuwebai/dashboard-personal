@@ -5,11 +5,12 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Habit } from '../../../shared/types';
 import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { Modal } from '../../../shared/ui/Modal';
 import { Input, Select } from '../../../shared/ui/Input';
+import { getCurrentHabitStreak, getHabitWeekDays } from '../lib/habitCard';
 
 interface HabitCardProps {
   habit: Habit;
@@ -35,19 +36,10 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
     color: habit.color,
   });
   
-  // Get last 7 days of logs
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    const dateStr = d.toISOString().split('T')[0];
-    const log = habitLogs.find(l => l.habitId === habit.id && l.date === dateStr);
-    return {
-      date: dateStr,
-      dayName: d.toLocaleDateString('en-US', { weekday: 'narrow' }),
-      completed: log?.completed ?? false,
-      isToday: i === 6
-    };
-  });
+  const locale = useAppStore((state) => (state.settings.language === 'es' ? 'es-AR' : 'en-US'));
+  const days = useMemo(() => getHabitWeekDays(habit.id, habitLogs, locale), [habit.id, habitLogs, locale]);
+  const currentStreak = useMemo(() => getCurrentHabitStreak(habit.id, habitLogs), [habit.id, habitLogs]);
+  const streakLabel = `${currentStreak} ${t(currentStreak === 1 ? 'habits.day' : 'habits.days')}`;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -136,12 +128,12 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
                   </button>
                   <button className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left">
                     <RotateCcw size={16} />
-                    <span>Reset Streak</span>
+                    <span>{t('habits.resetStreak')}</span>
                   </button>
                   <div className="h-[1px] bg-border my-1 mx-2" />
                   <button onClick={handleDelete} className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left">
                     <Trash2 size={16} />
-                    <span>Delete Habit</span>
+                    <span>{t('habits.deleteHabit')}</span>
                   </button>
                 </motion.div>
               </>
@@ -150,13 +142,13 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-1 mb-6 relative z-10">
+      <div className="grid grid-cols-7 gap-1.5 mb-6 relative z-10">
         {days.map((day) => (
           <button
             key={day.date}
             onClick={() => logHabit(habit.id, day.date, !day.completed)}
             className={cn(
-              "flex flex-col items-center gap-3 flex-1 p-2 rounded-2xl transition-all",
+              "flex min-w-0 flex-col items-center gap-3 p-2 rounded-2xl transition-all",
               day.isToday ? "bg-white/5 border border-white/10 ring-1 ring-white/5" : "hover:bg-white/3"
             )}
           >
@@ -271,7 +263,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
       <div className="pt-4 border-t border-border flex items-center justify-between relative z-10">
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-bold">
           <Flame size={14} className="fill-current" />
-          <span>8 DAY STREAK</span>
+          <span>{streakLabel} {t('habits.streak')}</span>
         </div>
         {!habit.isBoolean && habit.targetValue && (
           <div className="text-[10px] text-white/30 font-semibold tracking-tight">
