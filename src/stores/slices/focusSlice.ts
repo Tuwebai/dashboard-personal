@@ -54,7 +54,7 @@ export const createFocusSlice: StateCreator<
 
       session.elapsedSeconds += elapsedDelta;
       session.status = 'paused';
-      session.lastResumedAt = undefined;
+      delete session.lastResumedAt;
     }),
   resumeFocusSession: (id) =>
     set((state) => {
@@ -78,7 +78,7 @@ export const createFocusSlice: StateCreator<
       }
 
       session.status = 'completed';
-      session.lastResumedAt = undefined;
+      delete session.lastResumedAt;
       session.endedAt = new Date().toISOString();
       if (state.selectedFocusSessionId === id) {
         state.selectedFocusSessionId = null;

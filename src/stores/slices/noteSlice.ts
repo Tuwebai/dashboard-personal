@@ -62,6 +62,6 @@ export const createNoteSlice: StateCreator<
 
   deleteFolder: (id) => set(state => {
     state.folders = state.folders.filter(f => f.id !== id);
-    state.notes = state.notes.map(n => n.folderId === id ? { ...n, folderId: undefined } : n);
+    state.notes = state.notes.map(n => n.folderId === id ? { ...n, folderId: '' } : n);
   }),
 });
