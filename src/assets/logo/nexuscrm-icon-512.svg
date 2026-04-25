@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(76, 76)">
+    <circle cx="180" cy="180" r="158" fill="none" stroke="url(#g1)" stroke-width="8" opacity="0.2"/>
+    <circle cx="180" cy="180" r="44" fill="url(#g1)"/>
+    <line x1="180" y1="136" x2="180" y2="40" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"/>
+    <line x1="218" y1="202" x2="300" y2="250" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"/>
+    <line x1="142" y1="202" x2="60" y2="250" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="180" cy="30" r="26" fill="url(#g2)"/>
+    <circle cx="312" cy="261" r="26" fill="url(#g2)"/>
+    <circle cx="48" cy="261" r="26" fill="url(#g2)"/>
+    <line x1="205" y1="39" x2="288" y2="244" stroke="url(#g1)" stroke-width="5" stroke-linecap="round" opacity="0.3"/>
+    <line x1="155" y1="39" x2="72" y2="244" stroke="url(#g1)" stroke-width="5" stroke-linecap="round" opacity="0.3"/>
+    <line x1="70" y1="278" x2="290" y2="278" stroke="url(#g1)" stroke-width="5" stroke-linecap="round" opacity="0.3"/>
+  </g>
+</svg>

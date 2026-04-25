@@ -1,0 +1,19 @@
+<svg width="300" height="72" viewBox="0 0 300 72" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.1">
+  <defs>
+    <linearGradient id="wmg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(6, 8)">
+    <circle cx="28" cy="28" r="26" fill="none" stroke="url(#wmg)" stroke-width="2" opacity="0.5"/>
+    <circle cx="28" cy="28" r="7" fill="url(#wmg)"/>
+    <line x1="28" y1="21" x2="28" y2="8" stroke="url(#wmg)" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="34" y1="31.5" x2="45" y2="38" stroke="url(#wmg)" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="22" y1="31.5" x2="11" y2="38" stroke="url(#wmg)" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="28" cy="6" r="4.5" fill="url(#wmg)"/>
+    <circle cx="47" cy="40" r="4.5" fill="url(#wmg)"/>
+    <circle cx="9" cy="40" r="4.5" fill="url(#wmg)"/>
+  </g>
+  <text x="74" y="42" font-family="Inter, -apple-system, sans-serif" font-size="28" font-weight="700" fill="url(#wmg)" letter-spacing="-0.5">NexusCRM</text>
+</svg>

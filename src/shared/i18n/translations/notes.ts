@@ -1,0 +1,36 @@
+import type { TranslationDictionary } from './types';
+
+export const notesTranslations = {
+  en: {
+    'notes.new': 'Create new note',
+    'notes.noNotes': 'No notes found',
+    'notes.noNotesDesc': 'Try searching in another category or create a new one.',
+    'notes.selectNote': 'Select a note to view',
+    'notes.selectNoteDesc': 'Pick a note from the sidebar or create a new one to get started.',
+    'notes.searchPlaceholder': 'Search notes...',
+    'notes.allNotes': 'All Notes',
+    'notes.favorites': 'Favorites',
+    'notes.trash': 'Trash',
+    'notes.folders': 'Folders',
+    'notes.recent': 'Recent',
+    'notes.untitled': 'Untitled Note',
+    'notes.noContent': 'No additional text',
+    'notes.placeholder': 'Start writing your thoughts here...',
+  },
+  es: {
+    'notes.new': 'Crear nota nueva',
+    'notes.noNotes': 'No se encontraron notas',
+    'notes.noNotesDesc': 'Intenta buscar en otra categoría o crea una nueva.',
+    'notes.selectNote': 'Selecciona una nota para ver',
+    'notes.selectNoteDesc': 'Elige una nota de la barra lateral o crea una nueva para empezar.',
+    'notes.searchPlaceholder': 'Buscar notas...',
+    'notes.allNotes': 'Todas las Notas',
+    'notes.favorites': 'Favoritos',
+    'notes.trash': 'Papelera',
+    'notes.folders': 'Carpetas',
+    'notes.recent': 'Recientes',
+    'notes.untitled': 'Nota sin título',
+    'notes.noContent': 'Sin contenido adicional',
+    'notes.placeholder': 'Comienza a escribir tus pensamientos aquí...',
+  },
+} as const satisfies TranslationDictionary;

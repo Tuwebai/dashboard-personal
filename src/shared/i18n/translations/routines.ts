@@ -1,0 +1,32 @@
+import type { TranslationDictionary } from './types';
+
+export const routinesTranslations = {
+  en: {
+    'routines.title': 'Routines',
+    'routines.routineName': 'Routine Name',
+    'routines.routinePlaceholder': 'e.g., Morning Focus',
+    'routines.stepTitlePlaceholder': 'Step title...',
+    'routines.escToExit': 'ESC to exit',
+    'routines.finishAndClose': 'Finish and Close',
+    'routines.editRoutine': 'Edit Routine',
+    'routines.createRoutine': 'Create Routine',
+    'routines.subtitle': 'Design and follow your perfect daily flow.',
+    'routines.new': 'New Routine',
+    'routines.noRoutines': 'No routines yet',
+    'routines.noRoutinesDesc': 'Create your first routine to start following your daily flow.',
+  },
+  es: {
+    'routines.title': 'Rutinas',
+    'routines.routineName': 'Nombre de la rutina',
+    'routines.routinePlaceholder': 'Ej: Enfoque matinal',
+    'routines.stepTitlePlaceholder': 'Título del paso...',
+    'routines.escToExit': 'ESC para salir',
+    'routines.finishAndClose': 'Finalizar y cerrar',
+    'routines.editRoutine': 'Editar rutina',
+    'routines.createRoutine': 'Crear rutina',
+    'routines.subtitle': 'Diseña y sigue tu flujo diario perfecto.',
+    'routines.new': 'Nueva Rutina',
+    'routines.noRoutines': 'No hay rutinas aún',
+    'routines.noRoutinesDesc': 'Crea tu primera rutina para empezar a seguir tu flujo diario.',
+  },
+} as const satisfies TranslationDictionary;
