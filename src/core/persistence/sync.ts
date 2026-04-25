@@ -284,11 +284,19 @@ export function useFirebasePersistenceSync() {
     };
 
     const authUnsubscribe = subscribeToFirebaseAuth((user) => {
-      if (!user || cancelled) {
+      if (cancelled) {
+        return;
+      }
+
+      if (!user) {
+        remoteHydrated = false;
+        teardownStoreSubscription();
+        dispatchSyncStatus('idle');
         return;
       }
 
       remoteHydrated = false;
+      teardownStoreSubscription();
       void setupSync();
     });
 

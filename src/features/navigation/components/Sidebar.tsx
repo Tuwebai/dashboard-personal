@@ -43,7 +43,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobile }: SidebarProps) {
-  const { sidebarCollapsed, toggleSidebar, user, notifications } = useAppStore();
+  const { sidebarCollapsed, toggleSidebar, user, notifications, signOut } = useAppStore();
   const { t } = useI18n();
   const unreadCount = notifications.filter(n => !n.isRead).length;
   const isCollapsed = mobile ? false : sidebarCollapsed;
@@ -223,6 +223,10 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
         </button>
 
         <button
+          onClick={() => {
+            void signOut();
+            if (mobile) onCloseMobile?.();
+          }}
           className={cn(
             'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-red-400/80 hover:bg-red-500/5 transition-all duration-200 cursor-pointer',
             isCollapsed && 'justify-center px-0'

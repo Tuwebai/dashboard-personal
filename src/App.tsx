@@ -13,11 +13,12 @@ import Finances from './features/finances/pages/FinancesPage';
 import Calendar from './features/calendar/pages/CalendarPage';
 import Notes from './features/notes/pages/NotesPage';
 import { Settings } from './features/settings/pages/SettingsPage';
+import { LoginPage } from './features/auth/pages/LoginPage';
 import { useFirebaseAuthBootstrap } from './core/persistence/auth';
 import { useFirebasePersistenceSync } from './core/persistence/sync';
 
 export default function App() {
-  const { theme, settings, activeModule, setActiveModule } = useAppStore();
+  const { theme, settings, activeModule, setActiveModule, authStatus } = useAppStore();
   useFirebaseAuthBootstrap();
   useFirebasePersistenceSync();
 
@@ -43,16 +44,21 @@ export default function App() {
   // Initial sync from URL
   useEffect(() => {
     const path = window.location.pathname.slice(1);
-    if (path && path !== activeModule) {
+    if (path && path !== 'login' && path !== activeModule) {
       setActiveModule(path);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authStatus]);
 
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname.slice(1);
-      setActiveModule(path || 'dashboard');
+      if (path && path !== 'login') {
+        setActiveModule(path);
+        return;
+      }
+
+      setActiveModule('dashboard');
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -61,11 +67,16 @@ export default function App() {
 
   // Sync URL when activeModule changes (e.g. from widgets)
   useEffect(() => {
-    const path = activeModule === 'dashboard' ? '/' : `/${activeModule}`;
+    const path = authStatus !== 'authenticated'
+      ? '/login'
+      : activeModule === 'dashboard'
+        ? '/'
+        : `/${activeModule}`;
+
     if (window.location.pathname !== path) {
       window.history.pushState({ module: activeModule }, '', path);
     }
-  }, [activeModule]);
+  }, [activeModule, authStatus]);
 
   const handleNavigate = (module: string) => {
     setActiveModule(module);
@@ -101,6 +112,23 @@ export default function App() {
         return <Dashboard />;
     }
   };
+
+  if (authStatus === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-bg-primary text-white">
+        <div className="rounded-3xl border border-white/10 bg-bg-card px-8 py-6 text-center shadow-2xl shadow-black/30">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-300/80">
+            NexusCRM
+          </p>
+          <p className="mt-3 text-sm text-white/60">Verificando sesión...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (authStatus !== 'authenticated') {
+    return <LoginPage />;
+  }
 
   return (
     <DashboardLayout activeModule={activeModule} onNavigate={handleNavigate}>

@@ -16,6 +16,7 @@ import { weeklyPlanningTranslations } from './weekly-planning';
 import { calendarTranslations } from './calendar';
 import { journalingTranslations } from './journaling';
 import { focusTranslations } from './focus';
+import { authTranslations } from './auth';
 
 const dictionaries: TranslationDictionary[] = [
   commonTranslations,
@@ -35,6 +36,7 @@ const dictionaries: TranslationDictionary[] = [
   calendarTranslations,
   journalingTranslations,
   focusTranslations,
+  authTranslations,
 ];
 
 const mergeByLang = (lang: 'en' | 'es'): TranslationMessages =>
@@ -61,6 +63,7 @@ export type TranslationKey =
   | keyof typeof aboutTranslations.en
   | keyof typeof calendarTranslations.en
   | keyof typeof journalingTranslations.en
-  | keyof typeof focusTranslations.en;
+  | keyof typeof focusTranslations.en
+  | keyof typeof authTranslations.en;
 
 export type { Lang, TranslationDictionary, TranslationMessages } from './types';

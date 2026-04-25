@@ -1,5 +1,16 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInAnonymously, type Auth, type User } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  getAuth,
+  linkWithCredential,
+  onAuthStateChanged,
+  signInAnonymously,
+  signInWithEmailAndPassword,
+  signOut,
+  type Auth,
+  type User,
+} from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getPersistenceMode, isFirebasePersistenceConfigured } from './config';
 
@@ -84,6 +95,82 @@ export function ensureFirebaseAuth() {
     authUser = credential.user;
     return credential.user;
   }).catch(() => null);
+}
+
+export function signInFirebaseAnonymously() {
+  const auth = getFirebaseAuth();
+
+  if (!auth || !isAnonymousAuthEnabled()) {
+    return Promise.resolve<User | null>(null);
+  }
+
+  return signInAnonymously(auth)
+    .then((credential) => {
+      authUser = credential.user;
+      return credential.user;
+    })
+    .catch((error: unknown) => Promise.reject(error));
+}
+
+export function signInFirebaseWithEmail(email: string, password: string) {
+  const auth = getFirebaseAuth();
+
+  if (!auth) {
+    return Promise.resolve<User | null>(null);
+  }
+
+  return signInWithEmailAndPassword(auth, email, password)
+    .then((credential) => {
+      authUser = credential.user;
+      return credential.user;
+    })
+    .catch((error: unknown) => Promise.reject(error));
+}
+
+export function signUpFirebaseWithEmail(email: string, password: string) {
+  const auth = getFirebaseAuth();
+
+  if (!auth) {
+    return Promise.resolve<User | null>(null);
+  }
+
+  return createUserWithEmailAndPassword(auth, email, password)
+    .then((credential) => {
+      authUser = credential.user;
+      return credential.user;
+    })
+    .catch((error: unknown) => Promise.reject(error));
+}
+
+export function linkAnonymousFirebaseUser(email: string, password: string) {
+  const auth = getFirebaseAuth();
+  const user = auth?.currentUser;
+
+  if (!auth || !user || !user.isAnonymous) {
+    return Promise.resolve<User | null>(null);
+  }
+
+  const credential = EmailAuthProvider.credential(email, password);
+
+  return linkWithCredential(user, credential)
+    .then((result) => {
+      authUser = result.user;
+      return result.user;
+    })
+    .catch((error: unknown) => Promise.reject(error));
+}
+
+export function signOutFirebaseUser() {
+  const auth = getFirebaseAuth();
+
+  if (!auth) {
+    authUser = null;
+    return Promise.resolve();
+  }
+
+  return signOut(auth).finally(() => {
+    authUser = null;
+  });
 }
 
 export function subscribeToFirebaseAuth(callback: (user: User | null) => void) {

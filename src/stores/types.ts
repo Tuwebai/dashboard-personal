@@ -26,8 +26,21 @@ export type { FocusSession };
 export interface AuthSlice {
   user: typeof CURRENT_USER;
   settings: UserSettings;
+  authStatus: 'loading' | 'authenticated' | 'unauthenticated';
+  authProvider: 'anonymous' | 'password' | null;
+  firebaseUid: string | null;
   updateSettings: (settings: Partial<UserSettings>) => void;
   updateUser: (updates: Partial<typeof CURRENT_USER>) => void;
+  setAuthState: (state: {
+    authStatus: 'loading' | 'authenticated' | 'unauthenticated';
+    authProvider: 'anonymous' | 'password' | null;
+    firebaseUid: string | null;
+  }) => void;
+  signInAnonymously: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  linkAnonymousAccount: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 export interface UISlice {
