@@ -15,7 +15,10 @@ export function usePersistenceSyncStatus() {
   const [status, setStatus] = useState<PersistenceSyncStatus>(
     getPersistenceMode() === 'firebase' ? 'idle' : 'synced',
   );
-  const [updatedAt, setUpdatedAt] = useState(getLastSyncAt(firebaseUid ?? ''));
+  const [syncState, setSyncState] = useState(() => ({
+    uid: firebaseUid,
+    updatedAt: getLastSyncAt(firebaseUid ?? ''),
+  }));
 
   useEffect(() => {
     const handleStatusChange = (event: Event) => {
@@ -27,15 +30,20 @@ export function usePersistenceSyncStatus() {
 
       setStatus(detail.status);
 
-      if (detail.updatedAt) {
-        setUpdatedAt(detail.updatedAt);
-      }
+      setSyncState((current) => ({
+        uid: firebaseUid,
+        updatedAt: detail.updatedAt ?? current.updatedAt,
+      }));
     };
 
     window.addEventListener(SYNC_EVENT_NAME, handleStatusChange);
 
     return () => window.removeEventListener(SYNC_EVENT_NAME, handleStatusChange);
-  }, []);
+  }, [firebaseUid]);
+
+  const updatedAt = syncState.uid === firebaseUid
+    ? syncState.updatedAt
+    : getLastSyncAt(firebaseUid ?? '');
 
   return {
     status,

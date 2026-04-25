@@ -57,6 +57,7 @@ export function useFirebasePersistenceSync() {
       return;
     }
 
+    const setAuthState = useAppStore.getState().setAuthState;
     let cancelled = false;
     let syncTimeout: number | null = null;
     let remoteHydrated = false;
@@ -78,6 +79,11 @@ export function useFirebasePersistenceSync() {
       const remoteDocRef = getRemoteDocRef();
 
       if (!remoteDocRef) {
+        setAuthState({
+          authStatus: 'authenticated',
+          authProvider: useAppStore.getState().authProvider,
+          firebaseUid: uid,
+        });
         dispatchSyncStatus('error', getLastSyncAt(uid));
         pushSyncErrorNotification();
         return;
@@ -115,6 +121,11 @@ export function useFirebasePersistenceSync() {
 
           useAppStore.setState((state) => mergePersistedWorkspace(state, initialState));
           setLastSyncAt(uid, initialUpdatedAt);
+          setAuthState({
+            authStatus: 'authenticated',
+            authProvider: useAppStore.getState().authProvider,
+            firebaseUid: uid,
+          });
           dispatchSyncStatus('synced', initialUpdatedAt);
           remoteHydrated = true;
         } else {
@@ -127,17 +138,26 @@ export function useFirebasePersistenceSync() {
             if (shouldApplyRemoteState(remoteUpdatedAt, localUpdatedAt)) {
               useAppStore.setState((currentState) => mergePersistedWorkspace(currentState, data.state));
               setLastSyncAt(uid, remoteUpdatedAt);
-              dispatchSyncStatus('synced', remoteUpdatedAt);
             }
           }
         }
       } catch {
+        setAuthState({
+          authStatus: 'authenticated',
+          authProvider: useAppStore.getState().authProvider,
+          firebaseUid: uid,
+        });
         dispatchSyncStatus('error', getLastSyncAt(uid));
         pushSyncErrorNotification();
         remoteHydrated = true;
         return;
       }
 
+      setAuthState({
+        authStatus: 'authenticated',
+        authProvider: useAppStore.getState().authProvider,
+        firebaseUid: uid,
+      });
       dispatchSyncStatus('synced', getLastSyncAt(uid));
       remoteHydrated = true;
       teardownRemoteSubscription();

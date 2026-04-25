@@ -41,7 +41,7 @@ export function useFirebaseAuthBootstrap() {
         email: user.email ?? '',
       });
       setAuthState({
-        authStatus: 'authenticated',
+        authStatus: 'loading',
         authProvider,
         firebaseUid: user.uid,
       });

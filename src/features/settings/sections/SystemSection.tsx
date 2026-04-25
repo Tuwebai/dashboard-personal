@@ -59,7 +59,9 @@ export function SystemSection() {
           <p className="text-sm font-semibold text-white">{t('settings.syncStatus')}</p>
           <p className="mt-1 text-xs text-white/40">
             {currentMode === 'firebase'
-              ? status === 'syncing'
+              ? status === 'hydrating'
+                ? t('settings.syncHydrating')
+                : status === 'syncing'
                 ? t('settings.syncing')
                 : status === 'error'
                   ? t('settings.syncError')
