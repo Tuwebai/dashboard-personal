@@ -92,6 +92,7 @@ export interface FinanceSlice {
   deleteTransaction: (id: string) => void;
   addAccount: (account: Omit<FinancialAccount, 'id' | 'createdAt'>) => void;
   updateAccount: (id: string, updates: Partial<FinancialAccount>) => void;
+  deleteAccount: (id: string) => void;
   updateBudget: (id: string, updates: Partial<Budget>) => void;
   addGoal: (goal: Omit<FinancialGoal, 'id' | 'createdAt'>) => void;
   updateGoal: (id: string, updates: Partial<FinancialGoal>) => void;
