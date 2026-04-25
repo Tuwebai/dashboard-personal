@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 import type { FinancialAccount, Transaction } from '../../../shared/types';
 import { getDerivedAccounts } from '../../finances/lib/accounts';
@@ -30,29 +30,26 @@ export function useDashboardFinanceStats(accounts: FinancialAccount[], transacti
       .filter((transaction) => new Date(transaction.date) >= thirtyDaysAgo)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    const balanceHistory: { date: string; balance: number }[] = [];
+    const balanceHistory: { date: string; balance: number }[] = [
+      {
+        date: format(thirtyDaysAgo, 'dd MMM'),
+        balance: previousNetWorth,
+      },
+    ];
     let runningBalance = previousNetWorth;
-    let cursor = new Date(thirtyDaysAgo);
 
-    while (cursor <= today) {
-      const dayKey = format(cursor, 'yyyy-MM-dd');
-      const dayTransactions = recentTransactions.filter(
-        (transaction) => format(new Date(transaction.date), 'yyyy-MM-dd') === dayKey,
-      );
-
-      runningBalance += dayTransactions.reduce((total, transaction) => {
-        if (transaction.type === 'income') return total + transaction.amount;
-        if (transaction.type === 'expense') return total - transaction.amount;
-        return total;
-      }, 0);
+    recentTransactions.forEach((transaction) => {
+      runningBalance += (() => {
+        if (transaction.type === 'income') return transaction.amount;
+        if (transaction.type === 'expense') return -transaction.amount;
+        return 0;
+      })();
 
       balanceHistory.push({
-        date: format(cursor, 'dd MMM'),
+        date: format(new Date(transaction.date), 'dd MMM'),
         balance: runningBalance,
       });
-
-      cursor = addDays(cursor, 1);
-    }
+    });
 
     const monthlyCashFlowMap = new Map<string, { month: string; income: number; expenses: number; savings: number }>();
     [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).forEach((transaction) => {

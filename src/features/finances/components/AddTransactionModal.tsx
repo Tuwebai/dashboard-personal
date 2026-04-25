@@ -22,6 +22,7 @@ const buildInitialTransactionState = (accountId = '') => ({
   type: 'expense' as 'income' | 'expense',
   category: 'Other',
   accountId,
+  date: new Date().toISOString().split('T')[0],
 });
 
 const normalizeTransactionType = (type: Transaction['type']): 'income' | 'expense' =>
@@ -35,6 +36,7 @@ const buildTransactionState = (transaction: Transaction | null | undefined, acco
         type: normalizeTransactionType(transaction.type),
         category: transaction.category,
         accountId: transaction.accountId,
+        date: transaction.date,
       }
     : buildInitialTransactionState(accountId);
 
@@ -99,9 +101,10 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
       description: newTx.description,
       amount,
       type: newTx.type,
-      category: newTx.category,
-      accountId: newTx.accountId,
-    };
+        category: newTx.category,
+        accountId: newTx.accountId,
+        date: newTx.date,
+      };
 
     if (transaction) {
       updateTransaction(transaction.id, payload);
@@ -109,7 +112,6 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
     } else {
       addTransaction({
         ...payload,
-        date: new Date().toISOString().split('T')[0],
         tags: [],
         isRecurring: false,
       });
@@ -167,6 +169,13 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
             />
           </div>
         </div>
+
+        <Input
+          label={t('finances.dateLabel')}
+          type="date"
+          value={newTx.date}
+          onChange={e => setNewTx({ ...newTx, date: e.target.value })}
+        />
 
         <div className="pt-4">
             <Button variant="primary" className="w-full h-11" onClick={handleAdd}>
