@@ -8,12 +8,16 @@ const PRIORITY_ORDER = ['critical', 'high', 'medium', 'low'] as const;
 export function useDashboardTaskStats(tasks: Task[]) {
   return useMemo(() => {
     const today = format(new Date(), 'yyyy-MM-dd');
-    const tasksToday = tasks.filter((task) => task.dueDate === today);
-    const tasksCompletedToday = tasks.filter((task) => task.completedAt && isToday(parseISO(task.completedAt))).length;
-    const totalTasksToday = tasksToday.length;
+    const activeTasks = tasks.filter((task) => !task.isArchived);
+    const tasksToday = activeTasks.filter((task) => task.dueDate && isToday(parseISO(task.dueDate)));
+    const tasksCompletedToday = activeTasks.filter((task) => task.completedAt && isToday(parseISO(task.completedAt))).length;
+    const totalTasksToday =
+      tasksToday.length > 0
+        ? tasksToday.length
+        : activeTasks.filter((task) => task.status !== 'done').length;
     const tasksByPriority = PRIORITY_ORDER.map((priority) => ({
       name: priority.charAt(0).toUpperCase() + priority.slice(1),
-      value: tasks.filter((task) => task.priority === priority && task.status !== 'done').length,
+      value: activeTasks.filter((task) => task.priority === priority && task.status !== 'done').length,
       color: PRIORITY_COLORS[priority],
     })).filter((priority) => priority.value > 0);
 
