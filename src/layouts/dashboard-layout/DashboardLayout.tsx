@@ -18,17 +18,17 @@ export function DashboardLayout({ activeModule, onNavigate, children }: Dashboar
       </div>
       {mobileSidebarOpen ? (
         <div className="fixed inset-0 z-40 flex lg:hidden">
-          <button
-            type="button"
-            aria-label="Cerrar navegación"
-            className="flex-1 bg-black/60 backdrop-blur-sm"
-            onClick={() => setMobileSidebarOpen(false)}
-          />
           <Sidebar
             activeModule={activeModule}
             onNavigate={onNavigate}
             mobile
             onCloseMobile={() => setMobileSidebarOpen(false)}
+          />
+          <button
+            type="button"
+            aria-label="Cerrar navegación"
+            className="flex-1 bg-black/60 backdrop-blur-sm"
+            onClick={() => setMobileSidebarOpen(false)}
           />
         </div>
       ) : null}

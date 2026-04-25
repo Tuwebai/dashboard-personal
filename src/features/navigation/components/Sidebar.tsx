@@ -46,6 +46,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
   const { sidebarCollapsed, toggleSidebar, user, notifications } = useAppStore();
   const { t } = useI18n();
   const unreadCount = notifications.filter(n => !n.isRead).length;
+  const isCollapsed = mobile ? false : sidebarCollapsed;
 
   const navItems = NAV_ITEMS.map(item => ({
     ...item,
@@ -58,7 +59,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
         'flex flex-col h-full bg-[#0f0f0f] border-r border-[#1e1e1e] relative overflow-hidden',
         mobile && 'z-50 w-[240px] max-w-[85vw] shadow-2xl'
       )}
-      animate={{ width: mobile ? 240 : sidebarCollapsed ? 72 : 240 }}
+      animate={{ width: mobile ? 240 : isCollapsed ? 72 : 240 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
       {/* Subtle gradient top */}
@@ -67,13 +68,13 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
       {/* Logo */}
       <div className="flex items-center h-16 px-4 border-b border-[#1e1e1e] shrink-0 overflow-hidden">
-        <BrandLogo collapsed={sidebarCollapsed} className="transition-all duration-300" />
+        <BrandLogo collapsed={isCollapsed} className="transition-all duration-300" />
       </div>
 
       {/* User Profile */}
       <div className={cn(
         'flex items-center gap-3 px-4 py-4 border-b border-[#1e1e1e] shrink-0',
-        sidebarCollapsed && 'justify-center px-2'
+        isCollapsed && 'justify-center px-2'
       )}>
         <div className="relative shrink-0">
           <div className="w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-cyan-500 flex items-center justify-center text-sm font-bold text-white overflow-hidden shrink-0">
@@ -86,7 +87,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
           <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#0f0f0f] pulse-dot" />
         </div>
         <AnimatePresence>
-          {!sidebarCollapsed && (
+          {!isCollapsed && (
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -94,7 +95,6 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
               className="flex-1 min-w-0"
             >
               <p className="text-sm font-semibold text-white truncate">{user.name}</p>
-              <p className="text-xs text-white/40 truncate">{user.email}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -118,10 +118,10 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
                 isActive
                   ? 'bg-violet-500/15 text-violet-400'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/5',
-                sidebarCollapsed && 'justify-center px-0'
+                isCollapsed && 'justify-center px-0'
               )}
               aria-label={t(item.labelKey)}
-              title={sidebarCollapsed ? t(item.labelKey) : undefined}
+              title={isCollapsed ? t(item.labelKey) : undefined}
             >
               {isActive && (
                 <motion.div
@@ -132,14 +132,14 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
               )}
               <div className="relative">
                 <Icon size={18} className="shrink-0" />
-                {item.badge && !sidebarCollapsed && (
+                {item.badge && !isCollapsed && (
                   <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-violet-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center">
                     {item.badge > 9 ? '9+' : item.badge}
                   </span>
                 )}
               </div>
               <AnimatePresence>
-                {!sidebarCollapsed && (
+                {!isCollapsed && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -177,14 +177,14 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
                 isActive
                   ? 'bg-violet-500/15 text-violet-400'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/5',
-                sidebarCollapsed && 'justify-center px-0'
+                isCollapsed && 'justify-center px-0'
               )}
               aria-label={t(item.labelKey)}
-              title={sidebarCollapsed ? t(item.labelKey) : undefined}
+              title={isCollapsed ? t(item.labelKey) : undefined}
             >
               <Icon size={18} className="shrink-0" />
               <AnimatePresence>
-                {!sidebarCollapsed && (
+                {!isCollapsed && (
                   <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -202,14 +202,14 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
         <button
           className={cn(
             'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 cursor-pointer',
-            sidebarCollapsed && 'justify-center px-0'
+            isCollapsed && 'justify-center px-0'
           )}
           aria-label={t('common.help')}
-          title={sidebarCollapsed ? t('nav.help') : undefined}
+          title={isCollapsed ? t('nav.help') : undefined}
         >
           <HelpCircle size={18} className="shrink-0" />
           <AnimatePresence>
-            {!sidebarCollapsed && (
+            {!isCollapsed && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -225,14 +225,14 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
         <button
           className={cn(
             'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-red-400/80 hover:bg-red-500/5 transition-all duration-200 cursor-pointer',
-            sidebarCollapsed && 'justify-center px-0'
+            isCollapsed && 'justify-center px-0'
           )}
           aria-label={t('nav.signOut')}
-          title={sidebarCollapsed ? t('nav.signOut') : undefined}
+          title={isCollapsed ? t('nav.signOut') : undefined}
         >
           <LogOut size={18} className="shrink-0" />
           <AnimatePresence>
-            {!sidebarCollapsed && (
+            {!isCollapsed && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -251,20 +251,20 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
             onClick={toggleSidebar}
             className={cn(
               'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 mt-2 cursor-pointer',
-              sidebarCollapsed && 'justify-center px-0'
+              isCollapsed && 'justify-center px-0'
             )}
-            aria-label={sidebarCollapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
+            aria-label={isCollapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
           >
-            {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             <AnimatePresence>
-              {!sidebarCollapsed && (
+              {!isCollapsed && (
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="text-sm font-medium whitespace-nowrap"
                 >
-                  {sidebarCollapsed ? t('nav.expand') : t('nav.collapse')}
+                  {isCollapsed ? t('nav.expand') : t('nav.collapse')}
                 </motion.span>
               )}
             </AnimatePresence>
