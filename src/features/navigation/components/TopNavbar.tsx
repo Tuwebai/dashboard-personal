@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BrandLogo } from '../../../shared/ui/BrandLogo';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useShallow } from 'zustand/react/shallow';
 import {
   Search, Bell, Sun, Moon, ChevronRight, Menu,
   Check, AlertCircle, TrendingUp, Calendar, Pause, Play, CheckCircle2
@@ -42,7 +43,22 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
     pauseFocusSession,
     resumeFocusSession,
     finishFocusSession,
-  } = useAppStore();
+  } = useAppStore(
+    useShallow((state) => ({
+      theme: state.theme,
+      toggleTheme: state.toggleTheme,
+      notifications: state.notifications,
+      markNotificationRead: state.markNotificationRead,
+      markAllNotificationsRead: state.markAllNotificationsRead,
+      clearNotifications: state.clearNotifications,
+      setCommandPaletteOpen: state.setCommandPaletteOpen,
+      focusSessions: state.focusSessions,
+      selectedFocusSessionId: state.selectedFocusSessionId,
+      pauseFocusSession: state.pauseFocusSession,
+      resumeFocusSession: state.resumeFocusSession,
+      finishFocusSession: state.finishFocusSession,
+    }))
+  );
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
   const activeFocusSession = useMemo(

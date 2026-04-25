@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useShallow } from 'zustand/react/shallow';
 import {
   LayoutDashboard, Target, CalendarRange, CheckSquare, Zap, RotateCcw,
   DollarSign, Calendar, FileText, BookOpenText, Settings,
@@ -43,7 +44,15 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobile }: SidebarProps) {
-  const { sidebarCollapsed, toggleSidebar, user, notifications, signOut } = useAppStore();
+  const { sidebarCollapsed, toggleSidebar, user, notifications, signOut } = useAppStore(
+    useShallow((state) => ({
+      sidebarCollapsed: state.sidebarCollapsed,
+      toggleSidebar: state.toggleSidebar,
+      user: state.user,
+      notifications: state.notifications,
+      signOut: state.signOut,
+    }))
+  );
   const { t } = useI18n();
   const unreadCount = notifications.filter(n => !n.isRead).length;
   const isCollapsed = mobile ? false : sidebarCollapsed;
