@@ -64,6 +64,7 @@ export function useFirebasePersistenceSync() {
     let remoteHydrated = false;
     let currentUid: string | null = null;
     let pendingLocalUpdatedAt = '';
+    let hasPendingLocalChange = false;
     let syncSessionToken = 0;
     let storeUnsubscribe: () => void = () => undefined;
     let remoteUnsubscribe: (() => void) | null = null;
@@ -134,6 +135,7 @@ export function useFirebasePersistenceSync() {
           useAppStore.setState((state) => mergePersistedWorkspace(state, initialState));
           setLastSyncAt(uid, initialUpdatedAt);
           pendingLocalUpdatedAt = '';
+          hasPendingLocalChange = false;
           setAuthState({
             authStatus: 'authenticated',
             authProvider: useAppStore.getState().authProvider,
@@ -152,6 +154,7 @@ export function useFirebasePersistenceSync() {
               useAppStore.setState((currentState) => mergePersistedWorkspace(currentState, data.state));
               setLastSyncAt(uid, remoteUpdatedAt);
               pendingLocalUpdatedAt = '';
+              hasPendingLocalChange = false;
             }
           }
         }
@@ -200,6 +203,10 @@ export function useFirebasePersistenceSync() {
         const remoteUpdatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : '';
         const localUpdatedAt = getLastSyncAt(uid);
 
+        if (hasPendingLocalChange) {
+          return;
+        }
+
         if (shouldIgnorePendingRemoteEcho(remoteUpdatedAt, pendingLocalUpdatedAt)) {
           return;
         }
@@ -211,6 +218,7 @@ export function useFirebasePersistenceSync() {
         useAppStore.setState((state) => mergePersistedWorkspace(state, data.state));
         setLastSyncAt(uid, remoteUpdatedAt);
         pendingLocalUpdatedAt = '';
+        hasPendingLocalChange = false;
         dispatchSyncStatus('synced', remoteUpdatedAt);
       });
 
@@ -224,6 +232,7 @@ export function useFirebasePersistenceSync() {
           window.clearTimeout(syncTimeout);
         }
 
+        hasPendingLocalChange = true;
         syncTimeout = window.setTimeout(() => {
           if (isStaleSession()) {
             return;
@@ -244,10 +253,12 @@ export function useFirebasePersistenceSync() {
             .then(() => {
               setLastSyncAt(uid, updatedAt);
               pendingLocalUpdatedAt = '';
+              hasPendingLocalChange = false;
               dispatchSyncStatus('synced', updatedAt);
             })
             .catch(() => {
               pendingLocalUpdatedAt = '';
+              hasPendingLocalChange = false;
               dispatchSyncStatus('error', getLastSyncAt(uid));
               pushSyncErrorNotification();
             });
@@ -265,6 +276,7 @@ export function useFirebasePersistenceSync() {
         currentUid = null;
         remoteHydrated = false;
         pendingLocalUpdatedAt = '';
+        hasPendingLocalChange = false;
         syncSessionToken += 1;
         teardownStoreSubscription();
         teardownRemoteSubscription();
@@ -276,6 +288,7 @@ export function useFirebasePersistenceSync() {
       currentUid = user.uid;
       remoteHydrated = false;
       pendingLocalUpdatedAt = '';
+      hasPendingLocalChange = false;
       syncSessionToken += 1;
       teardownStoreSubscription();
       teardownRemoteSubscription();
