@@ -7,7 +7,7 @@ import { useDashboardFinanceStats } from './useDashboardFinanceStats';
 import { useDashboardActivityStats } from './useDashboardActivityStats';
 
 export function useDashboardStats() {
-  const { tasks, habits, habitLogs, accounts, transactions, notes, events, activities, setActiveModule, setSelectedTask, logHabit } = useAppStore(
+  const { tasks, habits, habitLogs, accounts, transactions, notes, events, personalGoals, journalEntries, focusSessions, setActiveModule, setSelectedTask, logHabit } = useAppStore(
     useShallow((state) => ({
       tasks: state.tasks,
       habits: state.habits,
@@ -16,7 +16,9 @@ export function useDashboardStats() {
       transactions: state.transactions,
       notes: state.notes,
       events: state.events,
-      activities: state.activities,
+      personalGoals: state.personalGoals,
+      journalEntries: state.journalEntries,
+      focusSessions: state.focusSessions,
       setActiveModule: state.setActiveModule,
       setSelectedTask: state.setSelectedTask,
       logHabit: state.logHabit,
@@ -26,7 +28,17 @@ export function useDashboardStats() {
   const taskStats = useDashboardTaskStats(tasks);
   const habitStats = useDashboardHabitStats(habits, habitLogs);
   const financeStats = useDashboardFinanceStats(accounts, transactions);
-  const activityStats = useDashboardActivityStats(notes, events, activities);
+  const activityStats = useDashboardActivityStats(
+    tasks,
+    habits,
+    habitLogs,
+    transactions,
+    notes,
+    events,
+    personalGoals,
+    journalEntries,
+    focusSessions,
+  );
 
   const weeklyScore = useMemo(
     () =>

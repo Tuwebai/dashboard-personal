@@ -27,7 +27,7 @@ export function Dashboard() {
     notesThisWeek,
     weeklyScore,
     upcomingEvents,
-    activities,
+    recentActivity,
     setActiveModule,
     setSelectedTask,
     logHabit,
@@ -84,7 +84,7 @@ export function Dashboard() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ActivityWidget activities={activities} />
+        <ActivityWidget activities={recentActivity} />
 
         <AchievementsWidget
           maxStreak={maxStreak}

@@ -23,7 +23,7 @@ export const ActivityWidget = memo(function ActivityWidget({ activities }: Activ
       <h3 className="font-semibold text-white text-sm mb-4">{t('dashboard.recentActivity')}</h3>
       {activities.length > 0 ? (
         <div className="space-y-3">
-          {activities.slice(0, 6).map((activity, i) => (
+          {activities.slice(0, 10).map((activity, i) => (
             <motion.div
               key={activity.id}
               initial={{ opacity: 0, x: -10 }}
