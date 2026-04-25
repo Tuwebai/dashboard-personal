@@ -15,7 +15,8 @@ export default function Habits() {
   const [newHabit, setNewHabit] = useState({
     name: '',
     category: 'health' as HabitCategory,
-    icon: '✨'
+    icon: '✨',
+    color: '#7c3aed',
   });
 
   const { addHabit } = useAppStore();
@@ -25,14 +26,13 @@ export default function Habits() {
     if (!newHabit.name) return;
     addHabit({
       ...newHabit,
-      color: '#7c3aed',
       frequency: 'daily',
       startDate: new Date().toISOString().split('T')[0],
       isBoolean: true,
       isArchived: false,
     });
     toast.success(t('habits.created'));
-    setNewHabit({ name: '', category: 'health', icon: '✨' });
+    setNewHabit({ name: '', category: 'health', icon: '✨', color: '#7c3aed' });
     setIsModalOpen(false);
   };
 
@@ -83,7 +83,12 @@ export default function Habits() {
       >
         <div className="space-y-6">
           <div className="space-y-3 p-6 bg-bg-card rounded-xl border border-border">
-            <div className="text-4xl text-center mb-4 transition-transform hover:scale-110 duration-200">{newHabit.icon}</div>
+            <div
+              className="text-4xl text-center mb-4 transition-transform hover:scale-110 duration-200"
+              style={{ color: newHabit.color }}
+            >
+              {newHabit.icon}
+            </div>
             <div className="flex justify-center gap-2">
               {['✨', '💧', '🥗', '🧘', '📖', '💻'].map(emoji => (
                 <button 
@@ -97,6 +102,19 @@ export default function Habits() {
                 >
                   {emoji}
                 </button>
+              ))}
+            </div>
+            <div className="mt-4 flex justify-center gap-2">
+              {['#7c3aed', '#06b6d4', '#22c55e', '#f59e0b', '#ef4444', '#ec4899'].map(color => (
+                <button
+                  key={color}
+                  onClick={() => setNewHabit({ ...newHabit, color })}
+                  className={`h-8 w-8 rounded-full border-2 transition-all duration-200 ${
+                    newHabit.color === color ? 'scale-110 border-white' : 'border-white/10'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  type="button"
+                />
               ))}
             </div>
           </div>
