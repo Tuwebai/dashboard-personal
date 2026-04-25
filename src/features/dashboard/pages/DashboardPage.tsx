@@ -3,7 +3,6 @@ import { useDashboardStats } from '../hooks/useDashboardStats';
 import { DashboardHeader } from '../components/DashboardHeader';
 import { KPIGrid } from '../components/KPIGrid';
 import { HabitsWidget } from '../components/HabitsWidget';
-import { TaskPriorityWidget } from '../components/TaskPriorityWidget';
 import { UpcomingEventsWidget } from '../components/UpcomingEventsWidget';
 import { FinanceWidgets } from '../components/FinanceWidgets';
 import { ActivityWidget } from '../components/ActivityWidget';
@@ -24,11 +23,9 @@ export function Dashboard() {
     isTrendPositive,
     TrendIcon,
     balanceHistory,
-    cashFlowData,
     notesThisWeek,
     weeklyScore,
     upcomingEvents,
-    tasksByPriority,
     activities,
     setActiveModule,
     logHabit,
@@ -58,7 +55,7 @@ export function Dashboard() {
         setActiveModule={setActiveModule}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <HabitsWidget
           habitCompletionRate={habitCompletionRate}
           completedHabits={completedHabits}
@@ -66,11 +63,6 @@ export function Dashboard() {
           today={today}
           setActiveModule={setActiveModule}
           logHabit={logHabit}
-        />
-
-        <TaskPriorityWidget
-          tasksByPriority={tasksByPriority}
-          setActiveModule={setActiveModule}
         />
 
         <UpcomingEventsWidget
@@ -84,8 +76,6 @@ export function Dashboard() {
         netWorthTrend={netWorthTrend}
         TrendIcon={TrendIcon}
         balanceHistory={balanceHistory}
-        cashFlowData={cashFlowData}
-        setActiveModule={setActiveModule}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
