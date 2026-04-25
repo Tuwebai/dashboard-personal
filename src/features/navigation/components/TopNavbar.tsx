@@ -11,21 +11,6 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { formatDistanceToNow } from 'date-fns';
 import type { NotificationType } from '../../../shared/types';
 
-const MODULE_LABELS: Record<string, string> = {
-  dashboard: 'Overview',
-  goals: 'Goals',
-  'weekly-planning': 'Weekly Planning',
-  journaling: 'Journaling',
-  focus: 'Focus',
-  tasks: 'Tasks',
-  habits: 'Habits',
-  routines: 'Routines',
-  finances: 'Finances',
-  calendar: 'Calendar',
-  notes: 'Notes',
-  settings: 'Settings',
-};
-
 const NOTIF_ICONS: Record<NotificationType, React.ComponentType<{ size?: number }>> = {
   task: Check,
   habit: AlertCircle,
@@ -98,6 +83,8 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
     return `${minutes}:${seconds}`;
   }, [activeFocusSession, now]);
 
+  const moduleLabelKey = activeModule === 'dashboard' ? 'nav.overview' : activeModule === 'weekly-planning' ? 'nav.weeklyPlanning' : `nav.${activeModule}`;
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-bg-primary/80 px-4 backdrop-blur-xl md:px-6">
       <button
@@ -112,7 +99,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       <div className="flex items-center gap-1.5 flex-1 min-w-0">
         <BrandLogo collapsed className="h-5 w-auto opacity-50 hover:opacity-100 transition-opacity cursor-pointer" />
         <ChevronRight size={14} className="text-white/20" />
-        <span className="text-white/80 text-sm font-medium">{MODULE_LABELS[activeModule] || activeModule}</span>
+        <span className="text-white/80 text-sm font-medium">{t(moduleLabelKey)}</span>
       </div>
 
       {activeFocusSession && remainingTime ? (

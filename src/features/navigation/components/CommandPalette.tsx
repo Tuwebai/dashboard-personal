@@ -33,7 +33,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
   const allCommands: CommandOption[] = [
     {
       id: 'nav_dashboard',
-      title: 'Go to Overview',
+      title: t('nav.overview'),
       icon: LayoutDashboard,
       category: 'navigation',
       shortcut: 'G D',
@@ -41,7 +41,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     },
     {
       id: 'nav_tasks',
-      title: 'Go to Tasks',
+      title: t('nav.tasks'),
       icon: CheckSquare,
       category: 'navigation',
       shortcut: 'G T',
@@ -49,7 +49,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     },
     {
       id: 'nav_habits',
-      title: 'Go to Habits',
+      title: t('nav.habits'),
       icon: Zap,
       category: 'navigation',
       shortcut: 'G H',
@@ -57,7 +57,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     },
     {
       id: 'nav_routines',
-      title: 'Go to Routines',
+      title: t('nav.routines'),
       icon: RotateCcw,
       category: 'navigation',
       shortcut: 'G R',
@@ -65,7 +65,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     },
     {
       id: 'nav_finances',
-      title: 'Go to Finances',
+      title: t('nav.finances'),
       icon: DollarSign,
       category: 'navigation',
       shortcut: 'G F',
@@ -73,7 +73,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     },
     {
       id: 'nav_calendar',
-      title: 'Go to Calendar',
+      title: t('nav.calendar'),
       icon: Calendar,
       category: 'navigation',
       shortcut: 'G C',
@@ -81,7 +81,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     },
     {
       id: 'nav_notes',
-      title: 'Go to Notes',
+      title: t('nav.notes'),
       icon: FileText,
       category: 'navigation',
       shortcut: 'G N',
@@ -89,7 +89,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     },
     {
       id: 'nav_settings',
-      title: 'Go to Settings',
+      title: t('nav.settings'),
       icon: Settings,
       category: 'navigation',
       action: () => { onNavigate('settings'); setCommandPaletteOpen(false); },

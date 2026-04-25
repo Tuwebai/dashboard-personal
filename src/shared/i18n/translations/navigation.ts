@@ -4,6 +4,7 @@ export const navigationTranslations = {
   en: {
     'nav.overview': 'Overview',
     'nav.goals': 'Goals',
+    'nav.weeklyPlanning': 'Weekly Planning',
     'nav.journaling': 'Journaling',
     'nav.focus': 'Focus',
     'nav.tasks': 'Tasks',
@@ -22,6 +23,7 @@ export const navigationTranslations = {
   es: {
     'nav.overview': 'Inicio',
     'nav.goals': 'Objetivos',
+    'nav.weeklyPlanning': 'Planificación semanal',
     'nav.journaling': 'Diario',
     'nav.focus': 'Foco',
     'nav.tasks': 'Tareas',
