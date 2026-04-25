@@ -3,6 +3,7 @@ import { format, isToday, parseISO } from 'date-fns';
 import { useAppStore } from '../../../stores/useAppStore';
 import { getHabitStats, PRIORITY_COLORS } from '../../../shared/lib/helpers';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { getDerivedAccounts } from '../../finances/lib/accounts';
 
 const PRIORITY_ORDER = ['critical', 'high', 'medium', 'low'] as const;
 
@@ -30,7 +31,8 @@ export function useDashboardStats() {
     const longestEver = Math.max(...allStats.map(s => s.longestStreak), 0);
 
     // Finances
-    const netWorth = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+    const derivedAccounts = getDerivedAccounts(accounts, transactions);
+    const netWorth = derivedAccounts.reduce((sum, account) => sum + account.derivedBalance, 0);
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -52,6 +54,50 @@ export function useDashboardStats() {
 
     const isTrendPositive = netWorthTrend >= 0;
     const TrendIcon = isTrendPositive ? TrendingUp : TrendingDown;
+
+    const sortedTransactions = [...transactions].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+    const balanceHistory = sortedTransactions.reduce<{ date: string; balance: number }[]>(
+      (history, transaction) => {
+        const previousBalance = history[history.length - 1]?.balance ?? 0;
+        const nextBalance =
+          transaction.type === 'income'
+            ? previousBalance + transaction.amount
+            : transaction.type === 'expense'
+              ? previousBalance - transaction.amount
+              : previousBalance;
+
+        history.push({
+          date: format(new Date(transaction.date), 'dd MMM'),
+          balance: nextBalance,
+        });
+
+        return history;
+      },
+      [],
+    );
+
+    const monthlyCashFlowMap = new Map<string, { month: string; income: number; expenses: number; savings: number }>();
+    sortedTransactions.forEach((transaction) => {
+      const monthKey = format(new Date(transaction.date), 'MMM');
+      const current = monthlyCashFlowMap.get(monthKey) ?? {
+        month: monthKey,
+        income: 0,
+        expenses: 0,
+        savings: 0,
+      };
+
+      if (transaction.type === 'income') {
+        current.income += transaction.amount;
+      } else if (transaction.type === 'expense') {
+        current.expenses += transaction.amount;
+      }
+
+      current.savings = current.income - current.expenses;
+      monthlyCashFlowMap.set(monthKey, current);
+    });
+    const cashFlowData = [...monthlyCashFlowMap.values()];
 
     // Notes
     const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
@@ -91,6 +137,8 @@ export function useDashboardStats() {
       isTrendPositive,
       TrendIcon,
       hasFinancialData,
+      balanceHistory,
+      cashFlowData,
       notesThisWeek,
       weeklyScore,
       upcomingEvents,

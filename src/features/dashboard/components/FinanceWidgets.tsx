@@ -5,16 +5,18 @@ import { cn } from '../../../shared/lib/cn';
 import { formatCurrency } from '../../../shared/lib/helpers';
 import { EmptyState } from '../../../shared/ui/EmptyState';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import type { CashFlowEntry } from '../../../shared/types';
 
 interface FinanceWidgetsProps {
   isTrendPositive: boolean;
   netWorthTrend: number;
   TrendIcon: LucideIcon;
-  hasFinancialData: boolean;
+  balanceHistory: { date: string; balance: number }[];
+  cashFlowData: CashFlowEntry[];
   setActiveModule: (module: string) => void;
 }
 
-export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, hasFinancialData, setActiveModule }: FinanceWidgetsProps) {
+export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, balanceHistory, cashFlowData, setActiveModule }: FinanceWidgetsProps) {
   const { t } = useI18n();
   const itemVariants = {
     hidden: { opacity: 0, y: 16 },
@@ -37,9 +39,9 @@ export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, hasF
             </span>
           </div>
         </div>
-        {hasFinancialData ? (
+        {balanceHistory.length > 0 ? (
           <ResponsiveContainer width="100%" height={120}>
-            <AreaChart data={[]}>
+            <AreaChart data={balanceHistory}>
               <defs>
                 <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.3} />
@@ -79,9 +81,9 @@ export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, hasF
             <ArrowRight size={16} />
           </button>
         </div>
-        {hasFinancialData ? (
+        {cashFlowData.length > 0 ? (
           <ResponsiveContainer width="100%" height={120}>
-            <AreaChart data={[]}>
+            <AreaChart data={cashFlowData}>
               <defs>
                 <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />

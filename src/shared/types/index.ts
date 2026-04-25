@@ -358,6 +358,7 @@ export interface DashboardStats {
   todayHabits: { habit: Habit; completed: boolean }[];
   tasksByPriority: { priority: TaskPriority; count: number }[];
   balanceHistory: { date: string; balance: number }[];
+  cashFlowData: CashFlowEntry[];
 }
 
 // ═══════════════════════════════════════════

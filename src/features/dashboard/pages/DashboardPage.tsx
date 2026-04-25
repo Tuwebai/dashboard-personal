@@ -23,7 +23,8 @@ export function Dashboard() {
     netWorthTrend,
     isTrendPositive,
     TrendIcon,
-    hasFinancialData,
+    balanceHistory,
+    cashFlowData,
     notesThisWeek,
     weeklyScore,
     upcomingEvents,
@@ -82,7 +83,8 @@ export function Dashboard() {
         isTrendPositive={isTrendPositive}
         netWorthTrend={netWorthTrend}
         TrendIcon={TrendIcon}
-        hasFinancialData={hasFinancialData}
+        balanceHistory={balanceHistory}
+        cashFlowData={cashFlowData}
         setActiveModule={setActiveModule}
       />
 
