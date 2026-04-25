@@ -2,20 +2,13 @@ import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { useAppStore } from '../../../stores/useAppStore';
 import { STORE_STORAGE_KEY } from '../../../core/persistence/storage';
+import {
+  pickPersistedWorkspace,
+  sanitizeImportedSnapshot,
+} from '../../../core/persistence/workspace';
 import { useI18n } from '../../../shared/i18n/useI18n';
+
 const MAX_IMPORT_SIZE_BYTES = 5 * 1024 * 1024;
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function isValidImportData(value: unknown): value is Record<string, unknown> {
-  if (!isPlainObject(value)) return false;
-
-  const { settings, tasks } = value;
-
-  return isPlainObject(settings) && Array.isArray(tasks);
-}
 
 export function useDataPortability() {
   const { t } = useI18n();
@@ -29,7 +22,7 @@ export function useDataPortability() {
   const exportData = () => {
     setIsExporting(true);
     try {
-      const data = JSON.stringify(store, null, 2);
+      const data = JSON.stringify(pickPersistedWorkspace(store), null, 2);
       const blob = new Blob([data], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -71,16 +64,16 @@ export function useDataPortability() {
     reader.onload = (event) => {
       try {
         const raw = event.target?.result as string;
-        const parsedData = JSON.parse(raw);
-        
-        if (isValidImportData(parsedData)) {
-           useAppStore.setState(parsedData);
-           setImportStatus('success');
-           toast.success(t('settings.importSuccess'));
-           setTimeout(() => window.location.reload(), 1500);
-        } else {
-           throw new Error('Invalid schema');
+        const parsedData = sanitizeImportedSnapshot(JSON.parse(raw));
+
+        if (!parsedData) {
+          throw new Error('Invalid schema');
         }
+
+        useAppStore.setState(parsedData);
+        setImportStatus('success');
+        toast.success(t('settings.importSuccess'));
+        setTimeout(() => window.location.reload(), 1500);
       } catch {
         setImportStatus('error');
         toast.error(t('settings.importInvalid'));

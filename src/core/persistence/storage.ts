@@ -1,7 +1,7 @@
 import { createJSONStorage, type PersistStorage } from 'zustand/middleware';
-import type { AppStore } from '../../stores/types';
+import type { PersistedWorkspaceSnapshot } from './workspace';
 
-export type PersistedAppStore = Partial<AppStore>;
+export type PersistedAppStore = PersistedWorkspaceSnapshot;
 
 const STORE_STORAGE_KEY = 'nexus-crm-store';
 
