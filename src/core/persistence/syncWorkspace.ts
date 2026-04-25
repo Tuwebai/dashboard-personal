@@ -14,6 +14,17 @@ export function shouldApplyRemoteState(remoteUpdatedAt: string, localUpdatedAt: 
   return (Number.isNaN(remoteTimestamp) ? 0 : remoteTimestamp) > (Number.isNaN(localTimestamp) ? 0 : localTimestamp);
 }
 
+export function shouldIgnorePendingRemoteEcho(remoteUpdatedAt: string, pendingLocalUpdatedAt: string) {
+  if (!pendingLocalUpdatedAt) {
+    return false;
+  }
+
+  const remoteTimestamp = Date.parse(remoteUpdatedAt || '');
+  const pendingTimestamp = Date.parse(pendingLocalUpdatedAt || '');
+
+  return (Number.isNaN(remoteTimestamp) ? 0 : remoteTimestamp) <= (Number.isNaN(pendingTimestamp) ? 0 : pendingTimestamp);
+}
+
 export function createScopedInitialSnapshot(uid: string, email: string | null): PersistedWorkspaceSnapshot {
   const snapshot = getDefaultPersistedWorkspaceSnapshot();
 

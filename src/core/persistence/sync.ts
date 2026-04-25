@@ -16,6 +16,7 @@ import {
 } from './syncMetadata';
 import {
   createScopedInitialSnapshot,
+  shouldIgnorePendingRemoteEcho,
   isRemoteStatePayload,
   isSnapshotOwnedByUser,
   shouldApplyRemoteState,
@@ -62,6 +63,7 @@ export function useFirebasePersistenceSync() {
     let syncTimeout: number | null = null;
     let remoteHydrated = false;
     let currentUid: string | null = null;
+    let pendingLocalUpdatedAt = '';
     let storeUnsubscribe: () => void = () => undefined;
     let remoteUnsubscribe: (() => void) | null = null;
 
@@ -121,6 +123,7 @@ export function useFirebasePersistenceSync() {
 
           useAppStore.setState((state) => mergePersistedWorkspace(state, initialState));
           setLastSyncAt(uid, initialUpdatedAt);
+          pendingLocalUpdatedAt = '';
           setAuthState({
             authStatus: 'authenticated',
             authProvider: useAppStore.getState().authProvider,
@@ -138,6 +141,7 @@ export function useFirebasePersistenceSync() {
             if (shouldApplyRemoteState(remoteUpdatedAt, localUpdatedAt)) {
               useAppStore.setState((currentState) => mergePersistedWorkspace(currentState, data.state));
               setLastSyncAt(uid, remoteUpdatedAt);
+              pendingLocalUpdatedAt = '';
             }
           }
         }
@@ -174,12 +178,17 @@ export function useFirebasePersistenceSync() {
         const remoteUpdatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : '';
         const localUpdatedAt = getLastSyncAt(uid);
 
+        if (shouldIgnorePendingRemoteEcho(remoteUpdatedAt, pendingLocalUpdatedAt)) {
+          return;
+        }
+
         if (!shouldApplyRemoteState(remoteUpdatedAt, localUpdatedAt)) {
           return;
         }
 
         useAppStore.setState((state) => mergePersistedWorkspace(state, data.state));
         setLastSyncAt(uid, remoteUpdatedAt);
+        pendingLocalUpdatedAt = '';
         dispatchSyncStatus('synced', remoteUpdatedAt);
       });
 
@@ -195,6 +204,7 @@ export function useFirebasePersistenceSync() {
 
         syncTimeout = window.setTimeout(() => {
           const updatedAt = new Date().toISOString();
+          pendingLocalUpdatedAt = updatedAt;
           dispatchSyncStatus('syncing', getLastSyncAt(uid));
 
           void setDoc(
@@ -207,9 +217,11 @@ export function useFirebasePersistenceSync() {
           )
             .then(() => {
               setLastSyncAt(uid, updatedAt);
+              pendingLocalUpdatedAt = '';
               dispatchSyncStatus('synced', updatedAt);
             })
             .catch(() => {
+              pendingLocalUpdatedAt = '';
               dispatchSyncStatus('error', getLastSyncAt(uid));
               pushSyncErrorNotification();
             });
@@ -226,6 +238,7 @@ export function useFirebasePersistenceSync() {
         const previousUid = currentUid;
         currentUid = null;
         remoteHydrated = false;
+        pendingLocalUpdatedAt = '';
         teardownStoreSubscription();
         teardownRemoteSubscription();
         clearLastSyncAt(previousUid);
@@ -235,6 +248,7 @@ export function useFirebasePersistenceSync() {
 
       currentUid = user.uid;
       remoteHydrated = false;
+      pendingLocalUpdatedAt = '';
       teardownStoreSubscription();
       teardownRemoteSubscription();
       void setupSync(user.uid, user.email);
