@@ -34,7 +34,7 @@ export function BudgetManagerSlideOver({ isOpen, onClose }: BudgetManagerSlideOv
   };
 
   return (
-    <SlideOver isOpen={isOpen} onClose={onClose} title={t('finances.manageBudgets')} width="w-96">
+    <SlideOver isOpen={isOpen} onClose={onClose} title={t('finances.manageBudgets')} width="w-full sm:w-96">
       <div className="space-y-6">
         <p className="text-sm text-text-secondary leading-relaxed">
           {t('finances.budgetManagerDescription')}

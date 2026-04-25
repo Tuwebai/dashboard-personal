@@ -47,7 +47,7 @@ export function TaskDetailSlideOver({
   const firstAvailablePrioritySlot = weeklyPriorityTaskIds.findIndex((taskId) => !taskId);
   const canPromoteToWeeklyPriority = firstAvailablePrioritySlot !== -1;
   return (
-    <SlideOver isOpen={task !== null} onClose={onClose} title="Task Details" width="w-96">
+    <SlideOver isOpen={task !== null} onClose={onClose} title="Task Details" width="w-full sm:w-96">
       {task ? (
         <div className="flex h-full flex-col">
           <div className="flex-1 space-y-5">

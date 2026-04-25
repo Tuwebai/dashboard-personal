@@ -27,7 +27,7 @@ export function EventDetailModal({ event, isOpen, onClose }: EventDetailModalPro
   };
 
   return (
-    <SlideOver isOpen={isOpen} onClose={onClose} title={t('calendar.details')} width="w-96">
+    <SlideOver isOpen={isOpen} onClose={onClose} title={t('calendar.details')} width="w-full sm:w-96">
       <div className="space-y-8">
         <div className="space-y-4">
           <div className="flex items-start gap-4">

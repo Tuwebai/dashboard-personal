@@ -44,7 +44,7 @@ export function FinancialAnalysisSlideOver({ isOpen, onClose }: FinancialAnalysi
   const topCategory = categoryEntries[0]?.[0] || 'expenses';
 
   return (
-    <SlideOver isOpen={isOpen} onClose={onClose} title={t('finances.analysis')} width="w-[450px]">
+    <SlideOver isOpen={isOpen} onClose={onClose} title={t('finances.analysis')} width="w-full sm:w-[450px]">
       <div className="space-y-8">
         <div className="p-6 bg-linear-to-br from-violet-600/20 to-cyan-600/20 border border-violet-500/20 rounded-3xl">
           <h4 className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-2">Projected Yearly Savings</h4>

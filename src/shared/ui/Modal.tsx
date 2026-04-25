@@ -98,13 +98,13 @@ interface SlideOverProps {
   width?: string;
 }
 
-export function SlideOver({ isOpen, onClose, title, children, width = 'w-96' }: SlideOverProps) {
+export function SlideOver({ isOpen, onClose, title, children, width = 'w-full sm:w-96' }: SlideOverProps) {
   useModalEscape(isOpen, onClose);
 
   const slideOverContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
+        <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
           <motion.div
             className="absolute inset-0 bg-black/50"
             initial={{ opacity: 0 }}
@@ -113,8 +113,8 @@ export function SlideOver({ isOpen, onClose, title, children, width = 'w-96' }: 
             onClick={onClose}
           />
           <motion.div
-            className={cn(
-              'relative bg-bg-card border-l border-border h-full flex flex-col overflow-hidden shadow-2xl',
+              className={cn(
+              'relative h-full max-w-full bg-bg-card border-l border-border flex flex-col overflow-hidden shadow-2xl',
               width
             )}
             initial={{ x: '100%' }}
