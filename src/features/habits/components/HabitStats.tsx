@@ -3,7 +3,7 @@ import { Zap, Target, Award, Calendar } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 
 export function HabitStats() {
-  const { habitLogs } = useAppStore();
+  const habitLogs = useAppStore((state) => state.habitLogs);
   
   // Calculate aggregate stats (in a real enterprise app, this might be a hook)
   const totalCompletions = habitLogs.filter(l => l.completed).length;

@@ -15,7 +15,7 @@ interface EventDetailModalProps {
 }
 
 export function EventDetailModal({ event, isOpen, onClose }: EventDetailModalProps) {
-  const { deleteEvent } = useAppStore();
+  const deleteEvent = useAppStore((state) => state.deleteEvent);
   const { t, lang } = useI18n();
 
   if (!event) return null;

@@ -7,7 +7,7 @@ interface HabitGridProps {
 }
 
 export function HabitGrid({ category }: HabitGridProps) {
-  const { habits } = useAppStore();
+  const habits = useAppStore((state) => state.habits);
   
   const filteredHabits = habits.filter(h => {
     if (category === 'all') return !h.isArchived;

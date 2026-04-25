@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Flame, Trash2, MoreVertical, Edit3, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useShallow } from 'zustand/react/shallow';
 import type { Habit } from '../../../shared/types';
 import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
@@ -16,7 +17,14 @@ interface HabitCardProps {
 
 export function HabitCard({ habit }: HabitCardProps) {
   const { t } = useI18n();
-  const { habitLogs, logHabit, deleteHabit, updateHabit } = useAppStore();
+  const { habitLogs, logHabit, deleteHabit, updateHabit } = useAppStore(
+    useShallow((state) => ({
+      habitLogs: state.habitLogs,
+      logHabit: state.logHabit,
+      deleteHabit: state.deleteHabit,
+      updateHabit: state.updateHabit,
+    }))
+  );
   const [showMenu, setShowMenu] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);

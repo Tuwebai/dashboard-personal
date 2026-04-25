@@ -1,10 +1,17 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { cn } from '../../../shared/lib/cn';
 
 export function NoteEditor() {
-  const { notes, selectedNoteId, updateNote } = useAppStore();
+  const { notes, selectedNoteId, updateNote } = useAppStore(
+    useShallow((state) => ({
+      notes: state.notes,
+      selectedNoteId: state.selectedNoteId,
+      updateNote: state.updateNote,
+    }))
+  );
   const { t } = useI18n();
   const editorRef = useRef<HTMLDivElement>(null);
   const [activeFormats, setActiveFormats] = useState<Record<string, boolean>>({});
