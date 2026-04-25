@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { cn } from '../lib/cn';
 import { useI18n } from '../i18n/useI18n';
+import { useModalEscape } from '../hooks/useModalEscape';
 
 interface ModalProps {
   isOpen: boolean;
@@ -17,20 +18,7 @@ interface ModalProps {
 export function Modal({ isOpen, onClose, title, children, size = 'md', className }: ModalProps) {
   const { t } = useI18n();
   const overlayRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      document.addEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, onClose]);
+  useModalEscape(isOpen, onClose);
 
   const sizeClasses = {
     sm: 'max-w-sm',
@@ -111,19 +99,7 @@ interface SlideOverProps {
 }
 
 export function SlideOver({ isOpen, onClose, title, children, width = 'w-96' }: SlideOverProps) {
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      document.addEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, onClose]);
+  useModalEscape(isOpen, onClose);
 
   const slideOverContent = (
     <AnimatePresence>
