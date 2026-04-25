@@ -85,13 +85,13 @@ export function AccountCard({ account, isSelected = false, onEdit, onDelete, onS
       </div>
 
       <div className="relative z-10 mt-4 flex gap-2">
-        <Button variant="ghost" size="sm" className="flex-1" onClick={(event) => handleAction(event, () => onEdit(account))} leftIcon={<Pencil size={14} />}>
+        <Button type="button" variant="ghost" size="sm" className="flex-1" onClick={(event) => handleAction(event, () => onEdit(account))} leftIcon={<Pencil size={14} />}>
           {t('common.edit')}
         </Button>
-        <Button variant={account.isDefault ? 'primary' : 'ghost'} size="sm" className="flex-1" onClick={(event) => handleAction(event, () => onSetDefault(account))} leftIcon={<Star size={14} />}>
+        <Button type="button" variant={account.isDefault ? 'primary' : 'ghost'} size="sm" className="flex-1" onClick={(event) => handleAction(event, () => onSetDefault(account))} leftIcon={<Star size={14} />}>
           {t('finances.defaultAccount')}
         </Button>
-        <Button variant="ghost" size="sm" className="text-rose-400 hover:bg-rose-500/10" onClick={(event) => handleAction(event, () => onDelete(account))} leftIcon={<Trash2 size={14} />}>
+        <Button type="button" variant="ghost" size="sm" className="text-rose-400 hover:bg-rose-500/10" onClick={(event) => handleAction(event, () => onDelete(account))} leftIcon={<Trash2 size={14} />}>
           {t('finances.deleteAccount')}
         </Button>
       </div>

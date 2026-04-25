@@ -235,7 +235,7 @@ export default function Finances() {
 
       {/* Modals & SlideOvers */}
       <AccountModal
-        key={editingAccount?.id ?? 'new-account'}
+        key={`${editingAccount?.id ?? 'new-account'}-${isAccountModalOpen ? 'open' : 'closed'}`}
         isOpen={isAccountModalOpen}
         onClose={handleCloseAccountModal}
         account={editingAccount}
