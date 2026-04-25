@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Pause, Play, TimerReset } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '../../../shared/ui/Button';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import type { FocusSession } from '../types';
@@ -88,19 +89,36 @@ export function FocusTimerCard({ session, onPause, onResume, onFinish }: FocusTi
       {session ? (
         <div className="mt-5 flex flex-wrap gap-3">
           {session.status === 'active' ? (
-            <Button onClick={() => onPause(session.id)} variant="secondary">
+            <Button
+              onClick={() => {
+                onPause(session.id);
+                toast.success(t('focus.paused'));
+              }}
+              variant="secondary"
+            >
               <Pause size={16} />
               {t('focus.timer.pause')}
             </Button>
           ) : null}
           {session.status === 'paused' ? (
-            <Button onClick={() => onResume(session.id)} variant="secondary">
+            <Button
+              onClick={() => {
+                onResume(session.id);
+                toast.success(t('focus.resumed'));
+              }}
+              variant="secondary"
+            >
               <Play size={16} />
               {t('focus.timer.resume')}
             </Button>
           ) : null}
           {(session.status === 'active' || session.status === 'paused') ? (
-            <Button onClick={() => onFinish(session.id)}>
+            <Button
+              onClick={() => {
+                onFinish(session.id);
+                toast.success(t('focus.finished'));
+              }}
+            >
               <CheckCircle2 size={16} />
               {t('focus.timer.finish')}
             </Button>
