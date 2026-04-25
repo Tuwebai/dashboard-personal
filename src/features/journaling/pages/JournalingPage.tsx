@@ -7,6 +7,7 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { JournalEntryComposer } from '../components/JournalEntryComposer';
 import { JournalEntryList } from '../components/JournalEntryList';
 import { JournalFilterBar } from '../components/JournalFilterBar';
+import type { JournalEntry } from '../types';
 
 const MOOD_OPTIONS = [
   { value: 'clear', labelKey: 'journaling.moodClear' },
@@ -27,9 +28,12 @@ export function JournalingPage() {
   const { t } = useI18n();
   const journalEntries = useAppStore((state) => state.journalEntries);
   const addJournalEntry = useAppStore((state) => state.addJournalEntry);
+  const updateJournalEntry = useAppStore((state) => state.updateJournalEntry);
+  const deleteJournalEntry = useAppStore((state) => state.deleteJournalEntry);
   const journalingContextDate = useAppStore((state) => state.journalingContextDate);
   const setJournalingContextDate = useAppStore((state) => state.setJournalingContextDate);
   const [selectedDate, setSelectedDate] = useState(journalingContextDate);
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mood, setMood] = useState('clear');
@@ -42,10 +46,20 @@ export function JournalingPage() {
     return journalEntries.filter((entry) => entry.createdAt.startsWith(selectedDate));
   }, [journalEntries, selectedDate]);
 
-  const handleCreateEntry = () => {
+  const resetForm = () => {
+    setEditingEntryId(null);
+    setTitle('');
+    setContent('');
+    setMood('clear');
+    setTags('');
+    setLinkedDate(journalingContextDate);
+    setLinkedArea('');
+  };
+
+  const handleSubmitEntry = () => {
     if (!content.trim()) return;
 
-    addJournalEntry({
+    const payload = {
       title: title.trim(),
       content: content.trim(),
       mood,
@@ -55,15 +69,35 @@ export function JournalingPage() {
         .filter(Boolean),
       linkedDate: linkedDate || undefined,
       linkedArea: linkedArea || undefined,
-    });
+    };
 
-    setTitle('');
-    setContent('');
-    setMood('clear');
-    setTags('');
-    setLinkedDate(journalingContextDate);
-    setLinkedArea('');
-    toast.success(t('journaling.created'));
+    if (editingEntryId) {
+      updateJournalEntry(editingEntryId, payload);
+      toast.success(t('journaling.updated'));
+    } else {
+      addJournalEntry(payload);
+      toast.success(t('journaling.created'));
+    }
+
+    resetForm();
+  };
+
+  const handleEditEntry = (entry: JournalEntry) => {
+    setEditingEntryId(entry.id);
+    setTitle(entry.title);
+    setContent(entry.content);
+    setMood(entry.mood);
+    setTags(entry.tags.join(', '));
+    setLinkedDate(entry.linkedDate ?? entry.createdAt.split('T')[0] ?? journalingContextDate);
+    setLinkedArea(entry.linkedArea ?? '');
+  };
+
+  const handleDeleteEntry = (id: string) => {
+    deleteJournalEntry(id);
+    if (editingEntryId === id) {
+      resetForm();
+    }
+    toast.success(t('journaling.deleted'));
   };
 
   return (
@@ -98,13 +132,14 @@ export function JournalingPage() {
             content={content}
             onTitleChange={setTitle}
             onContentChange={setContent}
-            onSubmit={handleCreateEntry}
+            onSubmit={handleSubmitEntry}
             titleLabel={t('journaling.entryTitle')}
             titlePlaceholder={t('journaling.entryTitlePlaceholder')}
             contentLabel={t('journaling.entryContent')}
             contentPlaceholder={t('journaling.entryContentPlaceholder')}
-            actionLabel={t('journaling.createEntry')}
+            actionLabel={editingEntryId ? t('journaling.saveEntry') : t('journaling.createEntry')}
             helper={t('journaling.createHelper')}
+            modeLabel={editingEntryId ? t('journaling.editHelper') : undefined}
           />
 
           <section className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6 shadow-2xl shadow-black/20 md:grid-cols-2">
@@ -144,7 +179,12 @@ export function JournalingPage() {
           </section>
         </div>
 
-        <JournalEntryList entries={filteredEntries} emptyMessage={t('journaling.emptyFiltered')} />
+        <JournalEntryList
+          entries={filteredEntries}
+          emptyMessage={t('journaling.emptyFiltered')}
+          onEdit={handleEditEntry}
+          onDelete={handleDeleteEntry}
+        />
       </div>
     </div>
   );

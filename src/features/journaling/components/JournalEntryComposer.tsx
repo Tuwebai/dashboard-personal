@@ -14,6 +14,7 @@ interface JournalEntryComposerProps {
   contentPlaceholder: string;
   actionLabel: string;
   helper: string;
+  modeLabel?: string;
 }
 
 export function JournalEntryComposer(props: JournalEntryComposerProps) {
@@ -29,6 +30,7 @@ export function JournalEntryComposer(props: JournalEntryComposerProps) {
     contentPlaceholder,
     actionLabel,
     helper,
+    modeLabel,
   } = props;
 
   return (
@@ -39,7 +41,7 @@ export function JournalEntryComposer(props: JournalEntryComposerProps) {
         </div>
         <div>
           <h2 className="text-sm font-semibold text-white">{actionLabel}</h2>
-          <p className="text-xs text-white/35">{helper}</p>
+          <p className="text-xs text-white/35">{modeLabel ?? helper}</p>
         </div>
       </div>
 

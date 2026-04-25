@@ -1,14 +1,20 @@
+import { Pencil, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import type { JournalEntry } from '../types';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
+import { useState } from 'react';
 
 interface JournalEntryListProps {
   entries: JournalEntry[];
   emptyMessage: string;
+  onEdit: (entry: JournalEntry) => void;
+  onDelete: (id: string) => void;
 }
 
-export function JournalEntryList({ entries, emptyMessage }: JournalEntryListProps) {
+export function JournalEntryList({ entries, emptyMessage, onEdit, onDelete }: JournalEntryListProps) {
   const { t } = useI18n();
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   return (
     <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 shadow-2xl shadow-black/20">
@@ -18,9 +24,27 @@ export function JournalEntryList({ entries, emptyMessage }: JournalEntryListProp
             <article key={entry.id} className="rounded-2xl border border-white/10 bg-black/10 p-5">
               <div className="flex items-center justify-between gap-4">
                 <h3 className="text-sm font-semibold text-white">{entry.title || t('journaling.untitled')}</h3>
-                <span className="text-xs text-white/35">
-                  {format(new Date(entry.createdAt), 'dd/MM/yyyy')}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-white/35">
+                    {format(new Date(entry.createdAt), 'dd/MM/yyyy')}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onEdit(entry)}
+                    className="text-white/40 transition-colors hover:text-white/80"
+                    aria-label={t('journaling.editEntry')}
+                  >
+                    <Pencil size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPendingDeleteId(entry.id)}
+                    className="text-rose-300 transition-colors hover:text-rose-200"
+                    aria-label={t('journaling.deleteEntry')}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2.5 py-1 text-[11px] font-medium text-violet-200">
@@ -54,6 +78,19 @@ export function JournalEntryList({ entries, emptyMessage }: JournalEntryListProp
           </div>
         )}
       </div>
+      <ConfirmDialog
+        isOpen={pendingDeleteId !== null}
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={() => {
+          if (pendingDeleteId) {
+            onDelete(pendingDeleteId);
+          }
+          setPendingDeleteId(null);
+        }}
+        title={t('journaling.deleteTitle')}
+        message={t('journaling.deleteMessage')}
+        confirmLabel={t('journaling.deleteEntry')}
+      />
     </section>
   );
 }
