@@ -20,8 +20,11 @@ export function useFirebaseAuthBootstrap() {
 
     return subscribeToFirebaseAuth((user) => {
       if (!user) {
+        const hadActiveSession = previousUidRef.current !== null;
         previousUidRef.current = null;
-        resetWorkspaceForSession();
+        if (hadActiveSession) {
+          resetWorkspaceForSession();
+        }
         setAuthState({
           authStatus: 'unauthenticated',
           authProvider: null,
