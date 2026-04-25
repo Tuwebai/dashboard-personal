@@ -36,19 +36,22 @@ export function FinanceSummary() {
   const currentBalance = income - expenses;
   const lastBalance = lastIncome - lastExpenses;
 
-  const calculateTrend = (current: number, previous: number) => {
+  const calculateTrend = (current: number, previous: number, invert = false) => {
     if (previous === 0) {
       if (current === 0) return '0%';
-      return `${current > 0 ? '+' : '-'}100%`;
+      const initialChange = current > 0 ? 100 : -100;
+      const adjustedInitialChange = invert ? -initialChange : initialChange;
+      return `${adjustedInitialChange >= 0 ? '+' : ''}${adjustedInitialChange.toFixed(0)}%`;
     }
 
-    const change = ((current - previous) / previous) * 100;
+    const rawChange = ((current - previous) / previous) * 100;
+    const change = invert ? -rawChange : rawChange;
     return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
   };
 
   const balanceTrend = calculateTrend(currentBalance, lastBalance);
   const incomeTrend = calculateTrend(income, lastIncome);
-  const expensesTrend = calculateTrend(expenses, lastExpenses);
+  const expensesTrend = calculateTrend(expenses, lastExpenses, true);
   const savingsRateTrend = calculateTrend(savingsRate, lastIncome > 0 ? ((lastIncome - lastExpenses) / lastIncome) * 100 : 0);
 
   const stats = [
