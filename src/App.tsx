@@ -1,24 +1,28 @@
-import type { ReactNode } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { useEffect, useLayoutEffect } from 'react';
 import { Toaster } from 'sonner';
 import { useAppStore } from './stores/useAppStore';
 import { DashboardLayout } from './layouts/dashboard-layout/DashboardLayout';
-import { Dashboard } from './features/dashboard/pages/DashboardPage';
-import { GoalsPage } from './features/goals/pages/GoalsPage';
-import { WeeklyPlanningPage } from './features/weekly-planning/pages/WeeklyPlanningPage';
-import { JournalingPage } from './features/journaling';
-import { FocusPage } from './features/focus';
-import { Tasks } from './features/tasks/pages/TasksPage';
-import { Routines } from './features/routines/pages/RoutinesPage';
-import Habits from './features/habits/pages/HabitsPage';
-import Finances from './features/finances/pages/FinancesPage';
-import Calendar from './features/calendar/pages/CalendarPage';
-import Notes from './features/notes/pages/NotesPage';
-import { Settings } from './features/settings/pages/SettingsPage';
-import { LoginPage } from './features/auth/pages/LoginPage';
 import { useFirebaseAuthBootstrap } from './core/persistence/auth';
 import { useFirebasePersistenceSync } from './core/persistence/sync';
 import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
+import { PageSkeleton } from './shared/ui/PageSkeleton';
+
+const Dashboard = lazy(() => import('./features/dashboard/pages/DashboardPage').then(m => ({ default: m.Dashboard })));
+const GoalsPage = lazy(() => import('./features/goals/pages/GoalsPage').then(m => ({ default: m.GoalsPage })));
+const WeeklyPlanningPage = lazy(() =>
+  import('./features/weekly-planning/pages/WeeklyPlanningPage').then(m => ({ default: m.WeeklyPlanningPage }))
+);
+const JournalingPage = lazy(() => import('./features/journaling').then(m => ({ default: m.JournalingPage })));
+const FocusPage = lazy(() => import('./features/focus').then(m => ({ default: m.FocusPage })));
+const Tasks = lazy(() => import('./features/tasks/pages/TasksPage').then(m => ({ default: m.Tasks })));
+const Routines = lazy(() => import('./features/routines/pages/RoutinesPage').then(m => ({ default: m.Routines })));
+const Habits = lazy(() => import('./features/habits/pages/HabitsPage'));
+const Finances = lazy(() => import('./features/finances/pages/FinancesPage'));
+const Calendar = lazy(() => import('./features/calendar/pages/CalendarPage'));
+const Notes = lazy(() => import('./features/notes/pages/NotesPage'));
+const Settings = lazy(() => import('./features/settings/pages/SettingsPage').then(m => ({ default: m.Settings })));
+const LoginPage = lazy(() => import('./features/auth/pages/LoginPage').then(m => ({ default: m.LoginPage })));
 
 export default function App() {
   const { theme, settings, activeModule, setActiveModule, authStatus } = useAppStore();
@@ -86,7 +90,7 @@ export default function App() {
   };
 
   const renderModule = () => {
-    const withBoundary = (featureName: string, children: React.ReactNode) => (
+    const withBoundary = (featureName: string, children: ReactNode) => (
       <FeatureErrorBoundary featureName={featureName}>{children}</FeatureErrorBoundary>
     );
 
@@ -134,11 +138,15 @@ export default function App() {
       </div>
     );
   } else if (authStatus !== 'authenticated') {
-    content = <LoginPage />;
+    content = (
+      <Suspense fallback={<PageSkeleton />}>
+        <LoginPage />
+      </Suspense>
+    );
   } else {
     content = (
       <DashboardLayout activeModule={activeModule} onNavigate={handleNavigate}>
-        {renderModule()}
+        <Suspense fallback={<PageSkeleton />}>{renderModule()}</Suspense>
       </DashboardLayout>
     );
   }
