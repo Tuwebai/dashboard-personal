@@ -52,10 +52,10 @@ export function FinanceSummary() {
   const savingsRateTrend = calculateTrend(savingsRate, lastIncome > 0 ? ((lastIncome - lastExpenses) / lastIncome) * 100 : 0);
 
   const stats = [
-    { label: t('finances.currentBalance'), value: currentBalance, icon: <Wallet className="text-violet-400" />, trend: balanceTrend, isValue: true },
-    { label: t('finances.monthlyIncome'), value: income, icon: <TrendingUp className="text-emerald-400" />, trend: incomeTrend, isValue: true },
-    { label: t('finances.monthlyExpenses'), value: expenses, icon: <TrendingDown className="text-rose-400" />, trend: expensesTrend, isValue: true },
-    { label: t('finances.savingsRate'), value: savingsRateFormatted, icon: <CreditCard className="text-blue-400" />, trend: savingsRateTrend, isValue: false },
+    { label: t('finances.currentBalance'), value: currentBalance, icon: <Wallet className="text-violet-400" />, trend: balanceTrend, isValue: true, valueClassName: 'text-text-primary' },
+    { label: t('finances.monthlyIncome'), value: income, icon: <TrendingUp className="text-emerald-400" />, trend: incomeTrend, isValue: true, valueClassName: 'text-emerald-400' },
+    { label: t('finances.monthlyExpenses'), value: expenses, icon: <TrendingDown className="text-rose-400" />, trend: expensesTrend, isValue: true, valueClassName: 'text-rose-400' },
+    { label: t('finances.savingsRate'), value: savingsRateFormatted, icon: <CreditCard className="text-blue-400" />, trend: savingsRateTrend, isValue: false, valueClassName: 'text-text-primary' },
   ];
 
   return (
@@ -81,7 +81,7 @@ export function FinanceSummary() {
           </div>
           <div className="space-y-1">
             <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">{stat.label}</span>
-            <div className="text-2xl font-bold text-text-primary">
+            <div className={cn("text-2xl font-bold", stat.valueClassName)}>
               {stat.isValue ? formatCurrency(stat.value as number) : stat.value}
             </div>
           </div>
