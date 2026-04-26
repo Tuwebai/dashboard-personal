@@ -17,20 +17,22 @@ test.describe('firebase auth smoke', () => {
   test('ingresa con correo y contraseña', async ({ page }) => {
     test.skip(!firebaseEmail || !firebasePassword, 'Faltan E2E_FIREBASE_EMAIL y E2E_FIREBASE_PASSWORD.');
 
-    await page.goto('/login');
+    await page.goto('/notes');
     await page.getByLabel('Correo electrónico').fill(firebaseEmail ?? '');
     await page.getByLabel('Contraseña').fill(firebasePassword ?? '');
     await page.getByRole('button', { name: 'Ingresar con correo' }).click();
 
-    await expect(page.getByRole('button', { name: 'Inicio' })).toBeVisible();
+    await expect(page).toHaveURL(/\/notes$/);
+    await expect(page.locator('header').getByText('Notas')).toBeVisible();
   });
 
   test('permite continuar como invitado', async ({ page }) => {
     test.skip(!runGuestSmoke, 'Definí E2E_FIREBASE_GUEST_SMOKE=true para ejecutar el smoke de invitado.');
 
-    await page.goto('/login');
+    await page.goto('/finances');
     await page.getByRole('button', { name: 'Continuar como invitado' }).click();
 
-    await expect(page.getByRole('button', { name: 'Inicio' })).toBeVisible();
+    await expect(page).toHaveURL(/\/finances$/);
+    await expect(page.locator('header').getByText('Finanzas')).toBeVisible();
   });
 });

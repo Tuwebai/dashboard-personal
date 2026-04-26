@@ -1,5 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
+const baseURL = process.env.E2E_BASE_URL?.trim() || 'http://127.0.0.1:4173';
+const shouldStartLocalServer = !process.env.E2E_BASE_URL;
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
@@ -14,13 +17,15 @@ export default defineConfig({
     },
   ],
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL,
     trace: 'retain-on-failure',
   },
-  webServer: {
-    command: 'npm run dev -- --port 4173',
-    url: 'http://127.0.0.1:4173',
-    reuseExistingServer: true,
-    timeout: 120000,
-  },
+  webServer: shouldStartLocalServer
+    ? {
+        command: 'npm run dev -- --port 4173',
+        url: 'http://127.0.0.1:4173',
+        reuseExistingServer: true,
+        timeout: 120000,
+      }
+    : undefined,
 });

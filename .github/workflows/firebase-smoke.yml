@@ -2,13 +2,24 @@ name: firebase-smoke
 
 on:
   workflow_dispatch:
+    inputs:
+      base_url:
+        description: URL remota a validar (preview o producción)
+        required: false
+        type: string
+      run_guest_smoke:
+        description: Ejecutar también el smoke de invitado
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   smoke:
     runs-on: ubuntu-latest
     env:
+      E2E_BASE_URL: ${{ inputs.base_url || vars.E2E_FIREBASE_BASE_URL }}
       E2E_FIREBASE_SMOKE: true
-      E2E_FIREBASE_GUEST_SMOKE: ${{ vars.E2E_FIREBASE_GUEST_SMOKE || 'false' }}
+      E2E_FIREBASE_GUEST_SMOKE: ${{ inputs.run_guest_smoke && 'true' || vars.E2E_FIREBASE_GUEST_SMOKE || 'false' }}
       E2E_FIREBASE_EMAIL: ${{ secrets.E2E_FIREBASE_EMAIL }}
       E2E_FIREBASE_PASSWORD: ${{ secrets.E2E_FIREBASE_PASSWORD }}
 
@@ -27,6 +38,13 @@ jobs:
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
+
+      - name: Validate remote base URL
+        run: |
+          if [ -z "$E2E_BASE_URL" ]; then
+            echo "Definí inputs.base_url o vars.E2E_FIREBASE_BASE_URL antes de ejecutar el smoke remoto."
+            exit 1
+          fi
 
       - name: Firebase auth E2E smoke
         run: npm run test:e2e:firebase
