@@ -226,13 +226,6 @@ export async function showForegroundPushNotification(payload: MessagePayload) {
     tag: notificationId,
   };
 
-  const registration = await getReadyServiceWorkerRegistration();
-
-  if (registration?.active && registration.showNotification) {
-    await registration.showNotification(title, options);
-    return true;
-  }
-
   const notification = new Notification(title, options);
   notification.onclick = () => {
     window.focus();
@@ -273,6 +266,16 @@ export async function showBrowserNotification({
     icon: '/favicon.svg',
     tag: notificationId,
   };
+
+  if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+    const notification = new Notification(title, options);
+    notification.onclick = () => {
+      window.focus();
+      window.location.assign(actionUrl);
+    };
+
+    return true;
+  }
 
   const registration = await getReadyServiceWorkerRegistration();
 
