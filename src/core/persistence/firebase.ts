@@ -1,11 +1,13 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import {
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   deleteUser,
   EmailAuthProvider,
   getAuth,
   linkWithCredential,
   onAuthStateChanged,
+  setPersistence,
   signInAnonymously,
   signInWithEmailAndPassword,
   signOut,
@@ -19,6 +21,7 @@ let firebaseApp: FirebaseApp | null = null;
 let firestoreDb: Firestore | null = null;
 let firebaseAuth: Auth | null = null;
 let authUser: User | null = null;
+let authPersistencePromise: Promise<Auth | null> | null = null;
 
 function getFirebaseConfig() {
   return {
@@ -72,116 +75,142 @@ export function getFirebaseAuthUser() {
   return authUser;
 }
 
-export function ensureFirebaseAuth() {
+export function ensureFirebaseAuthPersistence() {
   const auth = getFirebaseAuth();
 
   if (!auth) {
-    return Promise.resolve<User | null>(null);
+    return Promise.resolve<Auth | null>(null);
   }
 
-  if (!isAnonymousAuthEnabled()) {
-    return Promise.resolve<User | null>(null);
+  if (!authPersistencePromise) {
+    authPersistencePromise = setPersistence(auth, browserLocalPersistence)
+      .then(() => auth)
+      .catch((error: unknown) => {
+        authPersistencePromise = null;
+        return Promise.reject(error);
+      });
   }
 
-  if (auth.currentUser) {
-    authUser = auth.currentUser;
-    return Promise.resolve(auth.currentUser);
-  }
+  return authPersistencePromise;
+}
 
-  return signInAnonymously(auth).then((credential) => {
-    authUser = credential.user;
-    return credential.user;
-  }).catch(() => null);
+export function ensureFirebaseAuth() {
+  return ensureFirebaseAuthPersistence()
+    .then((auth) => {
+      if (!auth || !isAnonymousAuthEnabled()) {
+        return null;
+      }
+
+      if (auth.currentUser) {
+        authUser = auth.currentUser;
+        return auth.currentUser;
+      }
+
+      return signInAnonymously(auth)
+        .then((credential) => {
+          authUser = credential.user;
+          return credential.user;
+        })
+        .catch(() => null);
+    });
 }
 
 export function signInFirebaseAnonymously() {
-  const auth = getFirebaseAuth();
+  return ensureFirebaseAuthPersistence()
+    .then((auth) => {
+      if (!auth || !isAnonymousAuthEnabled()) {
+        return null;
+      }
 
-  if (!auth || !isAnonymousAuthEnabled()) {
-    return Promise.resolve<User | null>(null);
-  }
-
-  return signInAnonymously(auth)
-    .then((credential) => {
-      authUser = credential.user;
-      return credential.user;
+      return signInAnonymously(auth)
+        .then((credential) => {
+          authUser = credential.user;
+          return credential.user;
+        });
     })
     .catch((error: unknown) => Promise.reject(error));
 }
 
 export function signInFirebaseWithEmail(email: string, password: string) {
-  const auth = getFirebaseAuth();
+  return ensureFirebaseAuthPersistence()
+    .then((auth) => {
+      if (!auth) {
+        return null;
+      }
 
-  if (!auth) {
-    return Promise.resolve<User | null>(null);
-  }
-
-  return signInWithEmailAndPassword(auth, email, password)
-    .then((credential) => {
-      authUser = credential.user;
-      return credential.user;
+      return signInWithEmailAndPassword(auth, email, password)
+        .then((credential) => {
+          authUser = credential.user;
+          return credential.user;
+        });
     })
     .catch((error: unknown) => Promise.reject(error));
 }
 
 export function signUpFirebaseWithEmail(email: string, password: string) {
-  const auth = getFirebaseAuth();
+  return ensureFirebaseAuthPersistence()
+    .then((auth) => {
+      if (!auth) {
+        return null;
+      }
 
-  if (!auth) {
-    return Promise.resolve<User | null>(null);
-  }
-
-  return createUserWithEmailAndPassword(auth, email, password)
-    .then((credential) => {
-      authUser = credential.user;
-      return credential.user;
+      return createUserWithEmailAndPassword(auth, email, password)
+        .then((credential) => {
+          authUser = credential.user;
+          return credential.user;
+        });
     })
     .catch((error: unknown) => Promise.reject(error));
 }
 
 export function linkAnonymousFirebaseUser(email: string, password: string) {
-  const auth = getFirebaseAuth();
-  const user = auth?.currentUser;
+  return ensureFirebaseAuthPersistence()
+    .then((auth) => {
+      const user = auth?.currentUser;
 
-  if (!auth || !user || !user.isAnonymous) {
-    return Promise.resolve<User | null>(null);
-  }
+      if (!auth || !user || !user.isAnonymous) {
+        return null;
+      }
 
-  const credential = EmailAuthProvider.credential(email, password);
+      const credential = EmailAuthProvider.credential(email, password);
 
-  return linkWithCredential(user, credential)
-    .then((result) => {
-      authUser = result.user;
-      return result.user;
+      return linkWithCredential(user, credential)
+        .then((result) => {
+          authUser = result.user;
+          return result.user;
+        });
     })
     .catch((error: unknown) => Promise.reject(error));
 }
 
 export function signOutFirebaseUser() {
-  const auth = getFirebaseAuth();
+  return ensureFirebaseAuthPersistence()
+    .then((auth) => {
+      if (!auth) {
+        authUser = null;
+        return;
+      }
 
-  if (!auth) {
-    authUser = null;
-    return Promise.resolve();
-  }
-
-  return signOut(auth).finally(() => {
-    authUser = null;
-  });
+      return signOut(auth).finally(() => {
+        authUser = null;
+      });
+    });
 }
 
 export function deleteAnonymousFirebaseUser() {
-  const auth = getFirebaseAuth();
-  const user = auth?.currentUser;
+  return ensureFirebaseAuthPersistence()
+    .then((auth) => {
+      const user = auth?.currentUser;
 
-  if (!auth || !user?.isAnonymous) {
-    return Promise.resolve(false);
-  }
+      if (!auth || !user?.isAnonymous) {
+        return false;
+      }
 
-  return deleteUser(user)
-    .then(() => {
-      authUser = null;
-      return true;
+      return deleteUser(user)
+        .then(() => {
+          authUser = null;
+          return true;
+        });
     })
     .catch((error: unknown) => Promise.reject(error));
 }
@@ -193,6 +222,8 @@ export function subscribeToFirebaseAuth(callback: (user: User | null) => void) {
     callback(null);
     return () => undefined;
   }
+
+  void ensureFirebaseAuthPersistence().catch(() => undefined);
 
   return onAuthStateChanged(auth, (user) => {
     authUser = user;

@@ -26,7 +26,13 @@ export function useFirebaseAuthBootstrap() {
     let cancelled = false;
     let authUnsubscribe: () => void = () => undefined;
 
-    void loadFirebaseBridge().then(({ subscribeToFirebaseAuth }) => {
+    void loadFirebaseBridge().then(async ({ ensureFirebaseAuthPersistence, subscribeToFirebaseAuth }) => {
+      if (cancelled) {
+        return;
+      }
+
+      await ensureFirebaseAuthPersistence().catch(() => null);
+
       if (cancelled) {
         return;
       }
