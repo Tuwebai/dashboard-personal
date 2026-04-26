@@ -85,7 +85,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
   return (
     <AnimatePresence>
       {commandPaletteOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto px-3 pt-4 sm:px-4 sm:pt-[15vh]">
           <motion.div
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             initial={{ opacity: 0 }}
@@ -94,7 +94,7 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
             onClick={closePalette}
           />
           <motion.div
-            className="relative w-full max-w-xl bg-bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-bg-card shadow-2xl max-sm:max-h-[calc(100dvh-2rem)]"
             initial={{ opacity: 0, scale: 0.96, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}

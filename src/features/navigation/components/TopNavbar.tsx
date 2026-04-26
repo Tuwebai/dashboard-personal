@@ -212,7 +212,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
             <>
               <div className="fixed inset-0 z-10" onClick={() => setNotifOpen(false)} />
               <motion.div
-                className="absolute right-0 top-full mt-2 w-80 bg-bg-primary border border-bg-secondary rounded-xl shadow-2xl z-20 overflow-hidden"
+                className="fixed left-3 right-3 top-16 z-20 overflow-hidden rounded-xl border border-bg-secondary bg-bg-primary shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80"
                 initial={{ opacity: 0, y: -8, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.96 }}
