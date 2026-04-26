@@ -55,9 +55,9 @@ export const AgendaSidePanel = memo(() => {
             </div>
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-center opacity-20 py-10">
+          <div className="flex h-full flex-col items-center justify-center py-10 text-center text-text-muted">
             <CalendarIcon size={32} className="mb-2" />
-            <p className="text-xs font-bold">{t('calendar.noEvents')}</p>
+            <p className="text-xs font-bold text-text-primary">{t('calendar.noEvents')}</p>
           </div>
         )}
       </div>

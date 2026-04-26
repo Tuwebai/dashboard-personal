@@ -18,10 +18,10 @@ export function HabitGrid({ category }: HabitGridProps) {
 
   if (filteredHabits.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-bg-card border border-border rounded-xl text-white/30">
-        <div className="text-4xl mb-4 opacity-50 text-white/20 hover:scale-110 transition-transform">✨</div>
-        <h3 className="text-sm font-semibold text-white/80">{t('habits.noHabits')}</h3>
-        <p className="text-xs text-white/40 mt-1">{t('habits.noHabitsDesc')}</p>
+      <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-bg-card py-20 text-text-muted">
+        <div className="mb-4 text-4xl opacity-60 transition-transform hover:scale-110">✨</div>
+        <h3 className="text-sm font-semibold text-text-primary">{t('habits.noHabits')}</h3>
+        <p className="mt-1 text-xs text-text-secondary">{t('habits.noHabitsDesc')}</p>
       </div>
     );
   }

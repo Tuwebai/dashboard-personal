@@ -83,21 +83,21 @@ export function FocusSessionComposer({ tasks, onCreateSession }: FocusSessionCom
           <Plus size={20} />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-white">{t('focus.form.title')}</h2>
-          <p className="mt-1 text-xs text-white/35">{t('focus.form.subtitle')}</p>
+          <h2 className="text-sm font-semibold text-text-primary">{t('focus.form.title')}</h2>
+          <p className="mt-1 text-xs text-text-muted">{t('focus.form.subtitle')}</p>
         </div>
       </div>
 
-      <div className="mt-5 rounded-2xl border border-white/10 bg-black/10 p-4">
+      <div className="mt-5 rounded-2xl border border-border bg-bg-tertiary p-4">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/30">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-text-muted">
               {t('focus.form.modePreviewLabel')}
             </p>
-            <h3 className="mt-2 text-sm font-semibold text-white">
+            <h3 className="mt-2 text-sm font-semibold text-text-primary">
               {isDeepWork ? t('focus.form.modeDeepWork') : t('focus.form.modePomodoro')}
             </h3>
-            <p className="mt-1 text-xs text-white/45">
+            <p className="mt-1 text-xs text-text-secondary">
               {isDeepWork ? t('focus.form.deepWorkHelper') : t('focus.form.pomodoroHelper')}
             </p>
           </div>

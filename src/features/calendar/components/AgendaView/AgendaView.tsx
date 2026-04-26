@@ -78,10 +78,10 @@ export const AgendaView = memo(({ onEventClick }: AgendaViewProps) => {
           );
         })
       ) : (
-        <div className="flex flex-col items-center justify-center h-[50vh] text-center opacity-30">
+        <div className="flex h-[50vh] flex-col items-center justify-center text-center text-text-muted">
           <CalendarIcon size={48} className="mb-4" />
-          <p className="text-lg font-bold">{t('calendar.noEvents')}</p>
-          <p className="text-sm">{t('calendar.planNext')}</p>
+          <p className="text-lg font-bold text-text-primary">{t('calendar.noEvents')}</p>
+          <p className="text-sm text-text-secondary">{t('calendar.planNext')}</p>
         </div>
       )}
     </div>

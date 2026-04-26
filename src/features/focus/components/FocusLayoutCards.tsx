@@ -67,8 +67,8 @@ export function FocusLayoutCards({ sessions }: FocusLayoutCardsProps) {
               <Icon size={20} />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-white">{title}</h2>
-              <p className="mt-1 text-xs text-white/35">{subtitle}</p>
+              <h2 className="text-sm font-semibold text-text-primary">{title}</h2>
+              <p className="mt-1 text-xs text-text-muted">{subtitle}</p>
             </div>
           </div>
         </article>

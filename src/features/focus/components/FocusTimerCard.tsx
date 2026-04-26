@@ -63,23 +63,23 @@ export function FocusTimerCard({ session, onPause, onResume, onFinish }: FocusTi
           <TimerReset size={20} />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-white">{t('focus.timer.title')}</h2>
-          <p className="mt-1 text-xs text-white/35">
+          <h2 className="text-sm font-semibold text-text-primary">{t('focus.timer.title')}</h2>
+          <p className="mt-1 text-xs text-text-muted">
             {session ? session.title : t('focus.timer.empty')}
           </p>
         </div>
       </div>
 
       <div className="mt-6">
-        <div className="text-5xl font-bold tracking-tight text-white">
+        <div className="text-5xl font-bold tracking-tight text-text-primary">
           {formatTime(timerData.remainingSeconds)}
         </div>
-        <p className="mt-2 text-sm text-white/45">
+        <p className="mt-2 text-sm text-text-secondary">
           {t('focus.timer.elapsed').replace('{time}', formatTime(timerData.elapsedSeconds))}
         </p>
       </div>
 
-      <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/5">
+      <div className="mt-5 h-2 overflow-hidden rounded-full bg-bg-hover">
         <div
           className="h-full rounded-full bg-violet-500 transition-all duration-500"
           style={{ width: `${timerData.progress}%` }}

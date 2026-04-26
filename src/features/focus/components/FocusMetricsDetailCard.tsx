@@ -43,20 +43,20 @@ export function FocusMetricsDetailCard({ sessions }: FocusMetricsDetailCardProps
   return (
     <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 shadow-2xl shadow-black/20">
       <div>
-        <h2 className="text-sm font-semibold text-white">{t('focus.metrics.title')}</h2>
-        <p className="mt-1 text-xs text-white/35">{t('focus.metrics.subtitle')}</p>
+        <h2 className="text-sm font-semibold text-text-primary">{t('focus.metrics.title')}</h2>
+        <p className="mt-1 text-xs text-text-muted">{t('focus.metrics.subtitle')}</p>
       </div>
 
       <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
           <article
             key={metric.label}
-            className="rounded-2xl border border-white/10 bg-black/10 p-4"
+            className="rounded-2xl border border-border bg-bg-tertiary p-4"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/30">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
               {metric.label}
             </p>
-            <p className="mt-3 text-2xl font-bold tracking-tight text-white">{metric.value}</p>
+            <p className="mt-3 text-2xl font-bold tracking-tight text-text-primary">{metric.value}</p>
           </article>
         ))}
       </div>

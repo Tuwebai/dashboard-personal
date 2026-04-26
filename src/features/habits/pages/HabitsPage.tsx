@@ -54,8 +54,8 @@ export default function Habits() {
     <div className="space-y-8 page-enter h-full flex flex-col">
       <div className="flex items-center justify-between shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">{t('habits.title')}</h1>
-          <p className="text-sm font-medium text-white/30 uppercase tracking-[0.2em] mt-1">
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">{t('habits.title')}</h1>
+          <p className="mt-1 text-sm font-medium uppercase tracking-[0.2em] text-text-muted">
             {t('habits.subtitle')}
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function Habits() {
               className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all duration-200 border ${
                 activeCategory === category 
                   ? 'bg-violet-500/10 border-violet-500/20 text-violet-400' 
-                  : 'bg-transparent border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'
+                  : 'bg-transparent border-transparent text-text-secondary hover:bg-bg-hover hover:text-text-primary'
               }`}
             >
               {t(`habits.category_${category}`)}
@@ -113,7 +113,7 @@ export default function Habits() {
                   className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 ${
                     newHabit.icon === emoji 
                       ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' 
-                      : 'bg-white/5 text-white/40 hover:bg-white/10 border border-transparent'
+                      : 'bg-bg-secondary text-text-secondary hover:bg-bg-hover border border-transparent'
                   }`}
                 >
                   {emoji}
@@ -126,7 +126,7 @@ export default function Habits() {
                   key={color}
                   onClick={() => setNewHabit({ ...newHabit, color })}
                   className={`h-8 w-8 rounded-full border-2 transition-all duration-200 ${
-                    newHabit.color === color ? 'scale-110 border-white' : 'border-white/10'
+                    newHabit.color === color ? 'scale-110 border-border' : 'border-border'
                   }`}
                   style={{ backgroundColor: color }}
                   type="button"

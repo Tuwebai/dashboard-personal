@@ -84,7 +84,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-bg-card border border-border rounded-xl p-5 hover:border-white/10 transition-all group relative overflow-hidden"
+      className="group relative overflow-hidden rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border"
     >
       <div className="flex items-start justify-between mb-8 relative z-10">
         <div className="flex items-center gap-4">
@@ -99,8 +99,8 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
             {habit.icon}
           </div>
           <div>
-            <h3 className="font-bold text-white text-sm group-hover:text-violet-400 transition-colors">{habit.name}</h3>
-            <span className="text-[10px] uppercase tracking-widest font-bold text-white/30">{habit.category}</span>
+            <h3 className="text-sm font-bold text-text-primary transition-colors group-hover:text-violet-400">{habit.name}</h3>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">{habit.category}</span>
           </div>
         </div>
         
@@ -171,7 +171,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
             onClick={() => logHabit(habit.id, day.date, !day.completed)}
             className={cn(
               "flex min-w-0 flex-col items-center gap-3 p-2 rounded-2xl transition-all disabled:cursor-not-allowed disabled:opacity-60",
-              day.isToday ? "bg-white/5 border border-white/10 ring-1 ring-white/5" : "hover:bg-white/3"
+              day.isToday ? "border border-border bg-bg-secondary" : "hover:bg-bg-hover"
             )}
           >
             <span className={cn(
@@ -231,7 +231,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
                     'flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50',
                     formData.icon === emoji
                       ? 'border-violet-500/30 bg-violet-500/20 text-violet-400'
-                      : 'border-transparent bg-white/5 text-white/40 hover:bg-white/10'
+                      : 'border-transparent bg-bg-secondary text-text-secondary hover:bg-bg-hover'
                   )}
                   type="button"
                 >
@@ -248,7 +248,7 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
                   title={workspaceReadOnly ? readonlyActionLabel : undefined}
                   className={cn(
                     'h-8 w-8 rounded-full border-2 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50',
-                    formData.color === color ? 'scale-110 border-white' : 'border-white/10'
+                    formData.color === color ? 'scale-110 border-border' : 'border-border'
                   )}
                   style={{ backgroundColor: color }}
                   type="button"
@@ -298,8 +298,8 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
           <span>{streakLabel} {t('habits.streak')}</span>
         </div>
         {!habit.isBoolean && habit.targetValue && (
-          <div className="text-[10px] text-white/30 font-semibold tracking-tight">
-            GOAL: <span className="text-white/80 font-bold uppercase">{habit.targetValue}</span>
+          <div className="text-[10px] font-semibold tracking-tight text-text-muted">
+            GOAL: <span className="font-bold uppercase text-text-primary">{habit.targetValue}</span>
           </div>
         )}
       </div>
