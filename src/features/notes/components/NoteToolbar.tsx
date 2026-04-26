@@ -7,6 +7,7 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { useShallow } from 'zustand/react/shallow';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 interface NoteToolbarProps {
   showBackButton?: boolean;
@@ -15,6 +16,7 @@ interface NoteToolbarProps {
 
 export function NoteToolbar({ showBackButton = false, onBack }: NoteToolbarProps) {
   const { t } = useI18n();
+  const { workspaceReadOnly, readonlyActionLabel, actionProps } = useReadonlyActionProps();
   const { notes, selectedNoteId, updateNote, deleteNote } = useAppStore(
     useShallow((state) => ({
       notes: state.notes,
@@ -82,31 +84,37 @@ export function NoteToolbar({ showBackButton = false, onBack }: NoteToolbarProps
           data-testid="note-title-input"
           type="text"
           value={note.title}
+          readOnly={workspaceReadOnly}
           onChange={(e) => updateNote(note.id, { title: e.target.value })}
           className="w-full bg-transparent border-none text-lg font-bold text-text-primary focus:ring-0 placeholder:text-text-muted md:max-w-96"
           placeholder={t('common.untitledNote')}
+          title={workspaceReadOnly ? readonlyActionLabel : undefined}
         />
       </div>
 
       <div className="flex items-center gap-2">
         <button 
           onClick={handleTogglePinned}
+          type="button"
+          {...actionProps}
           className={cn(
-            "p-2 rounded-xl transition-all",
+            "p-2 rounded-xl transition-all disabled:cursor-not-allowed disabled:opacity-50",
             note.isPinned ? "bg-violet-500/10 text-violet-400" : "text-text-muted hover:text-text-primary hover:bg-white/5"
           )}
-          title={t('common.pin')}
+          title={workspaceReadOnly ? readonlyActionLabel : t('common.pin')}
         >
           <Pin size={18} className={note.isPinned ? "fill-current" : ""} />
         </button>
 
         <button 
           onClick={handleToggleFavorite}
+          type="button"
+          {...actionProps}
           className={cn(
-            "p-2 rounded-xl transition-all",
+            "p-2 rounded-xl transition-all disabled:cursor-not-allowed disabled:opacity-50",
             note.isFavorite ? "bg-amber-500/10 text-amber-500" : "text-text-muted hover:text-text-primary hover:bg-white/5"
           )}
-          title={t('common.favorite')}
+          title={workspaceReadOnly ? readonlyActionLabel : t('common.favorite')}
         >
           <Star size={18} className={note.isFavorite ? "fill-current" : ""} />
         </button>
@@ -124,11 +132,13 @@ export function NoteToolbar({ showBackButton = false, onBack }: NoteToolbarProps
         <div className="relative">
           <button 
             onClick={() => setShowMenu(!showMenu)}
+            type="button"
+            {...actionProps}
             className={cn(
-              "p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-white/5 transition-all",
+              "p-2 rounded-xl text-text-muted hover:text-text-primary hover:bg-white/5 transition-all disabled:cursor-not-allowed disabled:opacity-50",
               showMenu && "bg-white/10 text-text-primary"
             )}
-            title={t('common.more')}
+            title={workspaceReadOnly ? readonlyActionLabel : t('common.more')}
           >
             <MoreHorizontal size={18} />
           </button>
@@ -143,11 +153,21 @@ export function NoteToolbar({ showBackButton = false, onBack }: NoteToolbarProps
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   className="absolute right-0 mt-2 w-48 bg-bg-secondary border border-border rounded-2xl shadow-2xl p-2 z-50 glass"
                 >
-                  <button onClick={handleArchive} className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left">
+                  <button
+                    onClick={handleArchive}
+                    type="button"
+                    {...actionProps}
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left disabled:cursor-not-allowed disabled:opacity-50"
+                  >
                     <Archive size={16} />
                     <span>{note.isArchived ? t('notes.restore') : t('notes.archive')}</span>
                   </button>
-                  <button onClick={handleDelete} className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left">
+                  <button
+                    onClick={handleDelete}
+                    type="button"
+                    {...actionProps}
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left disabled:cursor-not-allowed disabled:opacity-50"
+                  >
                     <Trash2 size={16} />
                     <span>{t('notes.deleteAction')}</span>
                   </button>

@@ -4,6 +4,7 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { scheduleAfterPaint } from '../../../shared/lib/scheduleAfterPaint';
 import { cn } from '../../../shared/lib/cn';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 export function NoteEditor() {
   const { notes, selectedNoteId, updateNote } = useAppStore(
@@ -14,6 +15,7 @@ export function NoteEditor() {
     }))
   );
   const { t } = useI18n();
+  const { workspaceReadOnly, readonlyActionLabel } = useReadonlyActionProps();
   const editorRef = useRef<HTMLDivElement>(null);
   const [activeFormats, setActiveFormats] = useState<Record<string, boolean>>({});
   const note = notes.find(n => n.id === selectedNoteId);
@@ -45,11 +47,19 @@ export function NoteEditor() {
   if (!note) return null;
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    if (workspaceReadOnly) {
+      return;
+    }
+
     const html = e.currentTarget.innerHTML;
     updateNote(note.id, { content: html });
   };
 
   const applyFormat = (command: string, value: string | undefined = undefined) => {
+    if (workspaceReadOnly) {
+      return;
+    }
+
     // For block formats (H1, H2), check if they are already active to toggle them off
     if (command === 'formatBlock') {
       const currentValue = document.queryCommandValue('formatBlock').toLowerCase();
@@ -93,9 +103,12 @@ export function NoteEditor() {
         ].map(btn => (
           <button 
             key={btn.label}
+            type="button"
             onClick={() => applyFormat(btn.cmd, btn.val)}
+            disabled={workspaceReadOnly}
+            title={workspaceReadOnly ? readonlyActionLabel : undefined}
             className={cn(
-              "w-10 h-8 flex items-center justify-center text-[10px] font-bold rounded-lg transition-all cursor-pointer",
+              "w-10 h-8 flex items-center justify-center text-[10px] font-bold rounded-lg transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
               btn.id && activeFormats[btn.id] 
                 ? "bg-violet-500/20 text-violet-400 border border-violet-500/30" 
                 : "text-text-muted hover:text-text-primary hover:bg-white/10 border border-transparent"
@@ -108,12 +121,17 @@ export function NoteEditor() {
 
       <div
         ref={editorRef}
-        contentEditable
+        contentEditable={!workspaceReadOnly}
+        suppressContentEditableWarning
         onInput={handleInput}
         onKeyUp={checkActiveFormats}
         onMouseUp={checkActiveFormats}
-        className="flex-1 w-full bg-transparent text-text-secondary leading-relaxed outline-none placeholder:text-text-muted/30 text-lg overflow-y-auto cursor-text focus:empty:before:content-[attr(data-placeholder)] focus:empty:before:text-text-muted/30 prose prose-invert max-w-none pb-20 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:text-text-primary [&_h1]:mb-6 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-text-primary [&_h2]:mb-4 [&_h2]:mt-6 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_li]:mb-1"
+        className={cn(
+          "flex-1 w-full bg-transparent text-text-secondary leading-relaxed outline-none placeholder:text-text-muted/30 text-lg overflow-y-auto focus:empty:before:content-[attr(data-placeholder)] focus:empty:before:text-text-muted/30 prose prose-invert max-w-none pb-20 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:text-text-primary [&_h1]:mb-6 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-text-primary [&_h2]:mb-4 [&_h2]:mt-6 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_li]:mb-1",
+          workspaceReadOnly ? 'cursor-not-allowed opacity-80' : 'cursor-text',
+        )}
         data-placeholder={t('notes.placeholder')}
+        title={workspaceReadOnly ? readonlyActionLabel : undefined}
       />
       
       <div className="mt-8 pt-8 border-t border-border/10 flex items-center justify-between text-[10px] font-bold text-text-muted uppercase tracking-widest font-mono shrink-0">

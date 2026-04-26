@@ -11,6 +11,7 @@ import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 import { Modal } from '../../../shared/ui/Modal';
 import { Input, Select } from '../../../shared/ui/Input';
 import { getCurrentHabitStreak, getHabitWeekDays } from '../lib/habitCard';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 interface HabitCardProps {
   habit: Habit;
@@ -18,6 +19,7 @@ interface HabitCardProps {
 
 export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
   const { t } = useI18n();
+  const { workspaceReadOnly, readonlyActionLabel, actionProps } = useReadonlyActionProps();
   const { habitLogs, logHabit, deleteHabit, updateHabit } = useAppStore(
     useShallow((state) => ({
       habitLogs: state.habitLogs,
@@ -105,7 +107,10 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
         <div className="relative">
           <button 
             onClick={() => setShowMenu(!showMenu)}
-            className="p-2 rounded-xl hover:bg-white/5 text-text-muted transition-all"
+            type="button"
+            {...actionProps}
+            className="p-2 rounded-xl hover:bg-white/5 text-text-muted transition-all disabled:cursor-not-allowed disabled:opacity-50"
+            title={workspaceReadOnly ? readonlyActionLabel : t('common.more')}
           >
             <MoreVertical size={20} />
           </button>
@@ -122,17 +127,28 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
                 >
                   <button
                     onClick={handleEditOpen}
-                    className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left"
+                    type="button"
+                    {...actionProps}
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Edit3 size={16} />
                     <span>{t('habits.edit')}</span>
                   </button>
-                  <button className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left">
+                  <button
+                    type="button"
+                    {...actionProps}
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all text-left disabled:cursor-not-allowed disabled:opacity-50"
+                  >
                     <RotateCcw size={16} />
                     <span>{t('habits.resetStreak')}</span>
                   </button>
                   <div className="h-1px bg-border my-1 mx-2" />
-                  <button onClick={handleDelete} className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left">
+                  <button
+                    onClick={handleDelete}
+                    type="button"
+                    {...actionProps}
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-all text-left disabled:cursor-not-allowed disabled:opacity-50"
+                  >
                     <Trash2 size={16} />
                     <span>{t('habits.deleteHabit')}</span>
                   </button>
@@ -147,11 +163,14 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
         {days.map((day) => (
           <button
             key={day.date}
+            type="button"
             data-testid={day.isToday ? `habit-log-${habit.id}-today` : undefined}
             aria-pressed={day.completed}
+            disabled={workspaceReadOnly}
+            title={workspaceReadOnly ? readonlyActionLabel : undefined}
             onClick={() => logHabit(habit.id, day.date, !day.completed)}
             className={cn(
-              "flex min-w-0 flex-col items-center gap-3 p-2 rounded-2xl transition-all",
+              "flex min-w-0 flex-col items-center gap-3 p-2 rounded-2xl transition-all disabled:cursor-not-allowed disabled:opacity-60",
               day.isToday ? "bg-white/5 border border-white/10 ring-1 ring-white/5" : "hover:bg-white/3"
             )}
           >
@@ -206,8 +225,10 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
                 <button
                   key={emoji}
                   onClick={() => setFormData({ ...formData, icon: emoji })}
+                  disabled={workspaceReadOnly}
+                  title={workspaceReadOnly ? readonlyActionLabel : undefined}
                   className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-200',
+                    'flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50',
                     formData.icon === emoji
                       ? 'border-violet-500/30 bg-violet-500/20 text-violet-400'
                       : 'border-transparent bg-white/5 text-white/40 hover:bg-white/10'
@@ -223,8 +244,10 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
                 <button
                   key={color}
                   onClick={() => setFormData({ ...formData, color })}
+                  disabled={workspaceReadOnly}
+                  title={workspaceReadOnly ? readonlyActionLabel : undefined}
                   className={cn(
-                    'h-8 w-8 rounded-full border-2 transition-all duration-200',
+                    'h-8 w-8 rounded-full border-2 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50',
                     formData.color === color ? 'scale-110 border-white' : 'border-white/10'
                   )}
                   style={{ backgroundColor: color }}
@@ -238,12 +261,16 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
             label={t('habits.habitName')}
             placeholder={t('habits.habitPlaceholder')}
             value={formData.name}
+            readOnly={workspaceReadOnly}
+            title={workspaceReadOnly ? readonlyActionLabel : undefined}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
 
           <Select
             label={t('habits.category')}
             value={formData.category}
+            disabled={workspaceReadOnly}
+            title={workspaceReadOnly ? readonlyActionLabel : undefined}
             onChange={(e) => setFormData({ ...formData, category: e.target.value as Habit['category'] })}
             options={[
               { value: 'health', label: t('habits.category_health') },
@@ -256,7 +283,9 @@ export const HabitCard = memo(function HabitCard({ habit }: HabitCardProps) {
           <button
             type="button"
             onClick={handleUpdate}
-            className="flex h-11 w-full items-center justify-center rounded-xl bg-violet-500 text-sm font-semibold text-white shadow-xl shadow-violet-500/20 transition hover:bg-violet-400"
+            disabled={workspaceReadOnly}
+            title={workspaceReadOnly ? readonlyActionLabel : undefined}
+            className="flex h-11 w-full items-center justify-center rounded-xl bg-violet-500 text-sm font-semibold text-white shadow-xl shadow-violet-500/20 transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('habits.saveChanges')}
           </button>

@@ -8,6 +8,7 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { Transaction } from '../../../shared/types';
 import { useShallow } from 'zustand/react/shallow';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -78,6 +79,7 @@ const parseTransactionAmount = (value: string): number => {
 
 export function AddTransactionModal({ isOpen, onClose, transaction, initialAccountId }: AddTransactionModalProps) {
   const { t } = useI18n();
+  const { workspaceReadOnly, readonlyActionLabel } = useReadonlyActionProps();
   const { accounts, addTransaction, updateTransaction } = useAppStore(
     useShallow((state) => ({
       accounts: state.accounts,
@@ -103,6 +105,10 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
   );
 
   const handleAdd = () => {
+    if (workspaceReadOnly) {
+      return;
+    }
+
     if (!newTx.description || !newTx.amount) return;
     const amount = parseTransactionAmount(newTx.amount);
     if (Number.isNaN(amount)) return;
@@ -145,8 +151,24 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
     >
       <div className="space-y-6">
         <div className="flex p-1 bg-white/5 rounded-xl border border-white/5">
-          <button onClick={() => setNewTx({...newTx, type: 'expense'})} className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", newTx.type === 'expense' ? "bg-rose-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}>{t('finances.expense')}</button>
-          <button onClick={() => setNewTx({...newTx, type: 'income'})} className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", newTx.type === 'income' ? "bg-emerald-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}>{t('finances.income')}</button>
+          <button
+            type="button"
+            onClick={() => setNewTx({...newTx, type: 'expense'})}
+            disabled={workspaceReadOnly}
+            title={workspaceReadOnly ? readonlyActionLabel : undefined}
+            className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all disabled:cursor-not-allowed disabled:opacity-50", newTx.type === 'expense' ? "bg-rose-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}
+          >
+            {t('finances.expense')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setNewTx({...newTx, type: 'income'})}
+            disabled={workspaceReadOnly}
+            title={workspaceReadOnly ? readonlyActionLabel : undefined}
+            className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all disabled:cursor-not-allowed disabled:opacity-50", newTx.type === 'income' ? "bg-emerald-500 text-white shadow-md" : "text-white/40 hover:text-white/80")}
+          >
+            {t('finances.income')}
+          </button>
         </div>
         
         <Input 
@@ -154,6 +176,8 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
           data-testid="transaction-description-input"
           placeholder={t('finances.descriptionPlaceholder')}
           value={newTx.description}
+          readOnly={workspaceReadOnly}
+          title={workspaceReadOnly ? readonlyActionLabel : undefined}
           onChange={e => setNewTx({...newTx, description: e.target.value})}
         />
 
@@ -164,6 +188,8 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
           inputMode="decimal"
           placeholder={t('finances.amountPlaceholder')}
           value={newTx.amount}
+          readOnly={workspaceReadOnly}
+          title={workspaceReadOnly ? readonlyActionLabel : undefined}
           onChange={e => setNewTx({...newTx, amount: e.target.value})}
         />
 
@@ -173,6 +199,8 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
             <Select
               data-testid="transaction-category-select"
               value={newTx.category}
+              disabled={workspaceReadOnly}
+              title={workspaceReadOnly ? readonlyActionLabel : undefined}
               onChange={e => setNewTx({...newTx, category: e.target.value})}
               options={categoryOptions}
             />
@@ -182,6 +210,8 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
               <Select
                data-testid="transaction-account-select"
                value={resolvedAccountId}
+               disabled={workspaceReadOnly}
+               title={workspaceReadOnly ? readonlyActionLabel : undefined}
                 onChange={e => setNewTx({...newTx, accountId: e.target.value})}
                 options={accounts.map(acc => ({ value: acc.id, label: acc.name }))}
               />
@@ -193,6 +223,8 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
           data-testid="transaction-date-input"
           type="date"
           value={newTx.date}
+          readOnly={workspaceReadOnly}
+          title={workspaceReadOnly ? readonlyActionLabel : undefined}
           onChange={e => setNewTx({ ...newTx, date: e.target.value })}
         />
 
@@ -201,6 +233,8 @@ export function AddTransactionModal({ isOpen, onClose, transaction, initialAccou
               variant="primary"
               className="w-full h-11"
               data-testid="transaction-save-button"
+              disabled={workspaceReadOnly}
+              title={workspaceReadOnly ? readonlyActionLabel : undefined}
               onClick={handleAdd}
             >
               {transaction ? t('finances.saveTransactionChanges') : t('finances.confirmTransaction')}
