@@ -19,6 +19,21 @@ const THEME_OPTIONS = [
   { id: 'system', icon: Monitor, labelKey: 'settings.systemSync' },
 ] as const;
 
+const SELECTED_ACCENT_CARD_STYLE = {
+  backgroundColor: 'rgb(var(--color-accent-rgb) / 0.1)',
+  borderColor: 'rgb(var(--color-accent-rgb) / 0.24)',
+  boxShadow: '0 12px 30px -20px rgb(var(--color-accent-rgb) / 0.38)',
+};
+
+const SELECTED_ACCENT_SWATCH_STYLE = {
+  borderColor: 'rgb(var(--color-accent-rgb) / 0.3)',
+  boxShadow: '0 12px 30px -18px rgb(var(--color-accent-rgb) / 0.4)',
+};
+
+const ACCENT_ICON_STYLE = {
+  color: 'var(--color-accent)',
+};
+
 export function AppearanceSection() {
   const { t } = useI18n();
   const { 
@@ -30,22 +45,25 @@ export function AppearanceSection() {
     <section className="space-y-8 md:space-y-12">
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
         <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-text-primary">
-          <Monitor className="w-4 h-4 text-violet-400" />
+          <Monitor className="w-4 h-4" style={ACCENT_ICON_STYLE} />
           {t('settings.themePreferences')}
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3" role="radiogroup" aria-label={t('settings.themePreferences')}>
           {THEME_OPTIONS.map((mode) => (
             <button
               key={mode.id}
               type="button"
+              role="radio"
+              aria-checked={theme === mode.id}
               onClick={() => setThemeMode(mode.id)}
               className={cn(
                 "p-5 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 text-center",
                 theme === mode.id 
-                  ? "bg-violet-500/10 border-violet-500/20 text-text-primary" 
+                  ? "text-text-primary" 
                   : "bg-bg-tertiary border-border text-text-secondary hover:bg-bg-hover hover:text-text-primary"
               )}
+              style={theme === mode.id ? SELECTED_ACCENT_CARD_STYLE : undefined}
             >
               <mode.icon size={28} />
               <span className="text-sm font-bold">{t(mode.labelKey)}</span>
@@ -56,7 +74,7 @@ export function AppearanceSection() {
 
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
         <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-text-primary">
-          <LayoutDashboard className="w-4 h-4 text-violet-400" />
+          <LayoutDashboard className="w-4 h-4" style={ACCENT_ICON_STYLE} />
           {t('settings.interfaceSettings')}
         </h3>
         
@@ -74,6 +92,7 @@ export function AppearanceSection() {
             <Switch 
               checked={settings.sidebarCollapsed} 
               onChange={toggleSidebar} 
+              ariaLabel={t('settings.sidebarBehavior')}
             />
           </div>
 
@@ -90,6 +109,7 @@ export function AppearanceSection() {
             <Switch 
               checked={settings.compactMode} 
               onChange={toggleCompactMode} 
+              ariaLabel={t('settings.compactMode')}
             />
           </div>
         </div>
@@ -97,7 +117,7 @@ export function AppearanceSection() {
 
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
         <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-text-primary">
-          <Palette className="w-4 h-4 text-violet-400" />
+          <Palette className="w-4 h-4" style={ACCENT_ICON_STYLE} />
           {t('settings.accentColor')}
         </h3>
         
@@ -105,12 +125,16 @@ export function AppearanceSection() {
           {ACCENT_COLORS.map((color) => (
             <button
               key={color.labelKey}
+              type="button"
+              aria-pressed={settings.accentColor === color.value}
+              aria-label={t(color.labelKey)}
               className={cn(
                 "group p-1 rounded-2xl border-2 transition-all duration-300",
-                settings.accentColor === color.value ? "border-violet-500/30 shadow-sm shadow-violet/20" : "border-transparent"
+                settings.accentColor === color.value ? "" : "border-transparent"
               )}
               onClick={() => handleAccentChange(color.value)}
               title={t(color.labelKey)}
+              style={settings.accentColor === color.value ? SELECTED_ACCENT_SWATCH_STYLE : undefined}
             >
               <div className={cn(
                 "h-12 w-full rounded-2xl shadow-lg transition-transform group-hover:scale-95",

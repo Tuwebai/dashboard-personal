@@ -6,6 +6,7 @@ interface SwitchProps {
   onChange: (checked: boolean) => void;
   label?: string;
   description?: string;
+  ariaLabel?: string;
   className?: string;
   disabled?: boolean;
 }
@@ -15,11 +16,17 @@ export function Switch({
   onChange, 
   label, 
   description, 
+  ariaLabel,
   className,
   disabled = false 
 }: SwitchProps) {
   return (
-    <div 
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={ariaLabel ?? label}
+      disabled={disabled}
       className={cn(
         "flex items-center justify-between gap-4 group cursor-pointer",
         disabled && "opacity-50 cursor-not-allowed",
@@ -59,6 +66,6 @@ export function Switch({
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         />
       </div>
-    </div>
+    </button>
   );
 }
