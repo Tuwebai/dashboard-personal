@@ -7,6 +7,7 @@ export function useAppearanceSettings() {
     accentColor,
     sidebarCollapsed,
     compactMode,
+    workspaceReadOnly,
     setThemeMode,
     setAccentColor,
     setSidebarCollapsed,
@@ -17,6 +18,7 @@ export function useAppearanceSettings() {
       accentColor: state.settings.accentColor,
       sidebarCollapsed: state.settings.sidebarCollapsed,
       compactMode: state.settings.compactMode,
+      workspaceReadOnly: state.workspaceReadOnly,
       setThemeMode: state.setThemeMode,
       setAccentColor: state.setAccentColor,
       setSidebarCollapsed: state.setSidebarCollapsed,
@@ -40,6 +42,7 @@ export function useAppearanceSettings() {
   return {
     theme,
     settings,
+    workspaceReadOnly,
     setThemeMode,
     handleAccentChange,
     toggleSidebar,

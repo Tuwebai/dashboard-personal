@@ -37,7 +37,7 @@ const ACCENT_ICON_STYLE = {
 export function AppearanceSection() {
   const { t } = useI18n();
   const { 
-    theme, settings, setThemeMode, 
+    theme, settings, workspaceReadOnly, setThemeMode, 
     handleAccentChange, toggleSidebar, toggleCompactMode 
   } = useAppearanceSettings();
 
@@ -56,12 +56,14 @@ export function AppearanceSection() {
               type="button"
               role="radio"
               aria-checked={theme === mode.id}
+              disabled={workspaceReadOnly}
               onClick={() => setThemeMode(mode.id)}
               className={cn(
                 "p-5 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 text-center",
                 theme === mode.id 
                   ? "text-text-primary" 
-                  : "bg-bg-tertiary border-border text-text-secondary hover:bg-bg-hover hover:text-text-primary"
+                  : "bg-bg-tertiary border-border text-text-secondary hover:bg-bg-hover hover:text-text-primary",
+                workspaceReadOnly && "cursor-not-allowed opacity-60"
               )}
               style={theme === mode.id ? SELECTED_ACCENT_CARD_STYLE : undefined}
             >
@@ -93,6 +95,7 @@ export function AppearanceSection() {
               checked={settings.sidebarCollapsed} 
               onChange={toggleSidebar} 
               ariaLabel={t('settings.sidebarBehavior')}
+              disabled={workspaceReadOnly}
             />
           </div>
 
@@ -110,6 +113,7 @@ export function AppearanceSection() {
               checked={settings.compactMode} 
               onChange={toggleCompactMode} 
               ariaLabel={t('settings.compactMode')}
+              disabled={workspaceReadOnly}
             />
           </div>
         </div>
@@ -128,9 +132,11 @@ export function AppearanceSection() {
               type="button"
               aria-pressed={settings.accentColor === color.value}
               aria-label={t(color.labelKey)}
+              disabled={workspaceReadOnly}
               className={cn(
                 "group p-1 rounded-2xl border-2 transition-all duration-300",
-                settings.accentColor === color.value ? "" : "border-transparent"
+                settings.accentColor === color.value ? "" : "border-transparent",
+                workspaceReadOnly && "cursor-not-allowed opacity-60"
               )}
               onClick={() => handleAccentChange(color.value)}
               title={t(color.labelKey)}

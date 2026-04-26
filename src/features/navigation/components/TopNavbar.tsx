@@ -34,6 +34,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
   const [now, setNow] = useState(() => Date.now());
   const {
     themeMode,
+    workspaceReadOnly,
     setThemeMode,
     notifications,
     markNotificationRead,
@@ -48,6 +49,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
   } = useAppStore(
     useShallow((state) => ({
       themeMode: state.settings.theme,
+      workspaceReadOnly: state.workspaceReadOnly,
       setThemeMode: state.setThemeMode,
       notifications: state.notifications,
       markNotificationRead: state.markNotificationRead,
@@ -181,7 +183,11 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       {/* Theme Toggle */}
       <button
         onClick={() => setThemeMode(resolvedTheme === 'dark' ? 'light' : 'dark')}
-        className="rounded-lg p-2 text-text-secondary transition-all hover:bg-bg-hover hover:text-text-primary"
+        disabled={workspaceReadOnly}
+        className={cn(
+          "rounded-lg p-2 text-text-secondary transition-all hover:bg-bg-hover hover:text-text-primary",
+          workspaceReadOnly && "cursor-not-allowed opacity-50"
+        )}
         aria-label={t('common.toggleTheme')}
       >
         <motion.div
