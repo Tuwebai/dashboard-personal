@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { 
   User, Palette, Bell, Tag, ChevronDown,
   Database, Keyboard, Globe, Info,
@@ -39,10 +39,45 @@ export function Settings() {
   const [activeSection, setActiveSection] = useState<SettingsSection>('general');
   const [mobileSelectorOpen, setMobileSelectorOpen] = useState(false);
   const { t } = useI18n();
+  const mobileSelectorRef = useRef<HTMLDivElement | null>(null);
   const activeSectionConfig = useMemo(
     () => SECTIONS.find((section) => section.id === activeSection) ?? SECTIONS[0],
     [activeSection],
   );
+
+  useEffect(() => {
+    if (!mobileSelectorOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!mobileSelectorRef.current?.contains(event.target as Node)) {
+        setMobileSelectorOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileSelectorOpen(false);
+      }
+    };
+
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileSelectorOpen(false);
+      }
+    };
+
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [mobileSelectorOpen]);
 
   const renderSection = () => {
     switch (activeSection) {
@@ -66,7 +101,7 @@ export function Settings() {
       </div>
 
       <div className="flex-1 flex min-h-0 flex-col gap-4 md:gap-10 lg:flex-row">
-        <div className="relative md:hidden">
+        <div ref={mobileSelectorRef} className="relative md:hidden">
           <button
             type="button"
             onClick={() => setMobileSelectorOpen((current) => !current)}
