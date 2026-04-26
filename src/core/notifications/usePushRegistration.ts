@@ -3,7 +3,13 @@ import { toast } from 'sonner';
 import { useAppStore } from '../../stores/useAppStore';
 import { shouldUseFirebasePersistence } from '../persistence/config';
 import { disableNotificationDeviceRemote, upsertNotificationDeviceRemote } from './firestore';
-import { ensurePushToken, getPushDeviceId, revokePushToken, subscribeToForegroundPush } from './push';
+import {
+  ensurePushToken,
+  getPushDeviceId,
+  revokePushToken,
+  showForegroundPushNotification,
+  subscribeToForegroundPush,
+} from './push';
 import { getBrowserPushSupportState } from './support';
 import { useI18n } from '../../shared/i18n/useI18n';
 
@@ -54,8 +60,12 @@ export function usePushRegistration() {
         const message = payload.notification?.body ?? t('settings.notificationsEnabledBody');
         const title = payload.notification?.title ?? t('common.notifications');
 
-        toast.info(title, {
-          description: message,
+        void showForegroundPushNotification(payload).then((shown) => {
+          if (!shown) {
+            toast.info(title, {
+              description: message,
+            });
+          }
         });
       });
     };

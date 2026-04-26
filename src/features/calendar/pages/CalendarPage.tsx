@@ -20,6 +20,7 @@ import {
 import {
   buildCalendarEventSchedule,
   mapCalendarEventToFormValues,
+  parseCalendarEventReminders,
   type CalendarEventFormValues,
 } from '../lib/eventForm';
 
@@ -61,6 +62,7 @@ export default function Calendar() {
         startDate: schedule.startDate,
         endDate: schedule.endDate,
         color: eventData.color,
+        reminders: parseCalendarEventReminders(eventData.reminder),
       });
       toast.success(t('calendar.updated'));
       handleCloseAddModal();
@@ -74,7 +76,7 @@ export default function Calendar() {
       color: eventData.color,
       category: 'personal',
       recurrence: 'none',
-      reminders: [],
+      reminders: parseCalendarEventReminders(eventData.reminder),
       isAllDay: false,
     });
     toast.success(t('calendar.created'));

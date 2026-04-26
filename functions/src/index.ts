@@ -28,7 +28,7 @@ export const sendPushOnNotificationCreate = onDocumentCreated(
 
 export const generateNotificationReminders = onSchedule(
   {
-    schedule: 'every 15 minutes',
+    schedule: 'every 5 minutes',
     region: 'us-central1',
     timeZone: 'America/Argentina/Buenos_Aires',
   },

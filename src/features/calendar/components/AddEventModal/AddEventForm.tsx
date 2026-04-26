@@ -106,6 +106,29 @@ export const AddEventForm = memo(({ initialValues, submitLabel, onConfirm }: Eve
           />
         </div>
         <div className="space-y-1.5">
+          <label
+            htmlFor="cal-event-reminder"
+            className="text-[10px] font-bold text-text-muted uppercase tracking-widest px-1"
+          >
+            {t('calendar.reminder')}
+          </label>
+          <Select
+            id="cal-event-reminder"
+            name="event_reminder"
+            value={formData.reminder}
+            onChange={e => setFormData({...formData, reminder: e.target.value})}
+            options={[
+              { value: 'none', label: t('calendar.reminderNone') },
+              { value: '5', label: t('calendar.reminder5min') },
+              { value: '10', label: t('calendar.reminder10min') },
+              { value: '15', label: t('calendar.reminder15min') },
+              { value: '30', label: t('calendar.reminder30min') },
+              { value: '60', label: t('calendar.reminder60min') },
+              { value: '1440', label: t('calendar.reminder1day') },
+            ]}
+          />
+        </div>
+        <div className="space-y-1.5">
           <label className="text-[10px] font-bold text-text-muted uppercase tracking-widest px-1">{t('calendar.labelColor')}</label>
           <div className="flex items-center gap-3 px-1 py-2">
             {COLORS.map(c => (

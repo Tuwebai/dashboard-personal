@@ -7,6 +7,7 @@ export interface CalendarEventFormValues {
   startTime: string;
   duration: string;
   color: string;
+  reminder: string;
 }
 
 function padTimeUnit(value: number) {
@@ -31,6 +32,7 @@ export function createDefaultCalendarEventFormValues(): CalendarEventFormValues 
     startTime: '09:00',
     duration: '60',
     color: '#8b5cf6',
+    reminder: 'none',
   };
 }
 
@@ -59,5 +61,15 @@ export function mapCalendarEventToFormValues(event: CalendarEvent): CalendarEven
     startTime: format(startAt, 'HH:mm'),
     duration: String(durationMinutes),
     color: event.color,
+    reminder: event.reminders[0] ? String(event.reminders[0]) : 'none',
   };
+}
+
+export function parseCalendarEventReminders(reminder: string) {
+  const reminderMinutes = Number.parseInt(reminder, 10);
+  if (Number.isNaN(reminderMinutes) || reminderMinutes <= 0) {
+    return [] as number[];
+  }
+
+  return [reminderMinutes];
 }

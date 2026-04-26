@@ -12,6 +12,8 @@ import { getBrowserPushSupportState } from './support';
 
 const DEVICE_ID_STORAGE_KEY = 'nexus-notification-device-id';
 const PUSH_TOKEN_STORAGE_KEY = 'nexus-notification-token';
+const FOREGROUND_NOTIFICATION_TTL_MS = 20_000;
+const shownForegroundNotifications = new Map<string, number>();
 
 function getVapidKey() {
   return import.meta.env.VITE_FIREBASE_VAPID_KEY ?? '';
@@ -153,4 +155,71 @@ export async function subscribeToForegroundPush(callback: (payload: MessagePaylo
   }
 
   return onMessage(messaging as Messaging, callback);
+}
+
+function getForegroundNotificationId(payload: MessagePayload) {
+  return payload.data?.notificationId
+    ?? `${payload.notification?.title ?? 'notification'}:${payload.notification?.body ?? ''}`;
+}
+
+function shouldSkipForegroundNotification(notificationId: string) {
+  const now = Date.now();
+  const lastShownAt = shownForegroundNotifications.get(notificationId);
+  shownForegroundNotifications.forEach((shownAt, key) => {
+    if (now - shownAt > FOREGROUND_NOTIFICATION_TTL_MS) {
+      shownForegroundNotifications.delete(key);
+    }
+  });
+
+  if (lastShownAt && now - lastShownAt < FOREGROUND_NOTIFICATION_TTL_MS) {
+    return true;
+  }
+
+  shownForegroundNotifications.set(notificationId, now);
+  return false;
+}
+
+export async function showForegroundPushNotification(payload: MessagePayload) {
+  if (typeof window === 'undefined' || Notification.permission !== 'granted') {
+    return false;
+  }
+
+  const title = payload.notification?.title?.trim();
+  if (!title) {
+    return false;
+  }
+
+  const notificationId = getForegroundNotificationId(payload);
+  if (shouldSkipForegroundNotification(notificationId)) {
+    return false;
+  }
+
+  const body = payload.notification?.body ?? '';
+  const actionUrl = payload.data?.actionUrl ?? '/dashboard';
+  const options: NotificationOptions = {
+    body,
+    badge: '/favicon.ico',
+    data: {
+      actionUrl,
+      notificationId,
+    },
+    icon: '/favicon.ico',
+    tag: notificationId,
+  };
+
+  const registration = await navigator.serviceWorker.getRegistration().catch(() => undefined)
+    ?? await registerMessagingServiceWorker().catch(() => null);
+
+  if (registration?.showNotification) {
+    await registration.showNotification(title, options);
+    return true;
+  }
+
+  const notification = new Notification(title, options);
+  notification.onclick = () => {
+    window.focus();
+    window.location.assign(actionUrl);
+  };
+
+  return true;
 }

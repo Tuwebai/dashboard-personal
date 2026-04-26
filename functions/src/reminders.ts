@@ -2,6 +2,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 import type { NotificationPreferencesDoc, WorkspaceSnapshot } from './types';
 import { buildChannels, buildNotification, resolveNotificationSettings, upsertNotification } from './notifications';
 
+const EVENT_AND_HABIT_REMINDER_WINDOW_MINUTES = 6;
+
 function isDateInNextWindow(dateValue: string, windowMinutes: number) {
   const now = Date.now();
   const target = new Date(dateValue).getTime();
@@ -62,11 +64,15 @@ export async function generateScheduledNotifications() {
     }
 
     for (const event of workspace.events ?? []) {
+      if (!settings?.calendarNotifications) {
+        continue;
+      }
+
       const reminders = event.reminders ?? [];
       for (const reminderMinutes of reminders) {
         const startAt = new Date(event.startDate).getTime();
         const reminderAt = new Date(startAt - reminderMinutes * 60000).toISOString();
-        if (!isDateInNextWindow(reminderAt, 20)) {
+        if (!isDateInNextWindow(reminderAt, EVENT_AND_HABIT_REMINDER_WINDOW_MINUTES)) {
           continue;
         }
 
@@ -97,7 +103,7 @@ export async function generateScheduledNotifications() {
         (log) => log.habitId === habit.id && log.completed && isSameLocalDay(log.date, now),
       );
 
-      if (completedToday || !isDateInNextWindow(reminderDate.toISOString(), 20)) {
+      if (completedToday || !isDateInNextWindow(reminderDate.toISOString(), EVENT_AND_HABIT_REMINDER_WINDOW_MINUTES)) {
         continue;
       }
 
