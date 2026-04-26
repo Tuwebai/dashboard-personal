@@ -9,6 +9,7 @@ import { useDataPortability } from '../hooks/useDataPortability';
 import { usePersistenceMode } from '../hooks/usePersistenceMode';
 import { usePersistenceSyncStatus } from '../hooks/usePersistenceSyncStatus';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { getSyncStatusLabel, shouldShowLastConfirmedCopy } from '../lib/syncStatus';
 
 export function SystemSection() {
   const { t } = useI18n();
@@ -26,26 +27,14 @@ export function SystemSection() {
         timeStyle: 'short',
       })
     : '';
-  const syncStatusMessage = currentMode === 'firebase'
-    ? status === 'auth-resolving'
-      ? t('settings.syncAuthResolving')
-      : status === 'hydrating'
-      ? t('settings.syncHydrating')
-      : status === 'ready'
-      ? updatedAt
-        ? t('settings.syncedAt').replace('{time}', formattedUpdatedAt)
-        : t('settings.syncWaiting')
-      : status === 'syncing'
-      ? t('settings.syncing')
-      : status === 'offline-readonly'
-      ? t('settings.syncOfflineReadonly')
-      : status === 'error'
-        ? t('settings.syncError')
-        : updatedAt
-          ? t('settings.syncedAt').replace('{time}', formattedUpdatedAt)
-          : t('settings.syncWaiting')
-    : t('settings.syncLocal');
-  const showLastConfirmedCopy = currentMode === 'firebase' && !!updatedAt && (status === 'offline-readonly' || status === 'error');
+  const syncStatusMessage = getSyncStatusLabel({
+    mode: currentMode,
+    status,
+    updatedAt,
+    formattedUpdatedAt,
+    t,
+  });
+  const showLastConfirmedCopy = shouldShowLastConfirmedCopy(currentMode, status, updatedAt);
 
   return (
     <section className="space-y-8 md:space-y-12">

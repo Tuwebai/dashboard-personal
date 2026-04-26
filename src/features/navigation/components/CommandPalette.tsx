@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { scheduleAfterPaint } from '../../../shared/lib/scheduleAfterPaint';
 import { useShallow } from 'zustand/react/shallow';
 import { CommandPaletteFooter } from './command-palette/CommandPaletteFooter';
 import { buildCommandPaletteCommands } from './command-palette/commands';
@@ -49,9 +50,10 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
 
   useEffect(() => {
     if (commandPaletteOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
+      const cancelFocus = scheduleAfterPaint(() => inputRef.current?.focus());
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('');
+      return cancelFocus;
     }
   }, [commandPaletteOpen]);
 

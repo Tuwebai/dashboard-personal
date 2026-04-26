@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { scheduleAfterPaint } from '../../../shared/lib/scheduleAfterPaint';
 import { cn } from '../../../shared/lib/cn';
 
 export function NoteEditor() {
@@ -34,11 +35,10 @@ export function NoteEditor() {
       if (editorRef.current.innerHTML !== note.content) {
         editorRef.current.innerHTML = note.content;
       }
-      // Use timeout to avoid cascading renders (updating state synchronously in effect)
-      const timer = setTimeout(() => {
+      const cancelFormatCheck = scheduleAfterPaint(() => {
         checkActiveFormats();
-      }, 0);
-      return () => clearTimeout(timer);
+      });
+      return cancelFormatCheck;
     }
   }, [selectedNoteId, note, checkActiveFormats]);
 
