@@ -10,6 +10,7 @@ import { useAppNavigationSync } from './core/navigation/useAppNavigationSync';
 import type { AppModule } from './core/navigation/routes';
 import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
 import { PageSkeleton } from './shared/ui/PageSkeleton';
+import { AppLoadingScreen } from './shared/ui/AppLoadingScreen';
 
 const Dashboard = lazy(() => import('./features/dashboard/pages/DashboardPage').then(m => ({ default: m.Dashboard })));
 const GoalsPage = lazy(() => import('./features/goals/pages/GoalsPage').then(m => ({ default: m.GoalsPage })));
@@ -103,19 +104,10 @@ export default function App() {
   let content: ReactNode;
 
   if (authStatus === 'loading') {
-    content = (
-      <div className="flex min-h-screen items-center justify-center bg-bg-primary text-white">
-        <div className="rounded-3xl border border-white/10 bg-bg-card px-8 py-6 text-center shadow-2xl shadow-black/30">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-violet-300/80">
-            NexusCRM
-          </p>
-          <p className="mt-3 text-sm text-white/60">Verificando sesión...</p>
-        </div>
-      </div>
-    );
+    content = <AppLoadingScreen />;
   } else if (authStatus !== 'authenticated') {
     content = (
-      <Suspense fallback={<PageSkeleton />}>
+      <Suspense fallback={<AppLoadingScreen />}>
         <LoginPage />
       </Suspense>
     );
