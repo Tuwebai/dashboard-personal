@@ -23,7 +23,15 @@ export function isPersistedWorkspaceSnapshot(value: unknown): value is Persisted
     && Array.isArray(value.events);
 }
 
-export function sanitizeImportedSnapshot(value: unknown): PersistedWorkspaceSnapshot | null {
+export function hasLegacyAppearanceSnapshotFields(value: unknown): boolean {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return isThemeMode(value.theme) || typeof value.sidebarCollapsed === 'boolean';
+}
+
+export function normalizePersistedWorkspaceSnapshot(value: unknown): PersistedWorkspaceSnapshot | null {
   if (!isPersistedWorkspaceSnapshot(value)) {
     return null;
   }
@@ -47,4 +55,8 @@ export function sanitizeImportedSnapshot(value: unknown): PersistedWorkspaceSnap
         : value.settings.sidebarCollapsed ?? defaults.settings.sidebarCollapsed,
     },
   };
+}
+
+export function sanitizeImportedSnapshot(value: unknown): PersistedWorkspaceSnapshot | null {
+  return normalizePersistedWorkspaceSnapshot(value);
 }

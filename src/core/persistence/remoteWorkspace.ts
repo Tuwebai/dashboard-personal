@@ -69,7 +69,7 @@ export async function writeWorkspaceRemote(uid: string, payload: RemoteWorkspace
     throw new Error('persistence/invalid-doc-ref');
   }
 
-  await setDoc(ref, stripUndefinedDeep(payload), { merge: true });
+  await setDoc(ref, stripUndefinedDeep(payload));
 }
 
 export async function wipeRemoteWorkspace(uid: string) {

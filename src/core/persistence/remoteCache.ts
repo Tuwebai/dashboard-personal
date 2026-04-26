@@ -1,4 +1,4 @@
-import type { PersistedWorkspaceSnapshot } from './workspace';
+import { normalizePersistedWorkspaceSnapshot, type PersistedWorkspaceSnapshot } from './workspace';
 
 const REMOTE_CACHE_KEY_PREFIX = 'nexus-crm-remote-cache';
 
@@ -28,7 +28,19 @@ export function readWorkspaceCache(uid: string): CachedWorkspaceEnvelope | null 
       return null;
     }
 
-    return parsed;
+    const normalizedSnapshot = normalizePersistedWorkspaceSnapshot(parsed.snapshot);
+    if (!normalizedSnapshot) {
+      return null;
+    }
+
+    if (JSON.stringify(normalizedSnapshot) !== JSON.stringify(parsed.snapshot)) {
+      writeWorkspaceCache(uid, normalizedSnapshot, parsed.updatedAt);
+    }
+
+    return {
+      ...parsed,
+      snapshot: normalizedSnapshot,
+    };
   } catch {
     return null;
   }
@@ -42,7 +54,7 @@ export function writeWorkspaceCache(uid: string, snapshot: PersistedWorkspaceSna
   const payload: CachedWorkspaceEnvelope = {
     uid,
     updatedAt,
-    snapshot,
+    snapshot: normalizePersistedWorkspaceSnapshot(snapshot) ?? snapshot,
   };
 
   window.localStorage.setItem(getRemoteCacheKey(uid), JSON.stringify(payload));

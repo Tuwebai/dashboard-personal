@@ -3,8 +3,10 @@ import { useAppStore } from '../../stores/useAppStore';
 import { isFirebasePersistenceConfigured } from './config';
 import { loadFirebaseBridge, loadRemoteWorkspaceBridge } from './firebaseLoaders';
 import {
+  hasLegacyAppearanceSnapshotFields,
   isPersistedWorkspaceSnapshot,
   mergePersistedWorkspace,
+  normalizePersistedWorkspaceSnapshot,
   pickPersistedWorkspace,
 } from './workspace';
 import {
@@ -153,7 +155,25 @@ export function useFirebasePersistenceSync() {
         } else {
           const data = snapshot.data();
           if (isRemoteStatePayload(data) && isPersistedWorkspaceSnapshot(data.state)) {
-            applySnapshot(uid, data.state, typeof data.updatedAt === 'string' ? data.updatedAt : new Date().toISOString());
+            const normalizedSnapshot = normalizePersistedWorkspaceSnapshot(data.state);
+            if (!normalizedSnapshot) {
+              throw new Error('persistence/invalid-remote-payload');
+            }
+
+            const remoteUpdatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : new Date().toISOString();
+            const shouldRewriteRemote =
+              hasLegacyAppearanceSnapshotFields(data.state)
+              || JSON.stringify(normalizedSnapshot) !== JSON.stringify(data.state);
+            const appliedUpdatedAt = shouldRewriteRemote ? new Date().toISOString() : remoteUpdatedAt;
+
+            if (shouldRewriteRemote) {
+              await writeWorkspaceRemote(uid, {
+                updatedAt: appliedUpdatedAt,
+                state: normalizedSnapshot,
+              });
+            }
+
+            applySnapshot(uid, normalizedSnapshot, appliedUpdatedAt);
           } else {
             throw new Error('persistence/invalid-remote-payload');
           }
@@ -182,6 +202,15 @@ export function useFirebasePersistenceSync() {
             return;
           }
 
+          const normalizedSnapshot = normalizePersistedWorkspaceSnapshot(payload.state);
+          if (!normalizedSnapshot) {
+            const syncError = resolvePersistenceSyncError(new Error('persistence/invalid-remote-payload'));
+            setLastSyncError(uid, syncError);
+            dispatchSyncStatus('error', getLastSyncAt(uid), syncError);
+            pushSyncErrorNotification(syncError);
+            return;
+          }
+
           const remoteUpdatedAt = typeof payload.updatedAt === 'string' ? payload.updatedAt : '';
           if (pendingLocalUpdatedAt && remoteUpdatedAt <= pendingLocalUpdatedAt) {
             return;
@@ -191,7 +220,7 @@ export function useFirebasePersistenceSync() {
             return;
           }
 
-          applySnapshot(uid, payload.state, remoteUpdatedAt || new Date().toISOString());
+          applySnapshot(uid, normalizedSnapshot, remoteUpdatedAt || new Date().toISOString());
           clearLastSyncError(uid);
           dispatchSyncStatus('ready', getLastSyncAt(uid));
         });
