@@ -79,6 +79,7 @@ export function NoteToolbar({ showBackButton = false, onBack }: NoteToolbarProps
           </button>
         )}
         <input
+          data-testid="note-title-input"
           type="text"
           value={note.title}
           onChange={(e) => updateNote(note.id, { title: e.target.value })}

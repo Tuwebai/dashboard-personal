@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import type { NoteFilter } from '../pages/NotesPage';
 import { useShallow } from 'zustand/react/shallow';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 interface NoteSidebarProps {
   activeFilter: NoteFilter;
@@ -26,6 +27,7 @@ export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange, onNo
     })),
   );
   const { t } = useI18n();
+  const { workspaceReadOnly, readonlyActionLabel } = useReadonlyActionProps();
 
   const filteredNotes = notes.filter(note => {
     // Text search filter
@@ -71,8 +73,10 @@ export function NoteSidebar({ activeFilter, activeFolderId, onFilterChange, onNo
         </div>
         <button 
           onClick={handleCreateNote}
-          className="p-2 bg-violet-500 text-white rounded-xl shadow-lg shadow-violet-500/20 hover:bg-violet-600 transition-all active:scale-95"
-          title={t('notes.new')}
+          data-testid="notes-create-button"
+          disabled={workspaceReadOnly}
+          className="p-2 bg-violet-500 text-white rounded-xl shadow-lg shadow-violet-500/20 hover:bg-violet-600 transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+          title={workspaceReadOnly ? readonlyActionLabel : t('notes.new')}
         >
           <Plus size={20} />
         </button>

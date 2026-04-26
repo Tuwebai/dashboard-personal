@@ -9,6 +9,7 @@ import { Input, Select } from '../../../shared/ui/Input';
 import { HabitGrid } from '../components/HabitGrid';
 import type { HabitCategory } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 export default function Habits() {
   const [activeCategory, setActiveCategory] = useState<HabitCategory>('health');
@@ -26,6 +27,7 @@ export default function Habits() {
     }))
   );
   const { t } = useI18n();
+  const { actionProps } = useReadonlyActionProps();
 
   const handleAddHabit = () => {
     if (!newHabit.name) return;
@@ -55,6 +57,7 @@ export default function Habits() {
           className="h-11 px-6 shadow-xl shadow-violet-500/20"
           data-testid="habits-new-button"
           leftIcon={<Plus size={18} strokeWidth={2.5} />} 
+          {...actionProps}
           onClick={() => setIsModalOpen(true)}
         >
           {t('habits.newHabit')}
@@ -150,6 +153,7 @@ export default function Habits() {
             variant="primary" 
             className="w-full h-11 shadow-xl shadow-violet-500/20" 
             data-testid="habits-submit-button"
+            {...actionProps}
             onClick={handleAddHabit}
           >
             {t('habits.createHabit')}

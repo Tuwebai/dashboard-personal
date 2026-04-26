@@ -17,6 +17,7 @@ import { cn } from '../../../shared/lib/cn';
 import { Transaction, type FinancialAccount } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { getDerivedAccounts, type DerivedFinancialAccount } from '../lib/accounts';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 export default function Finances() {
   const { accounts, transactions, budgets, updateAccount, deleteAccount, normalizeTransactionAccounts } = useAppStore(
@@ -30,6 +31,7 @@ export default function Finances() {
     }))
   );
   const { t } = useI18n();
+  const { actionProps } = useReadonlyActionProps();
   
   // UI State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -133,7 +135,9 @@ export default function Finances() {
           <Button 
             variant="ghost" 
             className="w-full bg-bg-secondary border-border sm:w-auto"
+            data-testid="finances-new-account-button"
             leftIcon={<Plus size={16} />}
+            {...actionProps}
             onClick={handleOpenNewAccount}
           >
             {t('finances.newAccount')}
@@ -141,7 +145,9 @@ export default function Finances() {
           <Button 
             variant="primary" 
             className="w-full font-bold shadow-lg shadow-violet/20 sm:w-auto" 
+            data-testid="finances-add-transaction-button"
             leftIcon={<Plus size={16} />}
+            {...actionProps}
             onClick={handleOpenNewTransaction}
           >
             {t('finances.addTransaction')}
@@ -160,7 +166,7 @@ export default function Finances() {
                 {selectedAccountId && (
                   <Button variant="ghost" size="sm" className="text-violet-400" onClick={() => setSelectedAccountId(null)}>{t('finances.clearFilter')}</Button>
                 )}
-                <Button variant="ghost" size="sm" onClick={handleOpenNewAccount}>
+                <Button variant="ghost" size="sm" {...actionProps} onClick={handleOpenNewAccount}>
                   {t('finances.newAccount')}
                 </Button>
               </div>
@@ -168,7 +174,7 @@ export default function Finances() {
             {derivedAccounts.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-border bg-bg-secondary/60 p-6 text-center">
                 <p className="text-sm text-text-secondary">{t('finances.noAccounts')}</p>
-                <Button variant="primary" className="mt-4" onClick={handleOpenNewAccount}>
+                <Button variant="primary" className="mt-4" {...actionProps} onClick={handleOpenNewAccount}>
                   {t('finances.createFirstAccount')}
                 </Button>
               </div>

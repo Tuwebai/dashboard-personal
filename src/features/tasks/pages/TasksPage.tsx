@@ -11,6 +11,7 @@ import { KANBAN_COLUMNS } from '../../../shared/lib/helpers';
 import type { Task, TaskStatus } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useMediaQuery } from '../../../shared/hooks/useMediaQuery';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 // Subcomponents
 import { TaskToolbar } from '../components/TaskToolbar';
@@ -43,6 +44,7 @@ export function Tasks() {
   );
   const { t } = useI18n();
   const isMobile = useMediaQuery('(max-width: 767px)');
+  const { actionProps } = useReadonlyActionProps();
 
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
@@ -116,6 +118,7 @@ export function Tasks() {
           variant="primary" 
           className="h-11 px-6 shadow-xl shadow-violet-500/20"
           leftIcon={<Plus size={18} strokeWidth={2.5} />} 
+          {...actionProps}
           onClick={() => { setEditTask(null); setAddModalOpen(true); }}
         >
           {t('tasks.createNew')}
