@@ -2,7 +2,7 @@ import { StateCreator } from 'zustand';
 import { AuthSlice, AppStore } from '../types';
 import { CURRENT_USER, DEFAULT_SETTINGS } from '../../core/constants';
 import { shouldUseFirebasePersistence } from '../../core/persistence/config';
-import { loadFirebaseBridge } from '../../core/persistence/firebaseLoaders';
+import { loadFirebaseBridge, loadRemoteWorkspaceBridge } from '../../core/persistence/firebaseLoaders';
 
 const DEFAULT_AUTH_STATUS: AuthSlice['authStatus'] = shouldUseFirebasePersistence()
   ? 'loading'
@@ -13,7 +13,7 @@ export const createAuthSlice: StateCreator<
   [["zustand/immer", never], ["zustand/persist", unknown]],
   [],
   AuthSlice
-> = (set) => ({
+> = (set, get) => ({
   user: CURRENT_USER,
   settings: DEFAULT_SETTINGS,
   authStatus: DEFAULT_AUTH_STATUS,
@@ -73,7 +73,22 @@ export const createAuthSlice: StateCreator<
     }
   },
   signOut: async () => {
-    const { signOutFirebaseUser } = await loadFirebaseBridge();
+    const { authProvider, firebaseUid } = get();
+    const { deleteAnonymousFirebaseUser, signOutFirebaseUser } = await loadFirebaseBridge();
+
+    if (authProvider === 'anonymous') {
+      if (firebaseUid) {
+        const { wipeRemoteWorkspace } = await loadRemoteWorkspaceBridge();
+        await wipeRemoteWorkspace(firebaseUid).catch(() => undefined);
+      }
+
+      const deleted = await deleteAnonymousFirebaseUser().catch(() => false);
+
+      if (deleted) {
+        return;
+      }
+    }
+
     await signOutFirebaseUser();
   },
 });

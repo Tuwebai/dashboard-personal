@@ -1,6 +1,7 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   EmailAuthProvider,
   getAuth,
   linkWithCredential,
@@ -167,6 +168,22 @@ export function signOutFirebaseUser() {
   return signOut(auth).finally(() => {
     authUser = null;
   });
+}
+
+export function deleteAnonymousFirebaseUser() {
+  const auth = getFirebaseAuth();
+  const user = auth?.currentUser;
+
+  if (!auth || !user?.isAnonymous) {
+    return Promise.resolve(false);
+  }
+
+  return deleteUser(user)
+    .then(() => {
+      authUser = null;
+      return true;
+    })
+    .catch((error: unknown) => Promise.reject(error));
 }
 
 export function subscribeToFirebaseAuth(callback: (user: User | null) => void) {
