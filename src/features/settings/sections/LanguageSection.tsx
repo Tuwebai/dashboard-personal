@@ -4,8 +4,8 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 
 const LANGUAGES = [
-  { code: 'en' as const, label: 'English', flag: '🇺🇸', native: 'English' },
-  { code: 'es' as const, label: 'Español', flag: '🇪🇸', native: 'Español' },
+  { code: 'en' as const, labelKey: 'language.english', nativeKey: 'language.englishNative', flag: '🇺🇸' },
+  { code: 'es' as const, labelKey: 'language.spanish', nativeKey: 'language.spanishNative', flag: '🇪🇸' },
 ];
 
 export function LanguageSection() {
@@ -37,8 +37,8 @@ export function LanguageSection() {
               >
                 <span className="text-2xl">{l.flag}</span>
                 <div className="flex-1 text-left">
-                  <p className="text-sm font-semibold">{l.native}</p>
-                  <p className="text-[11px] text-white/30">{l.label}</p>
+                  <p className="text-sm font-semibold">{t(l.nativeKey)}</p>
+                  <p className="text-[11px] text-white/30">{t(l.labelKey)}</p>
                 </div>
                 {lang === l.code && (
                   <div className="w-6 h-6 bg-violet-500 rounded-full flex items-center justify-center">

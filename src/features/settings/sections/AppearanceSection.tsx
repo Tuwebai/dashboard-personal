@@ -2,17 +2,19 @@ import { Switch } from '../../../shared/ui/Switch';
 import { Monitor, Moon, Sun, LayoutDashboard, Sidebar, Palette } from 'lucide-react';
 import { cn } from '../../../shared/lib/cn';
 import { useAppearanceSettings } from '../hooks/useAppearanceSettings';
+import { useI18n } from '../../../shared/i18n/useI18n';
 
 const ACCENT_COLORS = [
-  { name: 'Standard Violet', value: '#8b5cf6', class: 'bg-violet-500' },
-  { name: 'Ocean Blue', value: '#3b82f6', class: 'bg-blue-500' },
-  { name: 'Emerald Green', value: '#10b981', class: 'bg-emerald-500' },
-  { name: 'Rose Pink', value: '#f43f5e', class: 'bg-rose-500' },
-  { name: 'Amber Glow', value: '#f59e0b', class: 'bg-amber-500' },
-  { name: 'Slate Gray', value: '#64748b', class: 'bg-slate-500' },
+  { labelKey: 'settings.accentStandardViolet', value: '#8b5cf6', class: 'bg-violet-500' },
+  { labelKey: 'settings.accentOceanBlue', value: '#3b82f6', class: 'bg-blue-500' },
+  { labelKey: 'settings.accentEmeraldGreen', value: '#10b981', class: 'bg-emerald-500' },
+  { labelKey: 'settings.accentRosePink', value: '#f43f5e', class: 'bg-rose-500' },
+  { labelKey: 'settings.accentAmberGlow', value: '#f59e0b', class: 'bg-amber-500' },
+  { labelKey: 'settings.accentSlateGray', value: '#64748b', class: 'bg-slate-500' },
 ];
 
 export function AppearanceSection() {
+  const { t } = useI18n();
   const { 
     theme, settings, toggleTheme, 
     handleAccentChange, toggleSidebar, toggleCompactMode 
@@ -23,14 +25,14 @@ export function AppearanceSection() {
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
         <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
           <Monitor className="w-4 h-4 text-violet-400" />
-          Theme Preferences
+          {t('settings.themePreferences')}
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { id: 'light', icon: Sun, label: 'Light Mode' },
-            { id: 'dark', icon: Moon, label: 'Dark Mode' },
-            { id: 'system', icon: Monitor, label: 'System Sync' },
+            { id: 'light', icon: Sun, label: t('settings.lightMode') },
+            { id: 'dark', icon: Moon, label: t('settings.darkMode') },
+            { id: 'system', icon: Monitor, label: t('settings.systemSync') },
           ].map((mode) => (
             <button
               key={mode.id}
@@ -52,7 +54,7 @@ export function AppearanceSection() {
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
         <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
           <LayoutDashboard className="w-4 h-4 text-violet-400" />
-          Interface Settings
+          {t('settings.interfaceSettings')}
         </h3>
         
         <div className="space-y-4">
@@ -62,8 +64,8 @@ export function AppearanceSection() {
                 <Sidebar size={20} />
               </div>
               <div>
-                <p className="font-bold text-white tracking-tight">Sidebar Behavior</p>
-                <p className="text-xs text-white/30">Auto-collapse sidebar to maximize workspace</p>
+                <p className="font-bold text-white tracking-tight">{t('settings.sidebarBehavior')}</p>
+                <p className="text-xs text-white/30">{t('settings.sidebarBehaviorDesc')}</p>
               </div>
             </div>
             <Switch 
@@ -78,8 +80,8 @@ export function AppearanceSection() {
                 <LayoutDashboard size={20} />
               </div>
               <div>
-                <p className="font-bold text-white tracking-tight">Compact Mode</p>
-                <p className="text-xs text-white/30">Reduced spacing and smaller interface elements</p>
+                <p className="font-bold text-white tracking-tight">{t('settings.compactMode')}</p>
+                <p className="text-xs text-white/30">{t('settings.compactModeDesc')}</p>
               </div>
             </div>
             <Switch 
@@ -93,19 +95,19 @@ export function AppearanceSection() {
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
         <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
           <Palette className="w-4 h-4 text-violet-400" />
-          Accent Color
+          {t('settings.accentColor')}
         </h3>
         
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
           {ACCENT_COLORS.map((color) => (
             <button
-              key={color.name}
+              key={color.labelKey}
               className={cn(
                 "group p-1 rounded-2xl border-2 transition-all duration-300",
                 settings.accentColor === color.value ? "border-white/20" : "border-transparent"
               )}
               onClick={() => handleAccentChange(color.value)}
-              title={color.name}
+              title={t(color.labelKey)}
             >
               <div className={cn(
                 "h-12 w-full rounded-2xl shadow-lg transition-transform group-hover:scale-95",

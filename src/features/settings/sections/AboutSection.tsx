@@ -1,13 +1,17 @@
 import { Info, Code2, Scale, Zap } from 'lucide-react';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { formatSettingsDate } from '../lib/locale';
 
 const TECH_STACK = [
   'React 18', 'TypeScript', 'Zustand', 'Tailwind CSS',
   'Framer Motion', 'Recharts', 'date-fns', 'Vite',
 ];
+const APP_VERSION = '2.4.0';
+const APP_BUILD_DATE = '2026-04-16';
 
 export function AboutSection() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const localizedBuildDate = formatSettingsDate(new Date(`${APP_BUILD_DATE}T00:00:00`), lang);
 
   return (
     <section className="space-y-8">
@@ -25,14 +29,14 @@ export function AboutSection() {
               <Zap size={14} className="text-violet-400" />
               <span className="text-[11px] text-white/40 font-medium">{t('about.version')}</span>
             </div>
-            <p className="text-sm font-semibold text-white">2.4.0</p>
+            <p className="text-sm font-semibold text-white">{APP_VERSION}</p>
           </div>
           <div className="p-4 bg-bg-tertiary border border-border rounded-xl">
             <div className="flex items-center gap-2 mb-2">
               <Info size={14} className="text-violet-400" />
               <span className="text-[11px] text-white/40 font-medium">{t('about.buildDate')}</span>
             </div>
-            <p className="text-sm font-semibold text-white">Apr 16, 2026</p>
+            <p className="text-sm font-semibold text-white">{localizedBuildDate}</p>
           </div>
         </div>
       </div>

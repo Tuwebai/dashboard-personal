@@ -11,9 +11,10 @@ import { usePersistenceMode } from '../hooks/usePersistenceMode';
 import { usePersistenceSyncStatus } from '../hooks/usePersistenceSyncStatus';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { getSyncStatusLabel, shouldShowLastConfirmedCopy } from '../lib/syncStatus';
+import { formatSettingsDateTime } from '../lib/locale';
 
 export function SystemSection() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const {
     isExporting, isImporting, importStatus, fileInputRef,
     exportData, triggerImport, handleFileChange, wipeAccount
@@ -23,16 +24,10 @@ export function SystemSection() {
   
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const formattedUpdatedAt = updatedAt
-    ? new Date(updatedAt).toLocaleString('es-AR', {
-        dateStyle: 'short',
-        timeStyle: 'short',
-      })
+    ? formatSettingsDateTime(new Date(updatedAt), lang)
     : '';
   const formattedErrorAt = errorInfo?.occurredAt
-    ? new Date(errorInfo.occurredAt).toLocaleString('es-AR', {
-        dateStyle: 'short',
-        timeStyle: 'short',
-      })
+    ? formatSettingsDateTime(new Date(errorInfo.occurredAt), lang)
     : '';
   const syncStatusMessage = getSyncStatusLabel({
     mode: currentMode,
