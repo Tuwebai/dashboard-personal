@@ -62,7 +62,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
       className={cn(
         'relative flex min-h-0 flex-col overflow-hidden border-r border-border bg-bg-primary',
         mobile
-          ? 'z-50 h-full max-h-screen w-[240px] max-w-[85vw] self-auto shadow-2xl'
+          ? 'z-50 h-[100dvh] max-h-[100dvh] w-[240px] max-w-[85vw] self-auto shadow-2xl'
           : 'h-dvh self-stretch'
       )}
       animate={{ width: mobile ? 240 : isCollapsed ? 72 : 240 }}
