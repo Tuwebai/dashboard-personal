@@ -49,7 +49,19 @@ export const createAuthSlice: StateCreator<
     }
   },
   signInWithEmail: async (email, password) => {
-    const { signInFirebaseWithEmail } = await loadFirebaseBridge();
+    const { authProvider, firebaseUid } = get();
+    const { deleteAnonymousFirebaseUser, signInFirebaseWithEmail } = await loadFirebaseBridge();
+
+    if (authProvider === 'anonymous' && firebaseUid) {
+      const { wipeRemoteWorkspace } = await loadRemoteWorkspaceBridge();
+      await wipeRemoteWorkspace(firebaseUid);
+
+      const deleted = await deleteAnonymousFirebaseUser();
+      if (!deleted) {
+        throw new Error('auth/anonymous-cleanup-failed');
+      }
+    }
+
     const user = await signInFirebaseWithEmail(email, password);
 
     if (!user) {
@@ -57,8 +69,11 @@ export const createAuthSlice: StateCreator<
     }
   },
   signUpWithEmail: async (email, password) => {
-    const { signUpFirebaseWithEmail } = await loadFirebaseBridge();
-    const user = await signUpFirebaseWithEmail(email, password);
+    const { authProvider } = get();
+    const { linkAnonymousFirebaseUser, signUpFirebaseWithEmail } = await loadFirebaseBridge();
+    const user = authProvider === 'anonymous'
+      ? await linkAnonymousFirebaseUser(email, password)
+      : await signUpFirebaseWithEmail(email, password);
 
     if (!user) {
       throw new Error('auth/sign-up-failed');
