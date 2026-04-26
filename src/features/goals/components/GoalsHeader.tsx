@@ -1,6 +1,7 @@
 import { Target } from 'lucide-react';
 import { Button } from '../../../shared/ui/Button';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 interface GoalsHeaderProps {
   onCreate: () => void;
@@ -8,6 +9,7 @@ interface GoalsHeaderProps {
 
 export function GoalsHeader({ onCreate }: GoalsHeaderProps) {
   const { t } = useI18n();
+  const { actionProps } = useReadonlyActionProps();
   return (
     <header className="flex flex-col gap-4 rounded-3xl border border-white/8 bg-white/4 p-6 md:flex-row md:items-center md:justify-between">
       <div className="flex items-start gap-4">
@@ -22,7 +24,7 @@ export function GoalsHeader({ onCreate }: GoalsHeaderProps) {
         </div>
       </div>
 
-      <Button variant="gradient" onClick={onCreate}>{t('goals.newGoal')}</Button>
+      <Button variant="gradient" onClick={onCreate} {...actionProps}>{t('goals.newGoal')}</Button>
     </header>
   );
 }

@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../../shared/ui/Button';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 import { useCalendarView } from '../hooks/useCalendarView';
 import { useCalendarEvents } from '../hooks/useCalendarEvents';
 import { formatWithLocale } from '../utils/dateUtils';
@@ -34,6 +35,7 @@ export default function Calendar() {
 
   const { addEvent, updateEvent } = useCalendarEvents();
   const { t, lang } = useI18n();
+  const { actionProps } = useReadonlyActionProps();
   
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
@@ -137,6 +139,7 @@ export default function Calendar() {
             variant="primary" 
             className="h-11 w-full px-6 font-bold shadow-lg shadow-violet/20 sm:w-auto" 
             leftIcon={<Plus size={18} />} 
+            {...actionProps}
             onClick={handleStartCreate}
           >
             {t('calendar.newEvent')}

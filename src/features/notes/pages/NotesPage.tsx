@@ -6,6 +6,7 @@ import { NoteToolbar } from '../components/NoteToolbar';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { Button } from '../../../shared/ui/Button';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 
 export type NoteFilter = 'all' | 'favorites' | 'trash' | 'folder';
 
@@ -14,6 +15,7 @@ export default function Notes() {
   const setSelectedNote = useAppStore((state) => state.setSelectedNote);
   const addNote = useAppStore((state) => state.addNote);
   const { t } = useI18n();
+  const { actionProps } = useReadonlyActionProps();
   const [activeFilter, setActiveFilter] = useState<NoteFilter>('all');
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
@@ -115,6 +117,7 @@ export default function Notes() {
                 variant="primary"
                 className="w-full sm:w-auto"
                 leftIcon={<Plus size={16} />}
+                {...actionProps}
                 onClick={handleCreateNote}
               >
                 {t('notes.createFirst')}

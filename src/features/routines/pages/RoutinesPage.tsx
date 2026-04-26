@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { useAppStore } from '../../../stores/useAppStore';
 import { Button } from '../../../shared/ui/Button';
+import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
 import { RoutineCard } from '../components/RoutineCard';
 import { RoutineDetailModal } from '../components/RoutineDetailModal';
 import { RoutineSessionOverlay } from '../components/RoutineSessionOverlay';
@@ -21,6 +22,7 @@ export function Routines() {
     })),
   );
   const { t } = useI18n();
+  const { actionProps } = useReadonlyActionProps();
   
   const [selectedRoutine, setSelectedRoutine] = useState<Routine | null>(null);
   const [editingRoutine, setEditingRoutine] = useState<Routine | null>(null);
@@ -84,6 +86,7 @@ export function Routines() {
             variant="primary" 
             leftIcon={<Plus size={16} />} 
             className="shadow-violet/20 shadow-lg font-bold"
+            {...actionProps}
             onClick={handleNewRoutine}
           >
             {t('routines.new')}
