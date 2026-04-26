@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../../../shared/ui/Button';
 import { Modal } from '../../../shared/ui/Modal';
 import { 
@@ -18,11 +19,17 @@ export function SystemSection() {
     exportData, triggerImport, handleFileChange, wipeAccount
   } = useDataPortability();
   const { currentMode, firebaseReady, changePersistenceMode } = usePersistenceMode();
-  const { status, updatedAt, errorMessageKey } = usePersistenceSyncStatus();
+  const { status, updatedAt, errorMessageKey, errorInfo } = usePersistenceSyncStatus();
   
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const formattedUpdatedAt = updatedAt
     ? new Date(updatedAt).toLocaleString('es-AR', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      })
+    : '';
+  const formattedErrorAt = errorInfo?.occurredAt
+    ? new Date(errorInfo.occurredAt).toLocaleString('es-AR', {
         dateStyle: 'short',
         timeStyle: 'short',
       })
@@ -35,6 +42,29 @@ export function SystemSection() {
     t,
   });
   const showLastConfirmedCopy = shouldShowLastConfirmedCopy(currentMode, status, updatedAt);
+  const handleCopySyncError = async () => {
+    if (!errorInfo) {
+      return;
+    }
+
+    const diagnostic = [
+      `status=${status}`,
+      `code=${errorInfo.code}`,
+      errorInfo.rawCode ? `rawCode=${errorInfo.rawCode}` : '',
+      `messageKey=${errorInfo.messageKey}`,
+      errorInfo.rawMessage ? `rawMessage=${errorInfo.rawMessage}` : '',
+      `occurredAt=${errorInfo.occurredAt}`,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    try {
+      await navigator.clipboard.writeText(diagnostic);
+      toast.success(t('settings.syncErrorCopied'));
+    } catch {
+      toast.error(t('settings.syncErrorCopyFailed'));
+    }
+  };
 
   return (
     <section className="space-y-8 md:space-y-12">
@@ -67,10 +97,26 @@ export function SystemSection() {
         <div className="rounded-xl border border-border bg-bg-tertiary p-4">
           <p className="text-sm font-semibold text-white">{t('settings.syncStatus')}</p>
           <p className="mt-1 text-xs text-white/40">{syncStatusMessage}</p>
-          {errorMessageKey && currentMode === 'firebase' && (status === 'offline-readonly' || status === 'error') && (
-            <p className={`mt-2 text-xs ${status === 'offline-readonly' ? 'text-amber-300/80' : 'text-rose-400'}`}>
-              {t(errorMessageKey)}
-            </p>
+          {errorMessageKey && errorInfo && currentMode === 'firebase' && (status === 'offline-readonly' || status === 'error') && (
+            <div className={`mt-2 rounded-xl border p-3 ${status === 'offline-readonly' ? 'border-amber-500/20 bg-amber-500/5' : 'border-rose-500/20 bg-rose-500/5'}`}>
+              <p className={`text-xs ${status === 'offline-readonly' ? 'text-amber-300/80' : 'text-rose-400'}`}>
+                {t(errorMessageKey)}
+              </p>
+              <div className="mt-2 space-y-1 text-[11px] text-white/40">
+                <p>{t('settings.syncDiagnosticCode')}: {errorInfo.rawCode || errorInfo.code}</p>
+                {formattedErrorAt && (
+                  <p>{t('settings.syncDiagnosticOccurredAt').replace('{time}', formattedErrorAt)}</p>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-3 h-8 border border-white/10 px-3 text-xs text-white/70 hover:bg-white/5 hover:text-white"
+                onClick={handleCopySyncError}
+              >
+                {t('settings.copySyncError')}
+              </Button>
+            </div>
           )}
           {showLastConfirmedCopy && (
             <p className="mt-2 text-xs text-white/40">

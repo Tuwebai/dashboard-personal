@@ -11,6 +11,9 @@ export type PersistenceSyncErrorMessageKey =
 export interface PersistenceSyncErrorInfo {
   code: 'network' | 'permission' | 'auth' | 'payload' | 'unknown';
   messageKey: PersistenceSyncErrorMessageKey;
+  rawCode: string;
+  rawMessage: string;
+  occurredAt: string;
 }
 
 function getFirebaseErrorCode(error: unknown) {
@@ -26,23 +29,28 @@ function getErrorMessage(error: unknown) {
 export function resolvePersistenceSyncError(error: unknown): PersistenceSyncErrorInfo {
   const code = getFirebaseErrorCode(error);
   const message = getErrorMessage(error);
+  const baseError = {
+    rawCode: code,
+    rawMessage: message,
+    occurredAt: new Date().toISOString(),
+  };
 
   if (message === 'persistence/invalid-remote-payload') {
-    return { code: 'payload', messageKey: 'settings.syncErrorPayload' };
+    return { code: 'payload', messageKey: 'settings.syncErrorPayload', ...baseError };
   }
 
   if (
     code.includes('permission-denied') ||
     code.includes('insufficient-permission')
   ) {
-    return { code: 'permission', messageKey: 'settings.syncErrorPermission' };
+    return { code: 'permission', messageKey: 'settings.syncErrorPermission', ...baseError };
   }
 
   if (
     code.includes('unauthenticated') ||
     code.startsWith('auth/')
   ) {
-    return { code: 'auth', messageKey: 'settings.syncErrorAuth' };
+    return { code: 'auth', messageKey: 'settings.syncErrorAuth', ...baseError };
   }
 
   if (
@@ -51,10 +59,10 @@ export function resolvePersistenceSyncError(error: unknown): PersistenceSyncErro
     code.includes('network-request-failed') ||
     message.toLowerCase().includes('network')
   ) {
-    return { code: 'network', messageKey: 'settings.syncErrorNetwork' };
+    return { code: 'network', messageKey: 'settings.syncErrorNetwork', ...baseError };
   }
 
-  return { code: 'unknown', messageKey: 'settings.syncErrorUnknown' };
+  return { code: 'unknown', messageKey: 'settings.syncErrorUnknown', ...baseError };
 }
 
 export function getLocalizedSyncNotification(lang: Lang, error: PersistenceSyncErrorInfo) {

@@ -54,5 +54,6 @@ export function usePersistenceSyncStatus() {
     status,
     updatedAt,
     errorMessageKey: error?.messageKey,
+    errorInfo: error,
   };
 }
