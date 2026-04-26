@@ -17,7 +17,7 @@ export function SystemSection() {
     exportData, triggerImport, handleFileChange, wipeAccount
   } = useDataPortability();
   const { currentMode, firebaseReady, changePersistenceMode } = usePersistenceMode();
-  const { status, updatedAt } = usePersistenceSyncStatus();
+  const { status, updatedAt, errorMessageKey } = usePersistenceSyncStatus();
   
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const formattedUpdatedAt = updatedAt
@@ -26,6 +26,26 @@ export function SystemSection() {
         timeStyle: 'short',
       })
     : '';
+  const syncStatusMessage = currentMode === 'firebase'
+    ? status === 'auth-resolving'
+      ? t('settings.syncAuthResolving')
+      : status === 'hydrating'
+      ? t('settings.syncHydrating')
+      : status === 'ready'
+      ? updatedAt
+        ? t('settings.syncedAt').replace('{time}', formattedUpdatedAt)
+        : t('settings.syncWaiting')
+      : status === 'syncing'
+      ? t('settings.syncing')
+      : status === 'offline-readonly'
+      ? t('settings.syncOfflineReadonly')
+      : status === 'error'
+        ? t('settings.syncError')
+        : updatedAt
+          ? t('settings.syncedAt').replace('{time}', formattedUpdatedAt)
+          : t('settings.syncWaiting')
+    : t('settings.syncLocal');
+  const showLastConfirmedCopy = currentMode === 'firebase' && !!updatedAt && (status === 'offline-readonly' || status === 'error');
 
   return (
     <section className="space-y-8 md:space-y-12">
@@ -57,27 +77,17 @@ export function SystemSection() {
 
         <div className="rounded-xl border border-border bg-bg-tertiary p-4">
           <p className="text-sm font-semibold text-white">{t('settings.syncStatus')}</p>
-          <p className="mt-1 text-xs text-white/40">
-            {currentMode === 'firebase'
-              ? status === 'auth-resolving'
-                ? t('settings.syncAuthResolving')
-                : status === 'hydrating'
-                ? t('settings.syncHydrating')
-                : status === 'ready'
-                ? updatedAt
-                  ? t('settings.syncedAt').replace('{time}', formattedUpdatedAt)
-                  : t('settings.syncWaiting')
-                : status === 'syncing'
-                ? t('settings.syncing')
-                : status === 'offline-readonly'
-                ? t('settings.syncOfflineReadonly')
-                : status === 'error'
-                  ? t('settings.syncError')
-                  : updatedAt
-                    ? t('settings.syncedAt').replace('{time}', formattedUpdatedAt)
-                    : t('settings.syncWaiting')
-              : t('settings.syncLocal')}
-          </p>
+          <p className="mt-1 text-xs text-white/40">{syncStatusMessage}</p>
+          {errorMessageKey && currentMode === 'firebase' && (status === 'offline-readonly' || status === 'error') && (
+            <p className={`mt-2 text-xs ${status === 'offline-readonly' ? 'text-amber-300/80' : 'text-rose-400'}`}>
+              {t(errorMessageKey)}
+            </p>
+          )}
+          {showLastConfirmedCopy && (
+            <p className="mt-2 text-xs text-white/40">
+              {t('settings.lastConfirmedCopyAt').replace('{time}', formattedUpdatedAt)}
+            </p>
+          )}
         </div>
       </div>
 

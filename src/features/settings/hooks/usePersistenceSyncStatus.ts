@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getPersistenceMode } from '../../../core/persistence/config';
 import { useAppStore } from '../../../stores/useAppStore';
-import { getLastSyncAt, type PersistenceSyncStatus } from '../../../core/persistence/syncMetadata';
-
-interface PersistenceSyncDetail {
-  status: PersistenceSyncStatus;
-  updatedAt?: string;
-}
+import {
+  getLastSyncAt,
+  getLastSyncError,
+  type PersistenceSyncDetail,
+  type PersistenceSyncStatus,
+} from '../../../core/persistence/syncMetadata';
 
 const SYNC_EVENT_NAME = 'nexus-crm:persistence-sync';
 
@@ -18,6 +18,7 @@ export function usePersistenceSyncStatus() {
   const [syncState, setSyncState] = useState(() => ({
     uid: firebaseUid,
     updatedAt: getLastSyncAt(firebaseUid ?? ''),
+    error: getLastSyncError(firebaseUid ?? ''),
   }));
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export function usePersistenceSyncStatus() {
       setSyncState((current) => ({
         uid: firebaseUid,
         updatedAt: detail.updatedAt ?? current.updatedAt,
+        error: detail.error ?? (detail.status === 'error' || detail.status === 'offline-readonly' ? current.error : null),
       }));
     };
 
@@ -44,9 +46,13 @@ export function usePersistenceSyncStatus() {
   const updatedAt = syncState.uid === firebaseUid
     ? syncState.updatedAt
     : getLastSyncAt(firebaseUid ?? '');
+  const error = syncState.uid === firebaseUid
+    ? syncState.error
+    : getLastSyncError(firebaseUid ?? '');
 
   return {
     status,
     updatedAt,
+    errorMessageKey: error?.messageKey,
   };
 }

@@ -8,12 +8,15 @@ import {
   pickPersistedWorkspace,
 } from './workspace';
 import {
+  clearLastSyncError,
   clearLastSyncAt,
   dispatchSyncStatus,
   getLastSyncAt,
   pushSyncErrorNotification,
+  setLastSyncError,
   setLastSyncAt,
 } from './syncMetadata';
+import { resolvePersistenceSyncError } from './syncErrors';
 import { clearWorkspaceCache, readWorkspaceCache, writeWorkspaceCache } from './remoteCache';
 import {
   hydrateWorkspaceFromRemote,
@@ -98,15 +101,18 @@ export function useFirebasePersistenceSync() {
           void writeWorkspaceRemote(uid, { updatedAt, state: snapshot })
             .then(() => {
               setLastSyncAt(uid, updatedAt);
+              clearLastSyncError(uid);
               writeWorkspaceCache(uid, snapshot, updatedAt);
               lastConfirmedSnapshot = serialized;
               pendingLocalUpdatedAt = '';
               dispatchSyncStatus('synced', updatedAt);
             })
-            .catch(() => {
+            .catch((error: unknown) => {
+              const syncError = resolvePersistenceSyncError(error);
               pendingLocalUpdatedAt = '';
-              dispatchSyncStatus('error', getLastSyncAt(uid));
-              pushSyncErrorNotification();
+              setLastSyncError(uid, syncError);
+              dispatchSyncStatus('error', getLastSyncAt(uid), syncError);
+              pushSyncErrorNotification(syncError);
             })
             .finally(() => {
               syncing = false;
@@ -156,6 +162,7 @@ export function useFirebasePersistenceSync() {
           firebaseUid: uid,
         });
         remoteHydrated = true;
+        clearLastSyncError(uid);
         dispatchSyncStatus('ready', getLastSyncAt(uid));
 
         remoteUnsubscribe?.();
@@ -165,6 +172,10 @@ export function useFirebasePersistenceSync() {
           }
 
           if (!isRemoteStatePayload(payload) || !isPersistedWorkspaceSnapshot(payload.state)) {
+            const syncError = resolvePersistenceSyncError(new Error('persistence/invalid-remote-payload'));
+            setLastSyncError(uid, syncError);
+            dispatchSyncStatus('error', getLastSyncAt(uid), syncError);
+            pushSyncErrorNotification(syncError);
             return;
           }
 
@@ -178,14 +189,18 @@ export function useFirebasePersistenceSync() {
           }
 
           applySnapshot(uid, payload.state, remoteUpdatedAt || new Date().toISOString());
+          clearLastSyncError(uid);
           dispatchSyncStatus('ready', getLastSyncAt(uid));
         });
 
         enableWriteSync(uid);
-      } catch {
+      } catch (error) {
         if (cancelled || currentUid !== uid) {
           return;
         }
+
+        const syncError = resolvePersistenceSyncError(error);
+        setLastSyncError(uid, syncError);
 
         const cached = readWorkspaceCache(uid);
         if (cached?.snapshot) {
@@ -199,13 +214,14 @@ export function useFirebasePersistenceSync() {
             authProvider: useAppStore.getState().authProvider,
             firebaseUid: uid,
           });
-          dispatchSyncStatus('offline-readonly', cached.updatedAt);
+          dispatchSyncStatus('offline-readonly', cached.updatedAt, syncError);
+          pushSyncErrorNotification(syncError);
           return;
         }
 
         setWorkspaceReadOnly(true);
-        dispatchSyncStatus('error', getLastSyncAt(uid));
-        pushSyncErrorNotification();
+        dispatchSyncStatus('error', getLastSyncAt(uid), syncError);
+        pushSyncErrorNotification(syncError);
       }
     };
 
@@ -223,6 +239,7 @@ export function useFirebasePersistenceSync() {
       if (!user) {
         const previousUid = currentUid;
         currentUid = null;
+        clearLastSyncError(previousUid);
         clearLastSyncAt(previousUid);
         clearWorkspaceCache(previousUid);
         dispatchSyncStatus('idle');
