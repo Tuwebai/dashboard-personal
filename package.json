@@ -13,7 +13,9 @@
     "check": "tsc --noEmit",
     "lint": "eslint .",
     "test:e2e": "playwright test",
-    "test:e2e:list": "playwright test --list"
+    "test:e2e:list": "playwright test --list",
+    "test:e2e:local": "playwright test e2e/local-workspace.smoke.spec.ts",
+    "test:e2e:firebase": "playwright test e2e/firebase-auth.smoke.spec.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
