@@ -90,7 +90,71 @@ html[data-resolved-theme='light'] {
   --color-text-primary: #111827;
   --color-text-secondary: #4b5563;
   --color-text-muted: #6b7280;
+  --light-surface-subtle: rgb(255 255 255 / 0.72);
+  --light-surface-soft: rgb(255 255 255 / 0.84);
+  --light-surface-strong: rgb(255 255 255 / 0.92);
+  --light-surface-hover: #f7faff;
+  --light-overlay-subtle: rgb(15 23 42 / 0.04);
+  --light-overlay-strong: rgb(15 23 42 / 0.08);
+  --light-shadow-soft: 0 16px 42px -30px rgb(15 23 42 / 0.18);
+  --light-shadow-strong: 0 18px 40px -24px rgb(15 23 42 / 0.22);
 }
+
+html[data-resolved-theme='light'] .text-white { color: var(--color-text-primary) !important; }
+html[data-resolved-theme='light'] .text-white\/90 { color: color-mix(in srgb, var(--color-text-primary) 90%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/80 { color: color-mix(in srgb, var(--color-text-primary) 80%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/75 { color: color-mix(in srgb, var(--color-text-primary) 75%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/70 { color: color-mix(in srgb, var(--color-text-primary) 68%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/65 { color: color-mix(in srgb, var(--color-text-primary) 63%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/60 { color: var(--color-text-secondary) !important; }
+html[data-resolved-theme='light'] .text-white\/55 { color: color-mix(in srgb, var(--color-text-secondary) 88%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/50 { color: color-mix(in srgb, var(--color-text-secondary) 82%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/45 { color: color-mix(in srgb, var(--color-text-secondary) 74%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/40 { color: color-mix(in srgb, var(--color-text-secondary) 70%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/35 { color: color-mix(in srgb, var(--color-text-secondary) 62%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/30 { color: var(--color-text-muted) !important; }
+html[data-resolved-theme='light'] .text-white\/25 { color: color-mix(in srgb, var(--color-text-muted) 82%, white) !important; }
+html[data-resolved-theme='light'] .text-white\/20 { color: color-mix(in srgb, var(--color-text-muted) 70%, white) !important; }
+
+html[data-resolved-theme='light'] .bg-white { background-color: var(--color-bg-secondary) !important; }
+html[data-resolved-theme='light'] .bg-white\/2 { background-color: color-mix(in srgb, var(--color-bg-secondary) 92%, var(--color-bg-tertiary)) !important; }
+html[data-resolved-theme='light'] .bg-white\/3 { background-color: color-mix(in srgb, var(--color-bg-secondary) 88%, var(--color-bg-tertiary)) !important; }
+html[data-resolved-theme='light'] .bg-white\/4 { background-color: color-mix(in srgb, var(--color-bg-secondary) 84%, var(--color-bg-tertiary)) !important; }
+html[data-resolved-theme='light'] .bg-white\/5 { background-color: var(--light-surface-subtle) !important; }
+html[data-resolved-theme='light'] .bg-white\/6 { background-color: color-mix(in srgb, var(--color-bg-secondary) 74%, var(--color-bg-tertiary)) !important; }
+html[data-resolved-theme='light'] .bg-white\/8 { background-color: color-mix(in srgb, var(--color-bg-secondary) 68%, var(--color-bg-tertiary)) !important; }
+html[data-resolved-theme='light'] .bg-white\/10 { background-color: color-mix(in srgb, var(--color-bg-secondary) 62%, var(--color-bg-tertiary)) !important; }
+html[data-resolved-theme='light'] .bg-white\/12 { background-color: color-mix(in srgb, var(--color-bg-secondary) 56%, var(--color-bg-tertiary)) !important; }
+html[data-resolved-theme='light'] .bg-white\/\[0\.03\] { background-color: var(--light-surface-soft) !important; }
+html[data-resolved-theme='light'] .bg-white\/\[0\.02\] { background-color: var(--light-surface-strong) !important; }
+
+html[data-resolved-theme='light'] .border-white { border-color: color-mix(in srgb, var(--color-border) 88%, white) !important; }
+html[data-resolved-theme='light'] .border-white\/5 { border-color: color-mix(in srgb, var(--color-border) 45%, white) !important; }
+html[data-resolved-theme='light'] .border-white\/6 { border-color: color-mix(in srgb, var(--color-border) 50%, white) !important; }
+html[data-resolved-theme='light'] .border-white\/8 { border-color: color-mix(in srgb, var(--color-border) 58%, white) !important; }
+html[data-resolved-theme='light'] .border-white\/10 { border-color: color-mix(in srgb, var(--color-border) 66%, white) !important; }
+html[data-resolved-theme='light'] .border-white\/20 { border-color: color-mix(in srgb, var(--color-border) 82%, white) !important; }
+html[data-resolved-theme='light'] .border-white\/30 { border-color: color-mix(in srgb, var(--color-border) 88%, white) !important; }
+
+html[data-resolved-theme='light'] .bg-black\/10 { background-color: var(--light-overlay-subtle) !important; }
+html[data-resolved-theme='light'] .shadow-black\/20 { box-shadow: var(--light-shadow-soft) !important; }
+html[data-resolved-theme='light'] .shadow-black\/30 { box-shadow: var(--light-shadow-strong) !important; }
+
+html[data-resolved-theme='light'] .hover\:bg-white:hover { background-color: var(--light-surface-hover) !important; }
+html[data-resolved-theme='light'] .hover\:bg-white\/3:hover { background-color: color-mix(in srgb, var(--color-bg-secondary) 84%, var(--color-bg-hover)) !important; }
+html[data-resolved-theme='light'] .hover\:bg-white\/4:hover { background-color: color-mix(in srgb, var(--color-bg-secondary) 78%, var(--color-bg-hover)) !important; }
+html[data-resolved-theme='light'] .hover\:bg-white\/5:hover { background-color: var(--light-surface-hover) !important; }
+html[data-resolved-theme='light'] .hover\:bg-white\/8:hover { background-color: color-mix(in srgb, var(--color-bg-secondary) 66%, var(--color-bg-hover)) !important; }
+html[data-resolved-theme='light'] .hover\:bg-white\/10:hover { background-color: color-mix(in srgb, var(--color-bg-secondary) 58%, var(--color-bg-hover)) !important; }
+html[data-resolved-theme='light'] .hover\:bg-white\/12:hover { background-color: color-mix(in srgb, var(--color-bg-secondary) 52%, var(--color-bg-hover)) !important; }
+html[data-resolved-theme='light'] .hover\:text-white:hover { color: var(--color-text-primary) !important; }
+html[data-resolved-theme='light'] .hover\:text-white\/80:hover { color: color-mix(in srgb, var(--color-text-primary) 82%, white) !important; }
+html[data-resolved-theme='light'] .hover\:text-white\/60:hover { color: var(--color-text-secondary) !important; }
+html[data-resolved-theme='light'] .hover\:text-white\/40:hover { color: var(--color-text-muted) !important; }
+html[data-resolved-theme='light'] .hover\:border-white\/20:hover { border-color: color-mix(in srgb, var(--color-border) 88%, white) !important; }
+
+html[data-resolved-theme='light'] .placeholder\:text-white\/30::placeholder { color: color-mix(in srgb, var(--color-text-muted) 78%, white) !important; }
+html[data-resolved-theme='light'] .placeholder\:text-white\/20::placeholder { color: color-mix(in srgb, var(--color-text-muted) 64%, white) !important; }
 
 html.compact-mode {
   --page-padding-x: 0.875rem;
