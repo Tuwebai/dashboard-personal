@@ -1,10 +1,13 @@
-import { useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useAppStore } from '../../stores/useAppStore';
 import type { UserSettings } from '../../shared/types';
+import { getPersistenceMode } from '../persistence/config';
+import { readLocalWorkspaceSnapshot, subscribeLocalWorkspaceStorageChange } from '../persistence/storage';
 
 export type ThemeMode = UserSettings['theme'];
 export type ResolvedTheme = 'dark' | 'light';
+type AppearanceSettings = Pick<UserSettings, 'accentColor' | 'compactMode' | 'sidebarCollapsed' | 'theme'>;
 
 const SYSTEM_THEME_QUERY = '(prefers-color-scheme: dark)';
 
@@ -62,6 +65,28 @@ function hexToRgbTriplet(color: string) {
   return `${red} ${green} ${blue}`;
 }
 
+function pickAppearanceSettings(settings: UserSettings): AppearanceSettings {
+  return {
+    theme: settings.theme,
+    accentColor: settings.accentColor,
+    compactMode: settings.compactMode,
+    sidebarCollapsed: settings.sidebarCollapsed,
+  };
+}
+
+function readStoredAppearanceSettings() {
+  return readLocalWorkspaceSnapshot()?.settings ?? null;
+}
+
+function hasAppearanceChanges(current: AppearanceSettings, next: AppearanceSettings) {
+  return (
+    current.theme !== next.theme
+    || current.accentColor !== next.accentColor
+    || current.compactMode !== next.compactMode
+    || current.sidebarCollapsed !== next.sidebarCollapsed
+  );
+}
+
 export function useResolvedTheme(mode: ThemeMode) {
   const prefersDark = useSyncExternalStore(
     subscribeToSystemThemeChange,
@@ -81,6 +106,31 @@ export function useRealtimeAppearance() {
     })),
   );
   const resolvedTheme = useResolvedTheme(themeMode);
+
+  useEffect(() => {
+    const syncAppearanceFromStorage = () => {
+      if (getPersistenceMode() !== 'local') {
+        return;
+      }
+
+      const storedSettings = readStoredAppearanceSettings();
+
+      if (!storedSettings) {
+        return;
+      }
+
+      const currentSettings = pickAppearanceSettings(useAppStore.getState().settings);
+      const nextSettings = pickAppearanceSettings(storedSettings);
+
+      if (!hasAppearanceChanges(currentSettings, nextSettings)) {
+        return;
+      }
+
+      useAppStore.getState().updateSettings(nextSettings);
+    };
+
+    return subscribeLocalWorkspaceStorageChange(syncAppearanceFromStorage);
+  }, []);
 
   useLayoutEffect(() => {
     const root = document.documentElement;
