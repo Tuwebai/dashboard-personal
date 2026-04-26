@@ -20,5 +20,4 @@
     <circle cx="5.5" cy="27.5" r="3" fill="url(#lg2)"/>
   </g>
   <text x="48" y="30" font-family="Inter, -apple-system, sans-serif" font-size="22" font-weight="700" fill="url(#lg1)" letter-spacing="-0.5">Nexus</text>
-  <text x="132" y="30" font-family="Inter, -apple-system, sans-serif" font-size="22" font-weight="300" fill="#999999" letter-spacing="2">CRM</text>
 </svg>

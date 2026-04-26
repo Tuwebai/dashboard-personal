@@ -25,6 +25,5 @@
   </g>
   <!-- Wordmark -->
   <text x="64" y="30" font-family="Inter, -apple-system, sans-serif" font-size="26" font-weight="700" fill="url(#g2)" letter-spacing="-0.5">Nexus</text>
-  <text x="160" y="30" font-family="Inter, -apple-system, sans-serif" font-size="26" font-weight="300" fill="#a3a3a3" letter-spacing="2">CRM</text>
   <text x="64" y="48" font-family="Inter, -apple-system, sans-serif" font-size="10" font-weight="400" fill="#444444" letter-spacing="2">PERSONAL DASHBOARD</text>
 </svg>

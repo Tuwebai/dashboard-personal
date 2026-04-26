@@ -15,5 +15,5 @@
     <circle cx="47" cy="40" r="4.5" fill="url(#wmg)"/>
     <circle cx="9" cy="40" r="4.5" fill="url(#wmg)"/>
   </g>
-  <text x="74" y="42" font-family="Inter, -apple-system, sans-serif" font-size="28" font-weight="700" fill="url(#wmg)" letter-spacing="-0.5">NexusCRM</text>
+  <text x="74" y="42" font-family="Inter, -apple-system, sans-serif" font-size="28" font-weight="700" fill="url(#wmg)" letter-spacing="-0.5">Nexus</text>
 </svg>

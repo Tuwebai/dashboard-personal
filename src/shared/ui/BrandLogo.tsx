@@ -60,15 +60,12 @@ export function BrandLogo({
     <div className={`flex min-w-0 items-center ${isSidebar ? 'gap-2' : 'gap-3'} ${className}`}>
       <BrandMark className={markClassName} />
       <div className="min-w-0">
-        <div className="flex min-w-0 items-baseline gap-1">
+        <div className="flex min-w-0 items-baseline">
           <span
             className={`truncate bg-clip-text font-bold tracking-tight text-transparent ${nameTextClassName}`}
             style={{ backgroundImage: 'linear-gradient(135deg, var(--brand-primary-start), var(--brand-primary-end))' }}
           >
             Nexus
-          </span>
-          <span className={`truncate font-light tracking-[0.12em] text-zinc-400 ${nameTextClassName}`}>
-            CRM
           </span>
         </div>
         <p className={`truncate font-medium text-zinc-500 ${subtitleTextClassName}`}>
