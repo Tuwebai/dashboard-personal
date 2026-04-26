@@ -60,8 +60,10 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
   return (
     <motion.aside
       className={cn(
-        'relative flex h-dvh min-h-0 flex-col self-stretch overflow-hidden border-r border-border bg-bg-primary',
-        mobile && 'z-50 w-[240px] max-w-[85vw] shadow-2xl'
+        'relative flex min-h-0 flex-col overflow-hidden border-r border-border bg-bg-primary',
+        mobile
+          ? 'z-50 h-full max-h-screen w-[240px] max-w-[85vw] self-auto shadow-2xl'
+          : 'h-dvh self-stretch'
       )}
       animate={{ width: mobile ? 240 : isCollapsed ? 72 : 240 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
