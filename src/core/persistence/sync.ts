@@ -40,6 +40,7 @@ export function useFirebasePersistenceSync() {
     let syncing = false;
     let pendingLocalUpdatedAt = '';
     let lastConfirmedSnapshot = '';
+    let lastAppliedUpdatedAt = '';
     let syncTimeout: number | null = null;
     let storeUnsubscribe: () => void = () => undefined;
     let remoteUnsubscribe: (() => void) | null = null;
@@ -69,6 +70,7 @@ export function useFirebasePersistenceSync() {
       setLastSyncAt(uid, updatedAt);
       writeWorkspaceCache(uid, snapshot, updatedAt);
       lastConfirmedSnapshot = JSON.stringify(snapshot);
+      lastAppliedUpdatedAt = updatedAt;
       pendingLocalUpdatedAt = '';
     };
 
@@ -104,6 +106,7 @@ export function useFirebasePersistenceSync() {
               clearLastSyncError(uid);
               writeWorkspaceCache(uid, snapshot, updatedAt);
               lastConfirmedSnapshot = serialized;
+              lastAppliedUpdatedAt = updatedAt;
               pendingLocalUpdatedAt = '';
               dispatchSyncStatus('synced', updatedAt);
             })
@@ -216,7 +219,7 @@ export function useFirebasePersistenceSync() {
             return;
           }
 
-          if (remoteUpdatedAt && remoteUpdatedAt <= getLastSyncAt(uid)) {
+          if (remoteUpdatedAt && remoteUpdatedAt <= lastAppliedUpdatedAt) {
             return;
           }
 
@@ -239,6 +242,7 @@ export function useFirebasePersistenceSync() {
           useAppStore.setState((state) => mergePersistedWorkspace(state, cached.snapshot));
           setLastSyncAt(uid, cached.updatedAt);
           lastConfirmedSnapshot = JSON.stringify(cached.snapshot);
+          lastAppliedUpdatedAt = cached.updatedAt;
           remoteHydrated = true;
           setWorkspaceReadOnly(true);
           setAuthState({
@@ -270,10 +274,11 @@ export function useFirebasePersistenceSync() {
         }
 
         teardownSubscriptions();
-        remoteHydrated = false;
-        syncing = false;
-        pendingLocalUpdatedAt = '';
-        lastConfirmedSnapshot = '';
+          remoteHydrated = false;
+          syncing = false;
+          pendingLocalUpdatedAt = '';
+          lastConfirmedSnapshot = '';
+          lastAppliedUpdatedAt = '';
 
         if (!user) {
           const previousUid = currentUid;
