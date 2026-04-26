@@ -10,7 +10,6 @@ const LIVE_NOTIFICATION_POLL_MS = 30_000;
 export function useLiveNotificationProducer() {
   const { t } = useI18n();
   const authStatus = useAppStore((state) => state.authStatus);
-  const authProvider = useAppStore((state) => state.authProvider);
   const settings = useAppStore((state) => state.settings);
   const tasks = useAppStore((state) => state.tasks);
   const events = useAppStore((state) => state.events);
@@ -19,14 +18,18 @@ export function useLiveNotificationProducer() {
   const budgets = useAppStore((state) => state.budgets);
   const transactions = useAppStore((state) => state.transactions);
   const notifications = useAppStore((state) => state.notifications);
+  const systemNotifications = useAppStore((state) => state.systemNotifications);
   const addNotification = useAppStore((state) => state.addNotification);
 
   useEffect(() => {
-    if (!shouldUseFirebasePersistence() || authStatus !== 'authenticated' || authProvider !== 'password') {
+    if (!shouldUseFirebasePersistence() || authStatus !== 'authenticated') {
       return;
     }
 
-    const existingIds = new Set(notifications.map((notification) => notification.id));
+    const existingIds = new Set([
+      ...notifications.map((notification) => notification.id),
+      ...systemNotifications.map((notification) => notification.id),
+    ]);
     let cancelled = false;
 
     const dispatchPlans = async () => {
@@ -84,7 +87,7 @@ export function useLiveNotificationProducer() {
           type: plan.type,
         });
 
-        if (settings.pushNotifications) {
+        if (settings.notificationsEnabled) {
           await showBrowserNotification({
             actionUrl: plan.actionUrl,
             body: message,
@@ -106,7 +109,6 @@ export function useLiveNotificationProducer() {
     };
   }, [
     addNotification,
-    authProvider,
     authStatus,
     budgets,
     events,
@@ -114,6 +116,7 @@ export function useLiveNotificationProducer() {
     habits,
     notifications,
     settings,
+    systemNotifications,
     t,
     tasks,
     transactions,

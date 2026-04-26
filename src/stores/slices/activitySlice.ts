@@ -163,7 +163,7 @@ export const createActivitySlice: StateCreator<
     const notification = createNotificationPayload(notifData, notifData.id ?? createNotificationId());
     const { firebaseUid, authProvider } = get();
 
-    if (notifData.scope === 'system' || !shouldUseFirebasePersistence() || authProvider !== 'password' || !firebaseUid) {
+    if (notifData.scope === 'system') {
       set((state) => {
         state.systemNotifications.unshift({
           ...notification,
@@ -183,6 +183,10 @@ export const createActivitySlice: StateCreator<
         state.notifications = state.notifications.slice(0, 40);
       }
     });
+
+    if (!shouldUseFirebasePersistence() || authProvider !== 'password' || !firebaseUid) {
+      return;
+    }
 
     const { createNotificationRemote } = await import('../../core/notifications/firestore');
     await createNotificationRemote(firebaseUid, notification).catch(() => undefined);

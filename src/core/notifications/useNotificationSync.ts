@@ -10,8 +10,12 @@ export function useNotificationSync() {
   const setNotifications = useAppStore((state) => state.setNotifications);
 
   useEffect(() => {
-    if (!shouldUseFirebasePersistence() || authStatus !== 'authenticated' || authProvider !== 'password' || !firebaseUid) {
+    if (!shouldUseFirebasePersistence() || authStatus !== 'authenticated') {
       setNotifications([]);
+      return;
+    }
+
+    if (authProvider !== 'password' || !firebaseUid) {
       return;
     }
 

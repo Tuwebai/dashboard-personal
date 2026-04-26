@@ -96,6 +96,25 @@ export async function registerMessagingServiceWorker() {
   return navigator.serviceWorker.register(getServiceWorkerUrl(), { scope: '/' });
 }
 
+async function getReadyServiceWorkerRegistration() {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    return null;
+  }
+
+  const existingRegistration = await navigator.serviceWorker.getRegistration().catch(() => undefined);
+  if (existingRegistration?.active) {
+    return existingRegistration;
+  }
+
+  await registerMessagingServiceWorker().catch(() => null);
+  const readyRegistration = await navigator.serviceWorker.ready.catch(() => undefined);
+  if (readyRegistration?.active) {
+    return readyRegistration;
+  }
+
+  return null;
+}
+
 export async function ensurePushToken() {
   const supportState = getBrowserPushSupportState();
   if (!supportState.supportsPush || supportState.permission !== 'granted') {
@@ -103,7 +122,7 @@ export async function ensurePushToken() {
   }
 
   const messaging = await getMessagingClient();
-  const registration = await registerMessagingServiceWorker();
+  const registration = await getReadyServiceWorkerRegistration();
 
   if (!messaging || !registration) {
     return null;
@@ -207,10 +226,9 @@ export async function showForegroundPushNotification(payload: MessagePayload) {
     tag: notificationId,
   };
 
-  const registration = await navigator.serviceWorker.getRegistration().catch(() => undefined)
-    ?? await registerMessagingServiceWorker().catch(() => null);
+  const registration = await getReadyServiceWorkerRegistration();
 
-  if (registration?.showNotification) {
+  if (registration?.active && registration.showNotification) {
     await registration.showNotification(title, options);
     return true;
   }
@@ -256,10 +274,9 @@ export async function showBrowserNotification({
     tag: notificationId,
   };
 
-  const registration = await navigator.serviceWorker.getRegistration().catch(() => undefined)
-    ?? await registerMessagingServiceWorker().catch(() => null);
+  const registration = await getReadyServiceWorkerRegistration();
 
-  if (registration?.showNotification) {
+  if (registration?.active && registration.showNotification) {
     await registration.showNotification(title, options);
     return true;
   }
