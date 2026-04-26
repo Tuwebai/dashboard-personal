@@ -43,6 +43,16 @@
   --modal-padding-x: 1.5rem;
   --modal-padding-y: 1.25rem;
   --field-height: 2.75rem;
+  --button-height-sm: 1.75rem;
+  --button-height-md: 2.25rem;
+  --button-height-lg: 2.75rem;
+  --button-size-icon: 2.25rem;
+  --button-padding-x-sm: 0.75rem;
+  --button-padding-x-md: 1rem;
+  --button-padding-x-lg: 1.5rem;
+  --button-padding-y-sm: 0.375rem;
+  --button-padding-y-md: 0.5rem;
+  --button-padding-y-lg: 0.75rem;
   --topbar-height: 3.5rem;
   --sidebar-brand-height: 4rem;
 }
@@ -88,6 +98,16 @@ html.compact-mode {
   --modal-padding-x: 1rem;
   --modal-padding-y: 1rem;
   --field-height: 2.5rem;
+  --button-height-sm: 1.625rem;
+  --button-height-md: 2.125rem;
+  --button-height-lg: 2.5rem;
+  --button-size-icon: 2.125rem;
+  --button-padding-x-sm: 0.625rem;
+  --button-padding-x-md: 0.875rem;
+  --button-padding-x-lg: 1.25rem;
+  --button-padding-y-sm: 0.25rem;
+  --button-padding-y-md: 0.375rem;
+  --button-padding-y-lg: 0.625rem;
   --topbar-height: 3.25rem;
   --sidebar-brand-height: 3.5rem;
   font-size: 15px;
@@ -291,6 +311,27 @@ input[type="date"]::-webkit-clear-button {
   box-shadow: 0 12px 30px -16px rgb(var(--color-accent-rgb) / 0.75);
 }
 
+.nexus-button-size-sm {
+  height: var(--button-height-sm);
+  padding: var(--button-padding-y-sm) var(--button-padding-x-sm);
+}
+
+.nexus-button-size-md {
+  height: var(--button-height-md);
+  padding: var(--button-padding-y-md) var(--button-padding-x-md);
+}
+
+.nexus-button-size-lg {
+  height: var(--button-height-lg);
+  padding: var(--button-padding-y-lg) var(--button-padding-x-lg);
+}
+
+.nexus-button-size-icon {
+  height: var(--button-size-icon);
+  width: var(--button-size-icon);
+  padding: 0.5rem;
+}
+
 .nexus-button-primary:hover {
   background-color: color-mix(in srgb, var(--color-accent) 88%, white);
   box-shadow: 0 18px 34px -18px rgb(var(--color-accent-rgb) / 0.75);
@@ -342,6 +383,9 @@ input[type="date"]::-webkit-clear-button {
 .bg-violet-500\/15 { background-color: rgb(var(--color-accent-rgb) / 0.15) !important; }
 .bg-violet-500\/20 { background-color: rgb(var(--color-accent-rgb) / 0.2) !important; }
 .bg-violet-500\/30 { background-color: rgb(var(--color-accent-rgb) / 0.3) !important; }
+.bg-violet-600\/15 { background-color: rgb(var(--color-accent-rgb) / 0.15) !important; }
+.bg-violet-600\/20 { background-color: rgb(var(--color-accent-rgb) / 0.2) !important; }
+.bg-violet-600\/30 { background-color: rgb(var(--color-accent-rgb) / 0.3) !important; }
 .text-violet-100 { color: color-mix(in srgb, var(--color-accent) 22%, white) !important; }
 .text-violet-200 { color: color-mix(in srgb, var(--color-accent) 40%, white) !important; }
 .text-violet-300 { color: color-mix(in srgb, var(--color-accent) 58%, white) !important; }
@@ -349,21 +393,42 @@ input[type="date"]::-webkit-clear-button {
 .border-violet-500 { border-color: var(--color-accent) !important; }
 .border-violet-500\/20 { border-color: rgb(var(--color-accent-rgb) / 0.2) !important; }
 .border-violet-500\/30 { border-color: rgb(var(--color-accent-rgb) / 0.3) !important; }
+.border-violet-500\/40 { border-color: rgb(var(--color-accent-rgb) / 0.4) !important; }
 .border-violet-500\/50 { border-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
+.border-violet-500\/60 { border-color: rgb(var(--color-accent-rgb) / 0.6) !important; }
+.shadow-violet\/20 { box-shadow: 0 12px 30px -18px rgb(var(--color-accent-rgb) / 0.55) !important; }
 .shadow-violet-500\/20 { box-shadow: 0 12px 30px -18px rgb(var(--color-accent-rgb) / 0.55) !important; }
+.shadow-violet-500\/5 { box-shadow: 0 10px 24px -18px rgb(var(--color-accent-rgb) / 0.24) !important; }
 .shadow-violet-500\/30 { box-shadow: 0 16px 36px -20px rgb(var(--color-accent-rgb) / 0.65) !important; }
+.shadow-violet-600\/30 { box-shadow: 0 16px 36px -20px rgb(var(--color-accent-rgb) / 0.65) !important; }
 .hover\:bg-violet-500:hover { background-color: color-mix(in srgb, var(--color-accent) 88%, white) !important; }
 .hover\:bg-violet-600:hover { background-color: color-mix(in srgb, var(--color-accent) 78%, black) !important; }
 .hover\:bg-violet-500\/10:hover { background-color: rgb(var(--color-accent-rgb) / 0.1) !important; }
+.hover\:border-violet-500\/30:hover { border-color: rgb(var(--color-accent-rgb) / 0.3) !important; }
 .hover\:text-violet-300:hover { color: color-mix(in srgb, var(--color-accent) 58%, white) !important; }
 .hover\:text-violet-400:hover { color: color-mix(in srgb, var(--color-accent) 74%, white) !important; }
+.group:hover .group-hover\:text-violet-300 { color: color-mix(in srgb, var(--color-accent) 58%, white) !important; }
 .group:hover .group-hover\:text-violet-400 { color: color-mix(in srgb, var(--color-accent) 74%, white) !important; }
+.group:hover .group-hover\:border-violet-500\/30 { border-color: rgb(var(--color-accent-rgb) / 0.3) !important; }
 .group:hover .group-hover\:border-violet-500\/50 { border-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
 .ring-violet-500\/20 { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.2) !important; }
+.ring-violet-500\/60 { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.6) !important; }
 .focus\:ring-violet-500\/10:focus { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.1) !important; }
+.focus\:ring-violet-500\/40:focus { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.4) !important; }
 .focus\:ring-violet-500\/50:focus { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
+.focus\:border-violet-500\/40:focus { border-color: rgb(var(--color-accent-rgb) / 0.4) !important; }
 .focus\:border-violet-500\/50:focus { border-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
 .accent-violet-500 { accent-color: var(--color-accent) !important; }
+.from-violet-600\/15 {
+  --tw-gradient-from: rgb(var(--color-accent-rgb) / 0.15) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(var(--color-accent-rgb) / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.from-violet-600\/20 {
+  --tw-gradient-from: rgb(var(--color-accent-rgb) / 0.2) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(var(--color-accent-rgb) / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
 .from-violet-400 {
   --tw-gradient-from: color-mix(in srgb, var(--color-accent) 78%, white) var(--tw-gradient-from-position) !important;
   --tw-gradient-to: rgb(var(--color-accent-rgb) / 0) var(--tw-gradient-to-position) !important;
@@ -379,6 +444,15 @@ input[type="date"]::-webkit-clear-button {
   --tw-gradient-to: rgb(var(--color-accent-rgb) / 0) var(--tw-gradient-to-position) !important;
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
 }
+
+html.compact-mode .h-11 { height: var(--button-height-lg) !important; }
+html.compact-mode .h-12 { height: calc(var(--button-height-lg) + 0.25rem) !important; }
+html.compact-mode .p-6 { padding: 1.25rem !important; }
+html.compact-mode .p-5 { padding: 1rem !important; }
+html.compact-mode .px-6 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+html.compact-mode .py-6 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+html.compact-mode .gap-6 { gap: 1.25rem !important; }
+html.compact-mode .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.25rem !important; }
 
 /* Ring progress */
 .ring-progress {

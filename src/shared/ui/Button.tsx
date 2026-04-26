@@ -32,10 +32,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
   };
 
   const sizes = {
-    sm: 'px-3 py-1.5 text-xs h-7',
-    md: 'px-4 py-2 text-sm h-9',
-    lg: 'px-6 py-3 text-base h-11',
-    icon: 'p-2 h-9 w-9',
+    sm: 'nexus-button-size-sm text-xs',
+    md: 'nexus-button-size-md text-sm',
+    lg: 'nexus-button-size-lg text-base',
+    icon: 'nexus-button-size-icon',
   };
 
   return (

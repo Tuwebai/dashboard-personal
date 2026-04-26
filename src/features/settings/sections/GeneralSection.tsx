@@ -92,8 +92,9 @@ export function GeneralSection() {
             accept="image/*" 
           />
           <div 
-            className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-2xl font-bold text-white/90 shadow-md sm:h-24 sm:w-24 sm:text-3xl"
+            className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-full text-2xl font-bold text-white/90 shadow-md sm:h-24 sm:w-24 sm:text-3xl"
             onClick={handleAvatarClick}
+            style={{ backgroundImage: 'linear-gradient(135deg, var(--brand-primary-start), var(--brand-primary-end))' }}
           >
             <img
               src={user.avatar || DEFAULT_NEXUS_AVATAR}
