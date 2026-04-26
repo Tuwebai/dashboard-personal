@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { getModuleFromPath, getModulePath, LOGIN_PATH, type AppModule } from './routes';
 
 export function useAppNavigationSync(
@@ -6,12 +6,39 @@ export function useAppNavigationSync(
   authStatus: string,
   setActiveModule: (module: AppModule) => void,
 ) {
+  const initialPathHydratedRef = useRef(false);
+
   useEffect(() => {
-    setActiveModule(getModuleFromPath(window.location.pathname));
-  }, [authStatus, setActiveModule]);
+    if (authStatus === 'loading') {
+      return;
+    }
+
+    if (authStatus !== 'authenticated') {
+      initialPathHydratedRef.current = false;
+      return;
+    }
+
+    if (initialPathHydratedRef.current) {
+      return;
+    }
+
+    const moduleFromPath = getModuleFromPath(window.location.pathname);
+
+    if (activeModule !== moduleFromPath) {
+      setActiveModule(moduleFromPath);
+      return;
+    }
+
+    initialPathHydratedRef.current = true;
+  }, [activeModule, authStatus, setActiveModule]);
 
   useEffect(() => {
     const handlePopState = () => {
+      if (window.location.pathname === LOGIN_PATH) {
+        return;
+      }
+
+      initialPathHydratedRef.current = true;
       setActiveModule(getModuleFromPath(window.location.pathname));
     };
 
@@ -20,7 +47,22 @@ export function useAppNavigationSync(
   }, [setActiveModule]);
 
   useEffect(() => {
-    const path = authStatus === 'authenticated' ? getModulePath(activeModule) : LOGIN_PATH;
+    if (authStatus === 'loading') {
+      return;
+    }
+
+    if (authStatus !== 'authenticated') {
+      if (window.location.pathname !== LOGIN_PATH) {
+        window.history.replaceState(null, '', LOGIN_PATH);
+      }
+      return;
+    }
+
+    if (!initialPathHydratedRef.current) {
+      return;
+    }
+
+    const path = getModulePath(activeModule);
 
     if (window.location.pathname !== path) {
       window.history.pushState({ module: activeModule }, '', path);
