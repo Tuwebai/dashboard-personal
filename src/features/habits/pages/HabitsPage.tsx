@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useShallow } from 'zustand/react/shallow';
@@ -10,6 +10,7 @@ import { HabitGrid } from '../components/HabitGrid';
 import type { HabitCategory } from '../../../shared/types';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
+import { SHORTCUT_OPEN_NEW_HABIT_EVENT, useShortcutAction } from '../../../core/navigation/shortcutActions';
 
 export default function Habits() {
   const [activeCategory, setActiveCategory] = useState<HabitCategory>('health');
@@ -28,6 +29,12 @@ export default function Habits() {
   );
   const { t } = useI18n();
   const { actionProps } = useReadonlyActionProps();
+
+  const openCreateModal = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  useShortcutAction(SHORTCUT_OPEN_NEW_HABIT_EVENT, openCreateModal);
 
   const handleAddHabit = () => {
     if (!newHabit.name) return;
@@ -58,7 +65,7 @@ export default function Habits() {
           data-testid="habits-new-button"
           leftIcon={<Plus size={18} strokeWidth={2.5} />} 
           {...actionProps}
-          onClick={() => setIsModalOpen(true)}
+          onClick={openCreateModal}
         >
           {t('habits.newHabit')}
         </Button>

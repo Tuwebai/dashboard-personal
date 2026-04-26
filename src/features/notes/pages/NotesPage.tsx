@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { List, Plus } from 'lucide-react';
 import { NoteSidebar } from '../components/NoteSidebar';
 import { NoteEditor } from '../components/NoteEditor';
@@ -7,6 +7,7 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { Button } from '../../../shared/ui/Button';
 import { useReadonlyActionProps } from '../../../shared/hooks/useReadonlyActionProps';
+import { SHORTCUT_CREATE_NEW_NOTE_EVENT, useShortcutAction } from '../../../core/navigation/shortcutActions';
 
 export type NoteFilter = 'all' | 'favorites' | 'trash' | 'folder';
 
@@ -54,7 +55,7 @@ export default function Notes() {
     setMobileView('list');
   };
 
-  const handleCreateNote = () => {
+  const handleCreateNote = useCallback(() => {
     addNote({
       title: t('notes.newUntitled'),
       content: '',
@@ -69,7 +70,9 @@ export default function Notes() {
     if (isMobile) {
       setMobileView('editor');
     }
-  };
+  }, [addNote, isMobile, t]);
+
+  useShortcutAction(SHORTCUT_CREATE_NEW_NOTE_EVENT, handleCreateNote);
 
   const showSidebar = !isMobile || mobileView === 'list';
   const showEditor = !isMobile || mobileView === 'editor';

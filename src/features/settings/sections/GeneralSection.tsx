@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Input, Textarea } from '../../../shared/ui/Input';
 import { Button } from '../../../shared/ui/Button';
 import { Camera, Mail, User as UserIcon, MapPin, Globe, Check, Lock } from 'lucide-react';
@@ -8,6 +8,7 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { useAppStore } from '../../../stores/useAppStore';
 import { mapFirebaseAuthError } from '../../auth/lib/mapFirebaseAuthError';
 import { DEFAULT_NEXUS_AVATAR } from '../../../shared/lib/defaultAvatar';
+import { SHORTCUT_SAVE_ACTIVE_EVENT, useShortcutAction } from '../../../core/navigation/shortcutActions';
 
 export function GeneralSection() {
   const { t } = useI18n();
@@ -21,7 +22,7 @@ export function GeneralSection() {
   const [confirmLinkPassword, setConfirmLinkPassword] = useState('');
   const [isLinking, setIsLinking] = useState(false);
 
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = useCallback(async () => {
     try {
       await saveProfile();
       toast.success(t('settings.profileSaved'));
@@ -32,7 +33,11 @@ export function GeneralSection() {
           : t('settings.profileSaveError'),
       );
     }
-  };
+  }, [profileReadonlyError, saveProfile, t]);
+
+  useShortcutAction(SHORTCUT_SAVE_ACTIVE_EVENT, () => {
+    void handleSaveProfile();
+  });
 
   const handleLinkGuestAccount = async () => {
     const normalizedEmail = profileData.email.trim();

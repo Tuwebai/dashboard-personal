@@ -21,6 +21,7 @@ import { MatrixView } from '../components/MatrixView';
 import { TableView } from '../components/TableView';
 import { TaskDetailSlideOver } from '../components/TaskDetailSlideOver';
 import { TaskModal } from '../components/TaskModal';
+import { SHORTCUT_OPEN_NEW_TASK_EVENT, useShortcutAction } from '../../../core/navigation/shortcutActions';
 
 export function Tasks() {
   const {
@@ -48,6 +49,11 @@ export function Tasks() {
 
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
+
+  useShortcutAction(SHORTCUT_OPEN_NEW_TASK_EVENT, () => {
+    setEditTask(null);
+    setAddModalOpen(true);
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined' || taskView !== 'kanban' || !isMobile) {

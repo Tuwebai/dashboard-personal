@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Sidebar } from '../../features/navigation/components/Sidebar';
 import { CommandPalette } from '../../features/navigation/components/CommandPalette';
 import { TopNavbar } from '../../features/navigation/components/TopNavbar';
+import { useGlobalKeyboardShortcuts } from '../../features/navigation/hooks/useGlobalKeyboardShortcuts';
 import { WorkspaceReadonlyBanner } from '../../shared/ui/WorkspaceReadonlyBanner';
 import type { AppModule } from '../../core/navigation/routes';
 
@@ -13,6 +14,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ activeModule, onNavigate, children }: DashboardLayoutProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  useGlobalKeyboardShortcuts({ onNavigate });
 
   return (
     <div className="flex h-dvh min-h-0 bg-bg-primary overflow-hidden">

@@ -57,17 +57,6 @@ export function CommandPalette({ onNavigate }: CommandPaletteProps) {
     }
   }, [commandPaletteOpen]);
 
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setCommandPaletteOpen(!commandPaletteOpen);
-      }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [commandPaletteOpen, setCommandPaletteOpen]);
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
