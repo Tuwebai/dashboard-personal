@@ -96,8 +96,8 @@ export function Settings() {
   return (
     <div className="flex flex-col h-full space-y-6 md:space-y-8 page-enter">
       <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">{t('settings.title')}</h1>
-        <p className="text-sm font-medium text-white/40 mt-1">{t('settings.subtitle')}</p>
+        <h1 className="text-2xl font-bold tracking-tight text-text-primary">{t('settings.title')}</h1>
+        <p className="mt-1 text-sm font-medium text-text-secondary">{t('settings.subtitle')}</p>
       </div>
 
       <div className="flex-1 flex min-h-0 flex-col gap-4 md:gap-10 lg:flex-row">
@@ -111,13 +111,13 @@ export function Settings() {
               <activeSectionConfig.icon size={20} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold tracking-tight text-white">{t(activeSectionConfig.labelKey)}</p>
-              <p className="truncate text-xs text-white/45">{t(activeSectionConfig.descKey)}</p>
+              <p className="text-sm font-semibold tracking-tight text-text-primary">{t(activeSectionConfig.labelKey)}</p>
+              <p className="truncate text-xs text-text-secondary">{t(activeSectionConfig.descKey)}</p>
             </div>
             <ChevronDown
               size={18}
               className={cn(
-                'shrink-0 text-white/45 transition-transform duration-200',
+                'shrink-0 text-text-secondary transition-transform duration-200',
                 mobileSelectorOpen && 'rotate-180',
               )}
             />
@@ -137,8 +137,8 @@ export function Settings() {
                     className={cn(
                       'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-all duration-200',
                       activeSection === section.id
-                        ? 'bg-violet-500/12 text-white ring-1 ring-violet-500/20'
-                        : 'text-white/55 hover:bg-white/5 hover:text-white/80',
+                        ? 'bg-violet-500/12 text-text-primary ring-1 ring-violet-500/20'
+                        : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary',
                     )}
                   >
                     <div
@@ -146,14 +146,14 @@ export function Settings() {
                         'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-200',
                         activeSection === section.id
                           ? 'bg-violet-500/15 text-violet-300'
-                          : 'bg-white/5 text-white/45',
+                          : 'bg-bg-secondary text-text-secondary',
                       )}
                     >
                       <section.icon size={18} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold tracking-tight">{t(section.labelKey)}</p>
-                      <p className="truncate text-[11px] text-white/40">{t(section.descKey)}</p>
+                      <p className="truncate text-[11px] text-text-muted">{t(section.descKey)}</p>
                     </div>
                   </button>
                 ))}
@@ -172,19 +172,19 @@ export function Settings() {
               className={cn(
                 "flex min-w-[220px] items-center gap-3 rounded-xl p-3 text-left transition-all duration-200 group md:w-full md:min-w-0",
                 activeSection === section.id 
-                  ? "bg-white/10 text-white" 
-                  : "text-white/40 hover:bg-white/5 hover:text-white/70"
+                  ? "bg-violet-500/12 text-text-primary ring-1 ring-violet-500/20" 
+                  : "text-text-secondary hover:bg-bg-hover hover:text-text-primary"
               )}
             >
               <div className={cn(
                 "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200",
-                activeSection === section.id ? "bg-white/10 text-white" : "bg-transparent text-white/40 group-hover:bg-white/5"
+                activeSection === section.id ? "bg-violet-500/15 text-violet-300" : "bg-transparent text-text-secondary group-hover:bg-bg-hover"
               )}>
                 <section.icon size={18} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm tracking-tight capitalize">{t(section.labelKey)}</p>
-                <p className="text-[11px] text-white/40">{t(section.descKey)}</p>
+                <p className="text-[11px] text-text-muted">{t(section.descKey)}</p>
               </div>
             </button>
           ))}

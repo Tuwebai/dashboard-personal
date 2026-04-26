@@ -110,7 +110,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       <button
         type="button"
         onClick={onToggleSidebar}
-        className="rounded-lg p-2 text-white/50 transition-all hover:bg-white/8 hover:text-white lg:hidden"
+        className="rounded-lg p-2 text-text-secondary transition-all hover:bg-bg-hover hover:text-text-primary lg:hidden"
         aria-label="Abrir navegación"
       >
         <Menu size={18} />
@@ -118,13 +118,13 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5 flex-1 min-w-0">
         <BrandMark className="h-5 w-5 shrink-0" />
-        <ChevronRight size={14} className="text-white/20" />
-        <span className="text-white/80 text-sm font-medium">{t(moduleLabelKey)}</span>
+        <ChevronRight size={14} className="text-text-muted" />
+        <span className="text-sm font-medium text-text-primary">{t(moduleLabelKey)}</span>
       </div>
 
       {activeFocusSession && remainingTime ? (
         <div className="hidden lg:flex items-center gap-2 rounded-2xl border border-violet-500/20 bg-violet-500/10 px-3 py-1.5">
-          <span className="min-w-14 text-center text-sm font-semibold tabular-nums text-white">
+          <span className="min-w-14 text-center text-sm font-semibold tabular-nums text-text-primary">
             {remainingTime}
           </span>
           {activeFocusSession.status === 'active' ? (
@@ -134,7 +134,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                 event.stopPropagation();
                 pauseFocusSession(activeFocusSession.id);
               }}
-              className="rounded-xl p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+              className="rounded-xl p-2 text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary"
               aria-label={t('focus.topbar.pause')}
             >
               <Pause size={14} />
@@ -146,7 +146,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                 event.stopPropagation();
                 resumeFocusSession(activeFocusSession.id);
               }}
-              className="rounded-xl p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+              className="rounded-xl p-2 text-text-secondary transition-colors hover:bg-bg-hover hover:text-text-primary"
               aria-label={t('focus.topbar.resume')}
             >
               <Play size={14} />
@@ -169,11 +169,11 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       {/* Search Trigger */}
       <button
         onClick={() => setCommandPaletteOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/5 px-2.5 py-1.5 text-sm text-white/40 transition-all group hover:bg-white/8 hover:text-white/60 sm:px-3"
+        className="group flex items-center gap-2 rounded-lg border border-border bg-bg-secondary px-2.5 py-1.5 text-sm text-text-secondary transition-all hover:bg-bg-hover hover:text-text-primary sm:px-3"
       >
         <Search size={14} />
         <span className="hidden sm:inline">Search...</span>
-        <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-white/5 border border-white/10 rounded text-[10px] font-mono text-white/30 group-hover:text-white/50">
+        <kbd className="hidden rounded border border-border bg-bg-tertiary px-1.5 py-0.5 text-[10px] font-mono text-text-muted group-hover:text-text-secondary sm:inline-flex items-center gap-0.5">
           ⌘K
         </kbd>
       </button>
@@ -181,7 +181,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       {/* Theme Toggle */}
       <button
         onClick={() => setThemeMode(resolvedTheme === 'dark' ? 'light' : 'dark')}
-        className="p-2 rounded-lg hover:bg-white/8 text-white/50 hover:text-white transition-all"
+        className="rounded-lg p-2 text-text-secondary transition-all hover:bg-bg-hover hover:text-text-primary"
         aria-label={t('common.toggleTheme')}
       >
         <motion.div
@@ -198,7 +198,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       <div className="relative">
         <button
           onClick={() => setNotifOpen(!notifOpen)}
-          className="relative p-2 rounded-lg hover:bg-white/8 text-white/50 hover:text-white transition-all"
+          className="relative rounded-lg p-2 text-text-secondary transition-all hover:bg-bg-hover hover:text-text-primary"
           aria-label={`${t('common.notifications')}${unreadCount > 0 ? ` (${unreadCount} ${t('common.unread')})` : ''}`}
         >
           <Bell size={18} />
@@ -221,7 +221,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                 transition={{ duration: 0.15 }}
               >
                 <div className="flex items-center justify-between px-4 py-3 border-b border-bg-secondary">
-                  <h3 className="text-sm font-semibold text-white">Notifications</h3>
+                  <h3 className="text-sm font-semibold text-text-primary">{t('common.notifications')}</h3>
                   <div className="flex items-center gap-3">
                     {unreadCount > 0 && (
                       <button
@@ -234,7 +234,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                     {notifications.length > 0 && (
                       <button
                         onClick={clearNotifications}
-                        className="text-xs text-white/45 hover:text-white/80 transition-colors"
+                        className="text-xs text-text-secondary transition-colors hover:text-text-primary"
                       >
                         {t('common.clearAll')}
                       </button>
@@ -243,7 +243,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                 </div>
                 <div className="max-h-80 overflow-y-auto divide-y divide-border">
                   {notifications.length === 0 ? (
-                    <div className="p-4 text-center text-white/40 text-sm">
+                    <div className="p-4 text-center text-sm text-text-secondary">
                       {t('common.noNotifications')}
                     </div>
                   ) : (
@@ -270,19 +270,19 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                             notif.type === 'habit' && 'bg-violet-500/20 text-violet-400',
                             notif.type === 'finance' && 'bg-amber-500/20 text-amber-400',
                             notif.type === 'calendar' && 'bg-blue-500/20 text-blue-400',
-                            notif.type === 'system' && 'bg-white/10 text-white/50',
+                            notif.type === 'system' && 'bg-bg-secondary text-text-secondary',
                           )}>
                             <Icon size={14} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className={cn(
                               'text-sm font-medium',
-                              notif.isRead ? 'text-white/60' : 'text-white'
+                              notif.isRead ? 'text-text-secondary' : 'text-text-primary'
                             )}>
                               {notif.title}
                             </p>
-                            <p className="text-xs text-white/40 mt-0.5 line-clamp-2">{notif.message}</p>
-                            <p className="text-[10px] text-white/25 mt-1">
+                            <p className="mt-0.5 line-clamp-2 text-xs text-text-muted">{notif.message}</p>
+                            <p className="mt-1 text-[10px] text-text-muted">
                               {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true })}
                             </p>
                           </div>

@@ -91,7 +91,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
         isCollapsed && 'justify-center px-2'
       )}>
         <div className="relative shrink-0">
-          <div className="w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-cyan-500 flex items-center justify-center text-sm font-bold text-white overflow-hidden shrink-0">
+          <div className="w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-cyan-500 flex items-center justify-center overflow-hidden text-sm font-bold text-white shrink-0">
             <img
               src={user.avatar || DEFAULT_NEXUS_AVATAR}
               alt={user.name}
@@ -108,7 +108,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
               exit={{ opacity: 0, x: -10 }}
               className="flex-1 min-w-0"
             >
-              <p className="text-sm font-semibold text-white truncate">{user.name}</p>
+              <p className="truncate text-sm font-semibold text-text-primary">{user.name}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -131,7 +131,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
                 'group relative flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 cursor-pointer md:py-2.5',
                 isActive
                   ? 'bg-violet-500/15 text-violet-400'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/5',
+                  : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary',
                 isCollapsed && 'justify-center px-0'
               )}
               aria-label={t(item.labelKey)}
@@ -190,7 +190,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
                 'flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 cursor-pointer md:py-2.5',
                 isActive
                   ? 'bg-violet-500/15 text-violet-400'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/5',
+                  : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary',
                 isCollapsed && 'justify-center px-0'
               )}
               aria-label={t(item.labelKey)}
@@ -215,7 +215,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
         <button
           className={cn(
-            'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 cursor-pointer md:py-2.5',
+            'flex w-full items-center gap-3 rounded-xl px-3 py-2 text-text-muted hover:bg-bg-hover hover:text-text-secondary transition-all duration-200 cursor-pointer md:py-2.5',
             isCollapsed && 'justify-center px-0'
           )}
           aria-label={t('common.help')}
@@ -267,10 +267,10 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
         {!mobile ? (
           <button
             onClick={toggleSidebarPreference}
-            className={cn(
-               'mt-2 flex w-full items-center gap-3 rounded-xl px-3 py-2 text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 cursor-pointer md:py-2.5',
-              isCollapsed && 'justify-center px-0'
-            )}
+          className={cn(
+            'mt-2 flex w-full items-center gap-3 rounded-xl px-3 py-2 text-text-muted hover:bg-bg-hover hover:text-text-secondary transition-all duration-200 cursor-pointer md:py-2.5',
+            isCollapsed && 'justify-center px-0'
+          )}
             aria-label={isCollapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
           >
             {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}

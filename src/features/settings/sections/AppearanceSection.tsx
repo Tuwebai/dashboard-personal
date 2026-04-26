@@ -29,7 +29,7 @@ export function AppearanceSection() {
   return (
     <section className="space-y-8 md:space-y-12">
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
-        <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+        <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-text-primary">
           <Monitor className="w-4 h-4 text-violet-400" />
           {t('settings.themePreferences')}
         </h3>
@@ -43,8 +43,8 @@ export function AppearanceSection() {
               className={cn(
                 "p-5 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 text-center",
                 theme === mode.id 
-                  ? "bg-violet-500/10 border-violet-500/20 text-white" 
-                  : "bg-bg-tertiary border-border text-white/40 hover:bg-white/5 hover:text-white/80"
+                  ? "bg-violet-500/10 border-violet-500/20 text-text-primary" 
+                  : "bg-bg-tertiary border-border text-text-secondary hover:bg-bg-hover hover:text-text-primary"
               )}
             >
               <mode.icon size={28} />
@@ -55,7 +55,7 @@ export function AppearanceSection() {
       </div>
 
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
-        <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+        <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-text-primary">
           <LayoutDashboard className="w-4 h-4 text-violet-400" />
           {t('settings.interfaceSettings')}
         </h3>
@@ -63,12 +63,12 @@ export function AppearanceSection() {
         <div className="space-y-4">
           <div className="p-4 bg-bg-tertiary border border-border rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-white/5 text-white/60 rounded-xl flex items-center justify-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bg-secondary text-text-secondary">
                 <Sidebar size={20} />
               </div>
               <div>
-                <p className="font-bold text-white tracking-tight">{t('settings.sidebarBehavior')}</p>
-                <p className="text-xs text-white/30">{t('settings.sidebarBehaviorDesc')}</p>
+                <p className="font-bold tracking-tight text-text-primary">{t('settings.sidebarBehavior')}</p>
+                <p className="text-xs text-text-muted">{t('settings.sidebarBehaviorDesc')}</p>
               </div>
             </div>
             <Switch 
@@ -79,12 +79,12 @@ export function AppearanceSection() {
 
           <div className="p-4 bg-bg-tertiary border border-border rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-white/5 text-white/60 rounded-xl flex items-center justify-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bg-secondary text-text-secondary">
                 <LayoutDashboard size={20} />
               </div>
               <div>
-                <p className="font-bold text-white tracking-tight">{t('settings.compactMode')}</p>
-                <p className="text-xs text-white/30">{t('settings.compactModeDesc')}</p>
+                <p className="font-bold tracking-tight text-text-primary">{t('settings.compactMode')}</p>
+                <p className="text-xs text-text-muted">{t('settings.compactModeDesc')}</p>
               </div>
             </div>
             <Switch 
@@ -96,7 +96,7 @@ export function AppearanceSection() {
       </div>
 
       <div className="rounded-xl border border-border bg-bg-card p-4 space-y-6 sm:p-6">
-        <h3 className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+        <h3 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-text-primary">
           <Palette className="w-4 h-4 text-violet-400" />
           {t('settings.accentColor')}
         </h3>
@@ -107,7 +107,7 @@ export function AppearanceSection() {
               key={color.labelKey}
               className={cn(
                 "group p-1 rounded-2xl border-2 transition-all duration-300",
-                settings.accentColor === color.value ? "border-white/20" : "border-transparent"
+                settings.accentColor === color.value ? "border-violet-500/30 shadow-sm shadow-violet/20" : "border-transparent"
               )}
               onClick={() => handleAccentChange(color.value)}
               title={t(color.labelKey)}

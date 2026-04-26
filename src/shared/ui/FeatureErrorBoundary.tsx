@@ -19,7 +19,7 @@ export class FeatureErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex h-full min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-border bg-bg-card px-6 text-center text-white/60">
+        <div className="flex h-full min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-border bg-bg-card px-6 text-center text-text-secondary">
           <p className="text-sm">Error en {this.props.featureName}</p>
           <button
             className="text-xs text-violet-400 underline underline-offset-4"
