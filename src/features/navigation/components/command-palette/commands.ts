@@ -9,16 +9,17 @@ import {
   Settings,
   Zap,
 } from 'lucide-react';
+import type { AppModule } from '../../../../core/navigation/routes';
 import type { CommandOption } from './types';
 
 type Translate = (key: string) => string;
 
 export function buildCommandPaletteCommands(
   t: Translate,
-  onNavigate: (module: string) => void,
+  onNavigate: (module: AppModule) => void,
   closePalette: () => void,
 ): CommandOption[] {
-  const navigateTo = (module: string) => () => {
+  const navigateTo = (module: AppModule) => () => {
     onNavigate(module);
     closePalette();
   };

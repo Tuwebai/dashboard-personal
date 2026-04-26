@@ -1,30 +1,10 @@
 import { useEffect } from 'react';
-
-const DEFAULT_MODULE = 'dashboard';
-const LOGIN_PATH = '/login';
-
-function getModuleFromPath(pathname: string) {
-  const module = pathname.replace(/^\/+/, '');
-
-  if (!module || module === 'login') {
-    return DEFAULT_MODULE;
-  }
-
-  return module;
-}
-
-function getPathFromModule(activeModule: string, authStatus: string) {
-  if (authStatus !== 'authenticated') {
-    return LOGIN_PATH;
-  }
-
-  return activeModule === DEFAULT_MODULE ? '/' : `/${activeModule}`;
-}
+import { getModuleFromPath, getModulePath, LOGIN_PATH, type AppModule } from './routes';
 
 export function useAppNavigationSync(
-  activeModule: string,
+  activeModule: AppModule,
   authStatus: string,
-  setActiveModule: (module: string) => void,
+  setActiveModule: (module: AppModule) => void,
 ) {
   useEffect(() => {
     setActiveModule(getModuleFromPath(window.location.pathname));
@@ -40,7 +20,7 @@ export function useAppNavigationSync(
   }, [setActiveModule]);
 
   useEffect(() => {
-    const path = getPathFromModule(activeModule, authStatus);
+    const path = authStatus === 'authenticated' ? getModulePath(activeModule) : LOGIN_PATH;
 
     if (window.location.pathname !== path) {
       window.history.pushState({ module: activeModule }, '', path);

@@ -2,10 +2,11 @@ import { useState, type ReactNode } from 'react';
 import { Sidebar } from '../../features/navigation/components/Sidebar';
 import { TopNavbar } from '../../features/navigation/components/TopNavbar';
 import { WorkspaceReadonlyBanner } from '../../shared/ui/WorkspaceReadonlyBanner';
+import type { AppModule } from '../../core/navigation/routes';
 
 interface DashboardLayoutProps {
-  activeModule: string;
-  onNavigate: (module: string) => void;
+  activeModule: AppModule;
+  onNavigate: (module: AppModule) => void;
   children: ReactNode;
 }
 

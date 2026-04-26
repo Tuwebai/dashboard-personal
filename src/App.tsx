@@ -7,6 +7,7 @@ import { DashboardLayout } from './layouts/dashboard-layout/DashboardLayout';
 import { useFirebaseAuthBootstrap } from './core/persistence/auth';
 import { useFirebasePersistenceSync } from './core/persistence/sync';
 import { useAppNavigationSync } from './core/navigation/useAppNavigationSync';
+import type { AppModule } from './core/navigation/routes';
 import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
 import { PageSkeleton } from './shared/ui/PageSkeleton';
 
@@ -60,7 +61,7 @@ export default function App() {
     document.documentElement.style.setProperty('--color-primary', accentColor);
   }, [theme, compactMode, accentColor]);
 
-  const handleNavigate = (module: string) => {
+  const handleNavigate = (module: AppModule) => {
     setActiveModule(module);
   };
 

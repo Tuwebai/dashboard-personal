@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import type { AppModule } from '../../../../core/navigation/routes';
 
 export type CommandCategory = 'navigation' | 'action';
 
@@ -13,5 +14,5 @@ export interface CommandOption {
 }
 
 export interface CommandPaletteProps {
-  onNavigate: (module: string) => void;
+  onNavigate: (module: AppModule) => void;
 }

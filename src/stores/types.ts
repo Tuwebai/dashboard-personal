@@ -9,6 +9,7 @@ import type { PersonalGoal } from '../features/goals/types';
 import type { WeeklyPlanningState } from '../features/weekly-planning/types';
 import type { JournalEntry } from '../features/journaling/types';
 import type { FocusSession } from '../features/focus/types';
+import type { AppModule } from '../core/navigation/routes';
 import { CURRENT_USER } from '../core/constants';
 
 export type {
@@ -48,11 +49,11 @@ export interface AuthSlice {
 export interface UISlice {
   sidebarCollapsed: boolean;
   commandPaletteOpen: boolean;
-  activeModule: string;
+  activeModule: AppModule;
   theme: 'dark' | 'light';
   toggleSidebar: () => void;
   setCommandPaletteOpen: (open: boolean) => void;
-  setActiveModule: (module: string) => void;
+  setActiveModule: (module: AppModule) => void;
   toggleTheme: () => void;
 }
 

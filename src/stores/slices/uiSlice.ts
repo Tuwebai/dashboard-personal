@@ -1,5 +1,6 @@
 import { StateCreator } from 'zustand';
 import { UISlice, AppStore } from '../types';
+import type { AppModule } from '../../core/navigation/routes';
 
 export const createUISlice: StateCreator<
   AppStore,
@@ -17,7 +18,7 @@ export const createUISlice: StateCreator<
   setCommandPaletteOpen: (open: boolean) => set(state => {
     state.commandPaletteOpen = open;
   }),
-  setActiveModule: (module: string) => set(state => {
+  setActiveModule: (module: AppModule) => set(state => {
     state.activeModule = module;
   }),
   toggleTheme: () => set(state => {

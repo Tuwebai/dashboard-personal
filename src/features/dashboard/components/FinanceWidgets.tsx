@@ -5,13 +5,14 @@ import { cn } from '../../../shared/lib/cn';
 import { formatCurrency } from '../../../shared/lib/helpers';
 import { EmptyState } from '../../../shared/ui/EmptyState';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import type { AppModule } from '../../../core/navigation/routes';
 
 interface FinanceWidgetsProps {
   isTrendPositive: boolean | null;
   netWorthTrend: number | null;
   TrendIcon: LucideIcon;
   balanceHistory: { date: string; dateKey: string; balance: number }[];
-  setActiveModule: (module: string) => void;
+  setActiveModule: (module: AppModule) => void;
 }
 
 export function FinanceWidgets({ isTrendPositive, netWorthTrend, TrendIcon, balanceHistory, setActiveModule }: FinanceWidgetsProps) {

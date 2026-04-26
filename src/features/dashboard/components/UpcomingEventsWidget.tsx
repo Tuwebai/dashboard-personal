@@ -3,11 +3,12 @@ import { ArrowRight, Calendar, Clock } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { EmptyState } from '../../../shared/ui/EmptyState';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import type { AppModule } from '../../../core/navigation/routes';
 import type { CalendarEvent } from '../../../shared/types';
 
 interface UpcomingEventsWidgetProps {
   upcomingEvents: CalendarEvent[];
-  setActiveModule: (module: string) => void;
+  setActiveModule: (module: AppModule) => void;
 }
 
 export function UpcomingEventsWidget({ upcomingEvents, setActiveModule }: UpcomingEventsWidgetProps) {

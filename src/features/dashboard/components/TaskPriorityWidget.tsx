@@ -3,10 +3,11 @@ import { ArrowRight, CheckSquare } from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { EmptyState } from '../../../shared/ui/EmptyState';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import type { AppModule } from '../../../core/navigation/routes';
 
 interface TaskPriorityWidgetProps {
   tasksByPriority: { name: string; value: number; color: string }[];
-  setActiveModule: (module: string) => void;
+  setActiveModule: (module: AppModule) => void;
 }
 
 export function TaskPriorityWidget({ tasksByPriority, setActiveModule }: TaskPriorityWidgetProps) {

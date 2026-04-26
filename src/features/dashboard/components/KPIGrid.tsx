@@ -4,6 +4,7 @@ import { AnimatedCounter } from '../../../shared/ui/AnimatedCounter';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { PRIORITY_BG } from '../../../shared/lib/helpers';
 import { cn } from '../../../shared/lib/cn';
+import type { AppModule } from '../../../core/navigation/routes';
 
 interface KPIGridProps {
   tasksCompletedToday: number;
@@ -13,7 +14,7 @@ interface KPIGridProps {
   longestEver: number;
   netWorth: number;
   notesThisWeek: number;
-  setActiveModule: (module: string) => void;
+  setActiveModule: (module: AppModule) => void;
   setSelectedTask: (id: string | null) => void;
 }
 

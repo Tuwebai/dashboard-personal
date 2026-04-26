@@ -4,6 +4,7 @@ import { ProgressRing } from '../../../shared/ui/ProgressRing';
 import { EmptyState } from '../../../shared/ui/EmptyState';
 import { cn } from '../../../shared/lib/cn';
 import { useI18n } from '../../../shared/i18n/useI18n';
+import type { AppModule } from '../../../core/navigation/routes';
 import type { Habit } from '../../../shared/types';
 
 interface HabitsWidgetProps {
@@ -11,7 +12,7 @@ interface HabitsWidgetProps {
   completedHabits: number;
   todayHabits: { habit: Habit; completed: boolean }[];
   today: string;
-  setActiveModule: (module: string) => void;
+  setActiveModule: (module: AppModule) => void;
   logHabit: (habitId: string, date: string, completed: boolean) => void;
 }
 

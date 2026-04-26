@@ -11,9 +11,10 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { BrandLogo } from '../../../shared/ui/BrandLogo';
 import { DEFAULT_NEXUS_AVATAR } from '../../../shared/lib/defaultAvatar';
+import type { AppModule } from '../../../core/navigation/routes';
 
 interface NavItem {
-  id: string;
+  id: AppModule;
   labelKey: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
   badge?: number;
@@ -38,8 +39,8 @@ const BOTTOM_ITEMS: NavItem[] = [
 ];
 
 interface SidebarProps {
-  activeModule: string;
-  onNavigate: (module: string) => void;
+  activeModule: AppModule;
+  onNavigate: (module: AppModule) => void;
   mobile?: boolean;
   onCloseMobile?: () => void;
 }

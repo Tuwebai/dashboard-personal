@@ -10,6 +10,7 @@ import { cn } from '../../../shared/lib/cn';
 import { useAppStore } from '../../../stores/useAppStore';
 import { useI18n } from '../../../shared/i18n/useI18n';
 import { formatDistanceToNow } from 'date-fns';
+import { getModuleFromPath, type AppModule } from '../../../core/navigation/routes';
 import type { NotificationType } from '../../../shared/types';
 
 const NOTIF_ICONS: Record<NotificationType, React.ComponentType<{ size?: number }>> = {
@@ -21,8 +22,8 @@ const NOTIF_ICONS: Record<NotificationType, React.ComponentType<{ size?: number 
 };
 
 interface TopNavbarProps {
-  activeModule: string;
-  onNavigate: (module: string) => void;
+  activeModule: AppModule;
+  onNavigate: (module: AppModule) => void;
   onToggleSidebar?: () => void;
 }
 
@@ -252,7 +253,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                           onClick={() => {
                             markNotificationRead(notif.id);
                             if (notif.actionUrl) {
-                              onNavigate(notif.actionUrl.replace('/', ''));
+                              onNavigate(getModuleFromPath(notif.actionUrl));
                               setNotifOpen(false);
                             }
                           }}
