@@ -3,6 +3,7 @@ import { useId } from 'react';
 interface BrandLogoProps {
   collapsed?: boolean;
   className?: string;
+  variant?: 'default' | 'sidebar';
 }
 
 interface BrandMarkProps {
@@ -37,25 +38,37 @@ export function BrandMark({ className = 'h-8 w-8 shrink-0' }: BrandMarkProps) {
   );
 }
 
-export function BrandLogo({ collapsed = false, className = "" }: BrandLogoProps) {
+export function BrandLogo({
+  collapsed = false,
+  className = '',
+  variant = 'default',
+}: BrandLogoProps) {
+  const isSidebar = variant === 'sidebar';
+  const markClassName = isSidebar ? 'h-7 w-7 shrink-0' : 'h-8 w-8 shrink-0';
+  const nameTextClassName = isSidebar
+    ? 'text-[1.05rem] md:text-[1.05rem]'
+    : 'text-lg md:text-[1.625rem]';
+  const subtitleTextClassName = isSidebar
+    ? 'text-[0.42rem] tracking-[0.18em] md:text-[0.42rem]'
+    : 'text-[0.5rem] tracking-[0.22em] md:text-[0.58rem]';
 
   if (collapsed) {
     return <BrandMark className={className} />;
   }
 
   return (
-    <div className={`flex min-w-0 items-center gap-3 ${className}`}>
-      <BrandMark />
+    <div className={`flex min-w-0 items-center ${isSidebar ? 'gap-2' : 'gap-3'} ${className}`}>
+      <BrandMark className={markClassName} />
       <div className="min-w-0">
         <div className="flex min-w-0 items-baseline gap-1">
-          <span className="truncate bg-linear-to-r from-violet-400 to-cyan-400 bg-clip-text text-lg font-bold tracking-tight text-transparent md:text-[1.625rem]">
+          <span className={`truncate bg-linear-to-r from-violet-400 to-cyan-400 bg-clip-text font-bold tracking-tight text-transparent ${nameTextClassName}`}>
             Nexus
           </span>
-          <span className="truncate text-lg font-light tracking-[0.14em] text-zinc-400 md:text-[1.625rem]">
+          <span className={`truncate font-light tracking-[0.12em] text-zinc-400 ${nameTextClassName}`}>
             CRM
           </span>
         </div>
-        <p className="truncate text-[0.5rem] font-medium tracking-[0.22em] text-zinc-500 md:text-[0.58rem]">
+        <p className={`truncate font-medium text-zinc-500 ${subtitleTextClassName}`}>
           PERSONAL DASHBOARD
         </p>
       </div>

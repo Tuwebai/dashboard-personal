@@ -74,9 +74,10 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
       <div className="flex h-14 items-center overflow-hidden border-b border-border px-4 shrink-0 md:h-16">
         <BrandLogo
           collapsed={isCollapsed}
+          variant="sidebar"
           className={cn(
             'transition-all duration-300',
-            isCollapsed ? 'h-8 w-8 shrink-0' : 'w-full max-w-[172px]',
+            isCollapsed ? 'h-8 w-8 shrink-0' : 'w-full min-w-0',
           )}
         />
       </div>
