@@ -109,7 +109,7 @@ export function useNotificationSettings() {
     if (permission === 'granted') {
       new Notification(t('settings.notificationsEnabledTitle'), {
         body: t('settings.notificationsEnabledBody'),
-        icon: '/favicon.ico'
+        icon: '/favicon.svg'
       });
       updateSettings({ pushNotifications: true });
       void syncNotificationPreferences({ ...settings, pushNotifications: true });

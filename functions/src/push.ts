@@ -30,8 +30,8 @@ export async function sendPushForNotification(userId: string, notificationId: st
     },
     webpush: {
       notification: {
-        icon: '/favicon.ico',
-        badge: '/favicon.ico',
+        icon: '/favicon.svg',
+        badge: '/favicon.svg',
       },
       fcmOptions: {
         link: notification.actionUrl ?? '/dashboard',

@@ -217,12 +217,12 @@ export async function showForegroundPushNotification(payload: MessagePayload) {
   const actionUrl = payload.data?.actionUrl ?? '/dashboard';
   const options: NotificationOptions = {
     body,
-    badge: '/favicon.ico',
+    badge: '/favicon.svg',
     data: {
       actionUrl,
       notificationId,
     },
-    icon: '/favicon.ico',
+    icon: '/favicon.svg',
     tag: notificationId,
   };
 
@@ -264,13 +264,13 @@ export async function showBrowserNotification({
   }
 
   const options: NotificationOptions = {
-    badge: '/favicon.ico',
+    badge: '/favicon.svg',
     body,
     data: {
       actionUrl,
       notificationId,
     },
-    icon: '/favicon.ico',
+    icon: '/favicon.svg',
     tag: notificationId,
   };
 

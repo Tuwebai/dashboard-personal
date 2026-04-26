@@ -28,13 +28,13 @@ if (hasMessagingConfig) {
   messaging.onBackgroundMessage((payload) => {
     const title = payload.notification?.title || 'Nexus';
     const body = payload.notification?.body || '';
-    const icon = payload.notification?.image || '/favicon.ico';
+    const icon = payload.notification?.image || '/favicon.svg';
     const actionUrl = payload.data?.actionUrl || '/';
 
     self.registration.showNotification(title, {
       body,
       icon,
-      badge: '/favicon.ico',
+      badge: '/favicon.svg',
       data: {
         actionUrl,
         notificationId: payload.data?.notificationId || '',
