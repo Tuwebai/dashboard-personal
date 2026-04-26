@@ -11,6 +11,7 @@ import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
 import { PageSkeleton } from './shared/ui/PageSkeleton';
 import { AppLoadingScreen } from './shared/ui/AppLoadingScreen';
 import { useRealtimeAppearance } from './core/appearance/theme';
+import { useLiveNotificationProducer } from './core/notifications/useLiveNotificationProducer';
 import { useNotificationSync } from './core/notifications/useNotificationSync';
 import { usePushRegistration } from './core/notifications/usePushRegistration';
 
@@ -41,6 +42,7 @@ export default function App() {
   const { resolvedTheme } = useRealtimeAppearance();
   useFirebaseAuthBootstrap();
   useFirebasePersistenceSync();
+  useLiveNotificationProducer();
   useNotificationSync();
   usePushRegistration();
   useAppNavigationSync(activeModule, authStatus, setActiveModule);

@@ -207,7 +207,7 @@ export interface ActivitySlice {
   markAllNotificationsRead: () => Promise<void>;
   clearNotifications: () => Promise<void>;
   addActivity: (activity: Omit<ActivityItem, 'id' | 'createdAt'>) => void;
-  addNotification: (notif: Omit<AppNotification, 'id' | 'createdAt' | 'scope'> & { scope?: 'user' | 'system' }) => Promise<void>;
+  addNotification: (notif: Omit<AppNotification, 'createdAt' | 'scope'> & { scope?: 'user' | 'system' }) => Promise<void>;
 }
 
 export type AppStore = AuthSlice & UISlice & TaskSlice & HabitSlice & RoutineSlice & FinanceSlice & CalendarSlice & WeeklyPlanningSlice & NoteSlice & JournalingSlice & FocusSlice & ActivitySlice & PersonalGoalSlice;

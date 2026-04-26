@@ -160,7 +160,7 @@ export const createActivitySlice: StateCreator<
   }),
 
   addNotification: async (notifData) => {
-    const notification = createNotificationPayload(notifData);
+    const notification = createNotificationPayload(notifData, notifData.id ?? createNotificationId());
     const { firebaseUid, authProvider } = get();
 
     if (notifData.scope === 'system' || !shouldUseFirebasePersistence() || authProvider !== 'password' || !firebaseUid) {

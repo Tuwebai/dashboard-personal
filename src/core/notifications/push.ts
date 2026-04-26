@@ -223,3 +223,52 @@ export async function showForegroundPushNotification(payload: MessagePayload) {
 
   return true;
 }
+
+type BrowserNotificationInput = {
+  actionUrl?: string;
+  body: string;
+  notificationId: string;
+  title: string;
+};
+
+export async function showBrowserNotification({
+  actionUrl = '/dashboard',
+  body,
+  notificationId,
+  title,
+}: BrowserNotificationInput) {
+  if (typeof window === 'undefined' || Notification.permission !== 'granted' || !title.trim()) {
+    return false;
+  }
+
+  if (shouldSkipForegroundNotification(notificationId)) {
+    return false;
+  }
+
+  const options: NotificationOptions = {
+    badge: '/favicon.ico',
+    body,
+    data: {
+      actionUrl,
+      notificationId,
+    },
+    icon: '/favicon.ico',
+    tag: notificationId,
+  };
+
+  const registration = await navigator.serviceWorker.getRegistration().catch(() => undefined)
+    ?? await registerMessagingServiceWorker().catch(() => null);
+
+  if (registration?.showNotification) {
+    await registration.showNotification(title, options);
+    return true;
+  }
+
+  const notification = new Notification(title, options);
+  notification.onclick = () => {
+    window.focus();
+    window.location.assign(actionUrl);
+  };
+
+  return true;
+}
