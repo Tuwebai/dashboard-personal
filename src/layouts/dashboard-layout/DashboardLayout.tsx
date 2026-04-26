@@ -17,7 +17,7 @@ export function DashboardLayout({ activeModule, onNavigate, children }: Dashboar
   useGlobalKeyboardShortcuts({ onNavigate });
 
   return (
-    <div className="flex h-dvh min-h-0 bg-bg-primary overflow-hidden">
+    <div className="flex h-dvh min-h-0 overflow-hidden bg-bg-primary">
       <div className="hidden min-h-0 lg:flex">
         <Sidebar activeModule={activeModule} onNavigate={onNavigate} />
       </div>
@@ -45,7 +45,12 @@ export function DashboardLayout({ activeModule, onNavigate, children }: Dashboar
         />
         <CommandPalette onNavigate={onNavigate} />
         <WorkspaceReadonlyBanner />
-        <main className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        <main
+          className="min-h-0 flex-1 overflow-y-auto"
+          style={{ padding: 'var(--page-padding-y) var(--page-padding-x)' }}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

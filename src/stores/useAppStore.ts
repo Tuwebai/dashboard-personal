@@ -117,6 +117,20 @@ export const useAppStore = create<AppStore>()(
               selectedFocusSessionId: null,
             };
           }
+          if (version < 9 && isPersistedAppStore(state)) {
+            state = {
+              ...state,
+              settings: {
+                ...state.settings,
+                theme: typeof (persistedState as { theme?: unknown }).theme === 'string'
+                  ? (persistedState as { theme?: AppStore['settings']['theme'] }).theme ?? state.settings.theme
+                  : state.settings.theme,
+                sidebarCollapsed: typeof (persistedState as { sidebarCollapsed?: unknown }).sidebarCollapsed === 'boolean'
+                  ? (persistedState as { sidebarCollapsed?: boolean }).sidebarCollapsed ?? state.settings.sidebarCollapsed
+                  : state.settings.sidebarCollapsed,
+              },
+            };
+          }
           return state as AppStore;
         },
         partialize: (state) => pickPersistedWorkspace(state),

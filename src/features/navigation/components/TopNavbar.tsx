@@ -12,6 +12,7 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 import { formatDistanceToNow } from 'date-fns';
 import { getModuleFromPath, type AppModule } from '../../../core/navigation/routes';
 import type { NotificationType } from '../../../shared/types';
+import { useResolvedTheme } from '../../../core/appearance/theme';
 
 const NOTIF_ICONS: Record<NotificationType, React.ComponentType<{ size?: number }>> = {
   task: Check,
@@ -32,8 +33,8 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
   const [notifOpen, setNotifOpen] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const {
-    theme,
-    toggleTheme,
+    themeMode,
+    setThemeMode,
     notifications,
     markNotificationRead,
     markAllNotificationsRead,
@@ -46,8 +47,8 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
     finishFocusSession,
   } = useAppStore(
     useShallow((state) => ({
-      theme: state.theme,
-      toggleTheme: state.toggleTheme,
+      themeMode: state.settings.theme,
+      setThemeMode: state.setThemeMode,
       notifications: state.notifications,
       markNotificationRead: state.markNotificationRead,
       markAllNotificationsRead: state.markAllNotificationsRead,
@@ -60,6 +61,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       finishFocusSession: state.finishFocusSession,
     }))
   );
+  const resolvedTheme = useResolvedTheme(themeMode);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
   const activeFocusSession = useMemo(
@@ -104,7 +106,7 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
   const moduleLabelKey = activeModule === 'dashboard' ? 'nav.overview' : activeModule === 'weekly-planning' ? 'nav.weeklyPlanning' : `nav.${activeModule}`;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-bg-primary/80 px-4 backdrop-blur-xl md:px-6">
+    <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-bg-primary/80 px-4 backdrop-blur-xl md:px-6" style={{ height: 'var(--topbar-height)' }}>
       <button
         type="button"
         onClick={onToggleSidebar}
@@ -178,17 +180,17 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
 
       {/* Theme Toggle */}
       <button
-        onClick={toggleTheme}
+        onClick={() => setThemeMode(resolvedTheme === 'dark' ? 'light' : 'dark')}
         className="p-2 rounded-lg hover:bg-white/8 text-white/50 hover:text-white transition-all"
         aria-label={t('common.toggleTheme')}
       >
         <motion.div
-          key={theme}
+          key={resolvedTheme}
           initial={{ rotate: -90, opacity: 0 }}
           animate={{ rotate: 0, opacity: 1 }}
           transition={{ duration: 0.2 }}
         >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          {resolvedTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
         </motion.div>
       </button>
 

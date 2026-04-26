@@ -28,6 +28,78 @@
   --color-info: #3b82f6;
 }
 
+:root {
+  color-scheme: dark;
+  --color-accent: #8b5cf6;
+  --color-accent-rgb: 139 92 246;
+  --color-brand-secondary: #06b6d4;
+  --color-brand-secondary-soft: #22d3ee;
+  --brand-primary-start: var(--color-accent);
+  --brand-primary-end: var(--color-brand-secondary);
+  --brand-accent-start: color-mix(in srgb, var(--color-accent) 78%, white);
+  --brand-accent-end: var(--color-brand-secondary-soft);
+  --page-padding-x: 1rem;
+  --page-padding-y: 1rem;
+  --modal-padding-x: 1.5rem;
+  --modal-padding-y: 1.25rem;
+  --field-height: 2.75rem;
+  --topbar-height: 3.5rem;
+  --sidebar-brand-height: 4rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-padding-x: 1.5rem;
+    --page-padding-y: 1.5rem;
+  }
+}
+
+html[data-resolved-theme='dark'] {
+  color-scheme: dark;
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-bg-tertiary: #1a1a1a;
+  --color-bg-card: #161616;
+  --color-bg-hover: #1f1f1f;
+  --color-border: #2a2a2a;
+  --color-border-subtle: #222222;
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #a3a3a3;
+  --color-text-muted: #666666;
+}
+
+html[data-resolved-theme='light'] {
+  color-scheme: light;
+  --color-bg-primary: #f4f7fb;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #edf2f8;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #e8eef6;
+  --color-border: #d9e2ec;
+  --color-border-subtle: #e7edf4;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #6b7280;
+}
+
+html.compact-mode {
+  --page-padding-x: 0.875rem;
+  --page-padding-y: 0.875rem;
+  --modal-padding-x: 1rem;
+  --modal-padding-y: 1rem;
+  --field-height: 2.5rem;
+  --topbar-height: 3.25rem;
+  --sidebar-brand-height: 3.5rem;
+  font-size: 15px;
+}
+
+@media (min-width: 768px) {
+  html.compact-mode {
+    --page-padding-x: 1rem;
+    --page-padding-y: 1rem;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -39,8 +111,8 @@ html {
 }
 
 body {
-  background-color: #0a0a0a;
-  color: #f5f5f5;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -64,32 +136,32 @@ button {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #111111;
+  background: var(--color-bg-secondary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #333333;
+  background: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #444444;
+  background: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
 }
 
 /* Glass morphism base */
 .glass {
-  background: rgba(22, 22, 22, 0.8);
+  background: color-mix(in srgb, var(--color-bg-card) 82%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
 }
 
 .glass-premium {
-  background: rgba(18, 18, 18, 0.75);
+  background: color-mix(in srgb, var(--color-bg-card) 76%, transparent);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
   box-shadow: 
     0 25px 50px -12px rgba(0, 0, 0, 0.7),
-    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    inset 0 1px 1px color-mix(in srgb, var(--color-text-primary) 6%, transparent);
 }
 
 /* Custom Date Picker Styling */
@@ -111,7 +183,7 @@ input[type="date"]::-webkit-clear-button {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  background: linear-gradient(135deg, var(--brand-primary-start), var(--brand-primary-end));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -119,7 +191,7 @@ input[type="date"]::-webkit-clear-button {
 
 /* Glow effect */
 .glow-violet {
-  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 0 20px rgb(var(--color-accent-rgb) / 0.3);
 }
 .glow-cyan {
   box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
@@ -133,7 +205,7 @@ input[type="date"]::-webkit-clear-button {
 }
 
 .animated-gradient {
-  background: linear-gradient(-45deg, #0a0a0a, #0d0d1a, #0a1020, #0d0a1a);
+  background: linear-gradient(-45deg, var(--color-bg-primary), color-mix(in srgb, var(--color-bg-primary) 88%, var(--color-accent)), color-mix(in srgb, var(--color-bg-primary) 86%, var(--color-brand-secondary)), var(--color-bg-primary));
   background-size: 400% 400%;
   animation: gradient-shift 15s ease infinite;
 }
@@ -155,7 +227,7 @@ input[type="date"]::-webkit-clear-button {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #1a1a1a 25%, #252525 50%, #1a1a1a 75%);
+  background: linear-gradient(90deg, var(--color-bg-tertiary) 25%, color-mix(in srgb, var(--color-bg-hover) 75%, white) 50%, var(--color-bg-tertiary) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -212,6 +284,100 @@ input[type="date"]::-webkit-clear-button {
 
 .page-enter {
   animation: page-enter 0.3s ease forwards;
+}
+
+.nexus-button-primary {
+  background-color: var(--color-accent);
+  box-shadow: 0 12px 30px -16px rgb(var(--color-accent-rgb) / 0.75);
+}
+
+.nexus-button-primary:hover {
+  background-color: color-mix(in srgb, var(--color-accent) 88%, white);
+  box-shadow: 0 18px 34px -18px rgb(var(--color-accent-rgb) / 0.75);
+}
+
+.nexus-button-gradient {
+  background-image: linear-gradient(135deg, var(--brand-primary-start), var(--brand-primary-end));
+  box-shadow: 0 12px 30px -16px rgb(var(--color-accent-rgb) / 0.65);
+}
+
+.nexus-button-gradient:hover {
+  background-image: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 88%, white), color-mix(in srgb, var(--color-brand-secondary) 88%, white));
+}
+
+.nexus-button-outline {
+  border: 1px solid rgb(var(--color-accent-rgb) / 0.45);
+  color: color-mix(in srgb, var(--color-accent) 74%, white);
+}
+
+.nexus-button-outline:hover {
+  background-color: rgb(var(--color-accent-rgb) / 0.1);
+  border-color: rgb(var(--color-accent-rgb) / 0.7);
+}
+
+.nexus-field-accent:focus {
+  border-color: rgb(var(--color-accent-rgb) / 0.5);
+  box-shadow: 0 0 0 4px rgb(var(--color-accent-rgb) / 0.1);
+}
+
+.nexus-switch-track-on {
+  background-color: rgb(var(--color-accent-rgb) / 0.2);
+}
+
+.nexus-switch-thumb-on {
+  background-color: var(--color-accent);
+}
+
+.nexus-badge-glow {
+  background-color: rgb(var(--color-accent-rgb) / 0.18);
+  color: color-mix(in srgb, var(--color-accent) 78%, white);
+  border: 1px solid rgb(var(--color-accent-rgb) / 0.3);
+}
+
+.bg-violet-500 { background-color: var(--color-accent) !important; }
+.bg-violet-600 { background-color: color-mix(in srgb, var(--color-accent) 82%, black) !important; }
+.bg-violet-500\/5 { background-color: rgb(var(--color-accent-rgb) / 0.05) !important; }
+.bg-violet-500\/10 { background-color: rgb(var(--color-accent-rgb) / 0.1) !important; }
+.bg-violet-500\/12 { background-color: rgb(var(--color-accent-rgb) / 0.12) !important; }
+.bg-violet-500\/15 { background-color: rgb(var(--color-accent-rgb) / 0.15) !important; }
+.bg-violet-500\/20 { background-color: rgb(var(--color-accent-rgb) / 0.2) !important; }
+.bg-violet-500\/30 { background-color: rgb(var(--color-accent-rgb) / 0.3) !important; }
+.text-violet-100 { color: color-mix(in srgb, var(--color-accent) 22%, white) !important; }
+.text-violet-200 { color: color-mix(in srgb, var(--color-accent) 40%, white) !important; }
+.text-violet-300 { color: color-mix(in srgb, var(--color-accent) 58%, white) !important; }
+.text-violet-400 { color: color-mix(in srgb, var(--color-accent) 74%, white) !important; }
+.border-violet-500 { border-color: var(--color-accent) !important; }
+.border-violet-500\/20 { border-color: rgb(var(--color-accent-rgb) / 0.2) !important; }
+.border-violet-500\/30 { border-color: rgb(var(--color-accent-rgb) / 0.3) !important; }
+.border-violet-500\/50 { border-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
+.shadow-violet-500\/20 { box-shadow: 0 12px 30px -18px rgb(var(--color-accent-rgb) / 0.55) !important; }
+.shadow-violet-500\/30 { box-shadow: 0 16px 36px -20px rgb(var(--color-accent-rgb) / 0.65) !important; }
+.hover\:bg-violet-500:hover { background-color: color-mix(in srgb, var(--color-accent) 88%, white) !important; }
+.hover\:bg-violet-600:hover { background-color: color-mix(in srgb, var(--color-accent) 78%, black) !important; }
+.hover\:bg-violet-500\/10:hover { background-color: rgb(var(--color-accent-rgb) / 0.1) !important; }
+.hover\:text-violet-300:hover { color: color-mix(in srgb, var(--color-accent) 58%, white) !important; }
+.hover\:text-violet-400:hover { color: color-mix(in srgb, var(--color-accent) 74%, white) !important; }
+.group:hover .group-hover\:text-violet-400 { color: color-mix(in srgb, var(--color-accent) 74%, white) !important; }
+.group:hover .group-hover\:border-violet-500\/50 { border-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
+.ring-violet-500\/20 { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.2) !important; }
+.focus\:ring-violet-500\/10:focus { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.1) !important; }
+.focus\:ring-violet-500\/50:focus { --tw-ring-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
+.focus\:border-violet-500\/50:focus { border-color: rgb(var(--color-accent-rgb) / 0.5) !important; }
+.accent-violet-500 { accent-color: var(--color-accent) !important; }
+.from-violet-400 {
+  --tw-gradient-from: color-mix(in srgb, var(--color-accent) 78%, white) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(var(--color-accent-rgb) / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.from-violet-500 {
+  --tw-gradient-from: var(--color-accent) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(var(--color-accent-rgb) / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.from-violet-600 {
+  --tw-gradient-from: color-mix(in srgb, var(--color-accent) 82%, black) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(var(--color-accent-rgb) / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
 }
 
 /* Ring progress */

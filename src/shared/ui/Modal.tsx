@@ -43,7 +43,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md', className
           />
           
           {/* Centering Container */}
-          <div className="flex min-h-full items-center justify-center p-4">
+          <div className="flex min-h-full items-center justify-center p-[var(--modal-padding-y)]">
             <motion.div
               className={cn(
                 'relative w-full bg-bg-card border border-border rounded-xl shadow-2xl overflow-hidden',
@@ -57,7 +57,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md', className
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               {title && (
-                <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                <div className="flex items-center justify-between border-b border-border px-[var(--modal-padding-x)] py-[var(--modal-padding-y)]">
                   <h2 className="text-xl font-bold text-white tracking-tight">{title}</h2>
                   <button
                     onClick={onClose}
@@ -77,7 +77,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md', className
                   <X size={20} />
                 </button>
               )}
-              <div className="px-6 py-5">
+              <div className="px-[var(--modal-padding-x)] py-[var(--modal-padding-y)]">
                 {children}
               </div>
             </motion.div>
@@ -122,7 +122,7 @@ export function SlideOver({ isOpen, onClose, title, children, width = 'w-full sm
             exit={{ x: '100%' }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           >
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <div className="flex items-center justify-between border-b border-border px-[var(--modal-padding-x)] py-[var(--modal-padding-y)]">
               {title && <h2 className="text-base font-semibold text-white">{title}</h2>}
               <button
                 onClick={onClose}
@@ -131,7 +131,7 @@ export function SlideOver({ isOpen, onClose, title, children, width = 'w-full sm
                 <X size={18} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="flex-1 overflow-y-auto px-[var(--modal-padding-x)] py-[var(--modal-padding-y)]">
               {children}
             </div>
           </motion.div>

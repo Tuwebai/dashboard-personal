@@ -5,6 +5,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function isThemeMode(value: unknown): value is PersistedWorkspaceSnapshot['settings']['theme'] {
+  return value === 'dark' || value === 'light' || value === 'system';
+}
+
 export function isPersistedWorkspaceSnapshot(value: unknown): value is PersistedWorkspaceSnapshot {
   if (!isRecord(value)) {
     return false;
@@ -25,6 +29,7 @@ export function sanitizeImportedSnapshot(value: unknown): PersistedWorkspaceSnap
   }
 
   const defaults = getDefaultPersistedWorkspaceSnapshot();
+  const legacyValue = value as unknown as Record<string, unknown>;
 
   return {
     ...defaults,
@@ -36,6 +41,10 @@ export function sanitizeImportedSnapshot(value: unknown): PersistedWorkspaceSnap
     settings: {
       ...defaults.settings,
       ...value.settings,
+      theme: isThemeMode(legacyValue.theme) ? legacyValue.theme : value.settings.theme ?? defaults.settings.theme,
+      sidebarCollapsed: typeof legacyValue.sidebarCollapsed === 'boolean'
+        ? legacyValue.sidebarCollapsed
+        : value.settings.sidebarCollapsed ?? defaults.settings.sidebarCollapsed,
     },
   };
 }

@@ -37,7 +37,7 @@ export function Badge({ children, variant = 'default', color, className, size = 
         sizeClasses,
         variant === 'default' && 'bg-white/10 text-white/70',
         variant === 'outline' && 'border border-white/20 text-white/60',
-        variant === 'glow' && 'bg-violet-500/20 text-violet-400 border border-violet-500/30',
+        variant === 'glow' && 'nexus-badge-glow',
         className
       )}
     >

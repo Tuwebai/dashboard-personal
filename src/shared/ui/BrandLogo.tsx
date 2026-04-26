@@ -18,12 +18,12 @@ export function BrandMark({ className = 'h-8 w-8 shrink-0' }: BrandMarkProps) {
     <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
         <linearGradient id={primaryGradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#7c3aed"/>
-          <stop offset="100%" stopColor="#06b6d4"/>
+          <stop offset="0%" style={{ stopColor: 'var(--brand-primary-start)' }} />
+          <stop offset="100%" style={{ stopColor: 'var(--brand-primary-end)' }} />
         </linearGradient>
         <linearGradient id={accentGradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#8b5cf6"/>
-          <stop offset="100%" stopColor="#22d3ee"/>
+          <stop offset="0%" style={{ stopColor: 'var(--brand-accent-start)' }} />
+          <stop offset="100%" style={{ stopColor: 'var(--brand-accent-end)' }} />
         </linearGradient>
       </defs>
       <circle cx="24" cy="24" r="22" fill="none" stroke={`url(#${primaryGradientId})`} strokeWidth="1.5" opacity="0.3"/>
@@ -61,7 +61,10 @@ export function BrandLogo({
       <BrandMark className={markClassName} />
       <div className="min-w-0">
         <div className="flex min-w-0 items-baseline gap-1">
-          <span className={`truncate bg-linear-to-r from-violet-400 to-cyan-400 bg-clip-text font-bold tracking-tight text-transparent ${nameTextClassName}`}>
+          <span
+            className={`truncate bg-clip-text font-bold tracking-tight text-transparent ${nameTextClassName}`}
+            style={{ backgroundImage: 'linear-gradient(135deg, var(--brand-primary-start), var(--brand-primary-end))' }}
+          >
             Nexus
           </span>
           <span className={`truncate font-light tracking-[0.12em] text-zinc-400 ${nameTextClassName}`}>

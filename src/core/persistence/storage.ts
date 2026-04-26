@@ -4,7 +4,7 @@ import { getPersistenceMode } from './config';
 
 export type PersistedAppStore = PersistedWorkspaceSnapshot;
 
-export const LOCAL_WORKSPACE_STORAGE_VERSION = 8;
+export const LOCAL_WORKSPACE_STORAGE_VERSION = 9;
 const STORE_STORAGE_KEY = 'nexus-crm-store';
 
 export function createAppPersistenceStorage(): PersistStorage<PersistedAppStore> | undefined {

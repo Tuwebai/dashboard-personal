@@ -32,10 +32,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
         <input
           ref={ref}
           className={cn(
-            'w-full bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white/90 placeholder:text-white/20',
-            'focus:outline-none focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10',
+            'nexus-field-accent w-full bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white/90 placeholder:text-white/20',
+            'focus:outline-none',
             'transition-all duration-300',
-            'h-11 px-4',
+            'h-[var(--field-height)] px-4',
             leftIcon && 'pl-11',
             rightIcon && 'pr-11',
             error && 'border-red-500/40 focus:border-red-500/40 focus:ring-red-500/10',
@@ -79,8 +79,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       <textarea
         ref={ref}
         className={cn(
-          'w-full bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white/90 placeholder:text-white/20',
-          'focus:outline-none focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10',
+          'nexus-field-accent w-full bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white/90 placeholder:text-white/20',
+          'focus:outline-none',
           'transition-all duration-300 resize-none p-4',
           error && 'border-red-500/40 focus:border-red-500/40 focus:ring-red-500/10',
           className
@@ -117,9 +117,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(({
       <select
         ref={ref}
         className={cn(
-          'w-full bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white/90',
-          'focus:outline-none focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10',
-          'transition-all duration-300 h-11 px-4 cursor-pointer',
+          'nexus-field-accent w-full bg-white/[0.03] border border-white/5 rounded-2xl text-sm text-white/90',
+          'focus:outline-none transition-all duration-300 h-[var(--field-height)] px-4 cursor-pointer',
           error && 'border-red-500/40 focus:border-red-500/40 focus:ring-red-500/10',
           className
         )}

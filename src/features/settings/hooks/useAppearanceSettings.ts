@@ -2,43 +2,45 @@ import { useAppStore } from '../../../stores/useAppStore';
 import { useShallow } from 'zustand/react/shallow';
 
 export function useAppearanceSettings() {
-  const { theme, accentColor, sidebarCollapsed, compactMode, toggleTheme, updateSettings } = useAppStore(
+  const {
+    theme,
+    accentColor,
+    sidebarCollapsed,
+    compactMode,
+    setThemeMode,
+    setAccentColor,
+    setSidebarCollapsed,
+    setCompactMode,
+  } = useAppStore(
     useShallow((state) => ({
-      theme: state.theme,
+      theme: state.settings.theme,
       accentColor: state.settings.accentColor,
       sidebarCollapsed: state.settings.sidebarCollapsed,
       compactMode: state.settings.compactMode,
-      toggleTheme: state.toggleTheme,
-      updateSettings: state.updateSettings,
+      setThemeMode: state.setThemeMode,
+      setAccentColor: state.setAccentColor,
+      setSidebarCollapsed: state.setSidebarCollapsed,
+      setCompactMode: state.setCompactMode,
     })),
   );
   const settings = { accentColor, sidebarCollapsed, compactMode };
 
   const handleAccentChange = (color: string) => {
-    updateSettings({ accentColor: color });
-    // If you had a CSS variable updater, you'd trigger it here:
-    // document.documentElement.style.setProperty('--color-primary', color);
+    setAccentColor(color);
   };
 
   const toggleSidebar = (checked: boolean) => {
-    updateSettings({ sidebarCollapsed: checked });
+    setSidebarCollapsed(checked);
   };
 
   const toggleCompactMode = (checked: boolean) => {
-    updateSettings({ compactMode: checked });
-    
-    // Toggle global HTML class for dense UI
-    if (checked) {
-      document.documentElement.classList.add('compact-mode');
-    } else {
-      document.documentElement.classList.remove('compact-mode');
-    }
+    setCompactMode(checked);
   };
 
   return {
     theme,
     settings,
-    toggleTheme,
+    setThemeMode,
     handleAccentChange,
     toggleSidebar,
     toggleCompactMode,

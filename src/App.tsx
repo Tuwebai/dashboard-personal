@@ -1,5 +1,4 @@
 import { lazy, Suspense, type ReactNode } from 'react';
-import { useLayoutEffect } from 'react';
 import { Toaster } from 'sonner';
 import { useAppStore } from './stores/useAppStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -11,6 +10,7 @@ import type { AppModule } from './core/navigation/routes';
 import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
 import { PageSkeleton } from './shared/ui/PageSkeleton';
 import { AppLoadingScreen } from './shared/ui/AppLoadingScreen';
+import { useRealtimeAppearance } from './core/appearance/theme';
 
 const Dashboard = lazy(() => import('./features/dashboard/pages/DashboardPage').then(m => ({ default: m.Dashboard })));
 const GoalsPage = lazy(() => import('./features/goals/pages/GoalsPage').then(m => ({ default: m.GoalsPage })));
@@ -29,38 +29,17 @@ const Settings = lazy(() => import('./features/settings/pages/SettingsPage').the
 const LoginPage = lazy(() => import('./features/auth/pages/LoginPage').then(m => ({ default: m.LoginPage })));
 
 export default function App() {
-  const { theme, compactMode, accentColor, activeModule, setActiveModule, authStatus } = useAppStore(
+  const { activeModule, setActiveModule, authStatus } = useAppStore(
     useShallow((state) => ({
-      theme: state.theme,
-      compactMode: state.settings.compactMode,
-      accentColor: state.settings.accentColor,
       activeModule: state.activeModule,
       setActiveModule: state.setActiveModule,
       authStatus: state.authStatus,
     })),
   );
+  const { resolvedTheme } = useRealtimeAppearance();
   useFirebaseAuthBootstrap();
   useFirebasePersistenceSync();
   useAppNavigationSync(activeModule, authStatus, setActiveModule);
-
-  useLayoutEffect(() => {
-    // Sync Theme
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-
-    // Sync Compact Mode
-    if (compactMode) {
-      document.documentElement.classList.add('compact-mode');
-    } else {
-      document.documentElement.classList.remove('compact-mode');
-    }
-
-    // Sync Accent Color natively
-    document.documentElement.style.setProperty('--color-primary', accentColor);
-  }, [theme, compactMode, accentColor]);
 
   const handleNavigate = (module: AppModule) => {
     setActiveModule(module);
@@ -122,7 +101,7 @@ export default function App() {
   return (
     <>
       {content}
-      <Toaster position="top-right" richColors theme="dark" />
+      <Toaster position="top-right" richColors theme={resolvedTheme} />
     </>
   );
 }

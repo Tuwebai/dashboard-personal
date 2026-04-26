@@ -11,12 +11,18 @@ const ACCENT_COLORS = [
   { labelKey: 'settings.accentRosePink', value: '#f43f5e', class: 'bg-rose-500' },
   { labelKey: 'settings.accentAmberGlow', value: '#f59e0b', class: 'bg-amber-500' },
   { labelKey: 'settings.accentSlateGray', value: '#64748b', class: 'bg-slate-500' },
-];
+] as const;
+
+const THEME_OPTIONS = [
+  { id: 'light', icon: Sun, labelKey: 'settings.lightMode' },
+  { id: 'dark', icon: Moon, labelKey: 'settings.darkMode' },
+  { id: 'system', icon: Monitor, labelKey: 'settings.systemSync' },
+] as const;
 
 export function AppearanceSection() {
   const { t } = useI18n();
   const { 
-    theme, settings, toggleTheme, 
+    theme, settings, setThemeMode, 
     handleAccentChange, toggleSidebar, toggleCompactMode 
   } = useAppearanceSettings();
 
@@ -29,14 +35,11 @@ export function AppearanceSection() {
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { id: 'light', icon: Sun, label: t('settings.lightMode') },
-            { id: 'dark', icon: Moon, label: t('settings.darkMode') },
-            { id: 'system', icon: Monitor, label: t('settings.systemSync') },
-          ].map((mode) => (
+          {THEME_OPTIONS.map((mode) => (
             <button
               key={mode.id}
-              onClick={toggleTheme}
+              type="button"
+              onClick={() => setThemeMode(mode.id)}
               className={cn(
                 "p-5 rounded-xl border transition-all duration-200 flex flex-col items-center gap-3 text-center",
                 theme === mode.id 
@@ -45,7 +48,7 @@ export function AppearanceSection() {
               )}
             >
               <mode.icon size={28} />
-              <span className="text-sm font-bold">{mode.label}</span>
+              <span className="text-sm font-bold">{t(mode.labelKey)}</span>
             </button>
           ))}
         </div>

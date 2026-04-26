@@ -39,9 +39,9 @@ function submitClosestForm(target: EventTarget | null) {
 }
 
 export function useGlobalKeyboardShortcuts({ onNavigate }: UseGlobalKeyboardShortcutsOptions) {
-  const { toggleSidebar, setCommandPaletteOpen, workspaceReadOnly } = useAppStore(
+  const { toggleSidebarPreference, setCommandPaletteOpen, workspaceReadOnly } = useAppStore(
     useShallow((state) => ({
-      toggleSidebar: state.toggleSidebar,
+      toggleSidebarPreference: state.toggleSidebarPreference,
       setCommandPaletteOpen: state.setCommandPaletteOpen,
       workspaceReadOnly: state.workspaceReadOnly,
     })),
@@ -82,7 +82,7 @@ export function useGlobalKeyboardShortcuts({ onNavigate }: UseGlobalKeyboardShor
       switch (key) {
         case 'b':
           event.preventDefault();
-          toggleSidebar();
+          toggleSidebarPreference();
           return;
         case '1':
           event.preventDefault();
@@ -138,5 +138,5 @@ export function useGlobalKeyboardShortcuts({ onNavigate }: UseGlobalKeyboardShor
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onNavigate, setCommandPaletteOpen, toggleSidebar, workspaceReadOnly]);
+  }, [onNavigate, setCommandPaletteOpen, toggleSidebarPreference, workspaceReadOnly]);
 }

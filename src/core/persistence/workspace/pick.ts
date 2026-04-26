@@ -5,8 +5,6 @@ export function pickPersistedWorkspace(state: AppStore): PersistedWorkspaceSnaps
   return {
     user: state.user,
     settings: state.settings,
-    theme: state.theme,
-    sidebarCollapsed: state.sidebarCollapsed,
     taskView: state.taskView,
     calendarView: state.calendarView,
     tasks: state.tasks,

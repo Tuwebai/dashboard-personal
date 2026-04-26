@@ -32,6 +32,11 @@ export interface AuthSlice {
   firebaseUid: string | null;
   workspaceReadOnly: boolean;
   updateSettings: (settings: Partial<UserSettings>) => void;
+  setThemeMode: (theme: UserSettings['theme']) => void;
+  setAccentColor: (accentColor: string) => void;
+  setCompactMode: (compactMode: boolean) => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
+  toggleSidebarPreference: () => void;
   updateUser: (updates: Partial<typeof CURRENT_USER>) => void;
   setWorkspaceReadOnly: (readOnly: boolean) => void;
   setAuthState: (state: {
@@ -47,14 +52,10 @@ export interface AuthSlice {
 }
 
 export interface UISlice {
-  sidebarCollapsed: boolean;
   commandPaletteOpen: boolean;
   activeModule: AppModule;
-  theme: 'dark' | 'light';
-  toggleSidebar: () => void;
   setCommandPaletteOpen: (open: boolean) => void;
   setActiveModule: (module: AppModule) => void;
-  toggleTheme: () => void;
 }
 
 export interface TaskSlice {

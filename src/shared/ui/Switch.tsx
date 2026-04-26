@@ -44,15 +44,15 @@ export function Switch({
       
       <div 
         className={cn(
-          "relative w-12 h-6 rounded-full transition-all duration-300 ring-2 ring-transparent",
-          checked ? "bg-violet-600/20" : "bg-white/5",
+          "relative h-6 w-12 rounded-full transition-all duration-300 ring-2 ring-transparent",
+          checked ? "nexus-switch-track-on" : "bg-white/5",
           "hover:ring-white/5"
         )}
       >
         <motion.div
           className={cn(
             "absolute top-1 left-1 w-4 h-4 rounded-full shadow-lg",
-            checked ? "bg-violet-500" : "bg-white/20"
+            checked ? "nexus-switch-thumb-on" : "bg-white/20"
           )}
           initial={false}
           animate={{ x: checked ? 24 : 0 }}

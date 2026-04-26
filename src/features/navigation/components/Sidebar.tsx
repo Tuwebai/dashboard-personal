@@ -46,10 +46,10 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobile }: SidebarProps) {
-  const { sidebarCollapsed, toggleSidebar, user, signOut } = useAppStore(
+  const { sidebarCollapsed, toggleSidebarPreference, user, signOut } = useAppStore(
     useShallow((state) => ({
-      sidebarCollapsed: state.sidebarCollapsed,
-      toggleSidebar: state.toggleSidebar,
+      sidebarCollapsed: state.settings.sidebarCollapsed,
+      toggleSidebarPreference: state.toggleSidebarPreference,
       user: state.user,
       signOut: state.signOut,
     }))
@@ -73,7 +73,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
 
 
       {/* Logo */}
-      <div className="flex h-14 items-center overflow-hidden border-b border-border px-4 shrink-0 md:h-16">
+      <div className="flex items-center overflow-hidden border-b border-border px-4 shrink-0" style={{ height: 'var(--sidebar-brand-height)' }}>
         <BrandLogo
           collapsed={isCollapsed}
           variant="sidebar"
@@ -266,7 +266,7 @@ export function Sidebar({ activeModule, onNavigate, mobile = false, onCloseMobil
         {/* Collapse Toggle */}
         {!mobile ? (
           <button
-            onClick={toggleSidebar}
+            onClick={toggleSidebarPreference}
             className={cn(
                'mt-2 flex w-full items-center gap-3 rounded-xl px-3 py-2 text-white/30 hover:text-white/60 hover:bg-white/5 transition-all duration-200 cursor-pointer md:py-2.5',
               isCollapsed && 'justify-center px-0'

@@ -26,6 +26,36 @@ export const createAuthSlice: StateCreator<
     }
     Object.assign(state.settings, updates);
   }),
+  setThemeMode: (theme) => set(state => {
+    if (state.workspaceReadOnly) {
+      return;
+    }
+    state.settings.theme = theme;
+  }),
+  setAccentColor: (accentColor) => set(state => {
+    if (state.workspaceReadOnly) {
+      return;
+    }
+    state.settings.accentColor = accentColor;
+  }),
+  setCompactMode: (compactMode) => set(state => {
+    if (state.workspaceReadOnly) {
+      return;
+    }
+    state.settings.compactMode = compactMode;
+  }),
+  setSidebarCollapsed: (collapsed) => set(state => {
+    if (state.workspaceReadOnly) {
+      return;
+    }
+    state.settings.sidebarCollapsed = collapsed;
+  }),
+  toggleSidebarPreference: () => set(state => {
+    if (state.workspaceReadOnly) {
+      return;
+    }
+    state.settings.sidebarCollapsed = !state.settings.sidebarCollapsed;
+  }),
   updateUser: (updates) => set(state => {
     if (state.workspaceReadOnly) {
       return;

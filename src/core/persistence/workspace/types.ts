@@ -4,8 +4,6 @@ import type { AppStore } from '../../../stores/types';
 export interface PersistedWorkspaceSnapshot {
   user: AppStore['user'];
   settings: AppStore['settings'];
-  theme: AppStore['theme'];
-  sidebarCollapsed: AppStore['sidebarCollapsed'];
   taskView: AppStore['taskView'];
   calendarView: AppStore['calendarView'];
   tasks: AppStore['tasks'];
@@ -39,8 +37,6 @@ export function getDefaultPersistedWorkspaceSnapshot(): PersistedWorkspaceSnapsh
   return {
     user: { ...CURRENT_USER, createdAt: new Date().toISOString() },
     settings: { ...DEFAULT_SETTINGS },
-    theme: 'dark',
-    sidebarCollapsed: false,
     taskView: 'kanban',
     calendarView: 'month',
     tasks: [],
