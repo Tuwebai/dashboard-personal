@@ -15,6 +15,7 @@
     "test:e2e": "playwright test",
     "test:e2e:list": "playwright test --list",
     "test:e2e:local": "playwright test e2e/local-workspace.smoke.spec.ts",
+    "test:e2e:shell": "playwright test e2e/shell-deeplinks.smoke.spec.ts e2e/shell-responsive.smoke.spec.ts",
     "test:e2e:firebase": "playwright test e2e/firebase-auth.smoke.spec.ts"
   },
   "dependencies": {

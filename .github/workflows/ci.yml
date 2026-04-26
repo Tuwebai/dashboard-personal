@@ -37,3 +37,6 @@ jobs:
 
       - name: Local E2E smoke
         run: npm run test:e2e:local
+
+      - name: Shell E2E smoke
+        run: npm run test:e2e:shell
