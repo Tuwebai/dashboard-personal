@@ -27,6 +27,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   weekStartsMonday: true,
   defaultTaskView: 'kanban',
   notificationsEnabled: true,
+  pushNotifications: false,
   taskNotifications: true,
   habitNotifications: true,
   financeAlerts: true,

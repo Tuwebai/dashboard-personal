@@ -35,6 +35,10 @@ function getFirebaseConfig() {
   };
 }
 
+export function getFirebaseClientConfig() {
+  return getFirebaseConfig();
+}
+
 function isAnonymousAuthEnabled() {
   return import.meta.env.VITE_FIREBASE_ENABLE_ANONYMOUS_AUTH === 'true';
 }
@@ -53,6 +57,18 @@ export function getFirebaseFirestore() {
   }
 
   return firestoreDb;
+}
+
+export function getFirebaseAppInstance() {
+  if (!shouldUseFirebasePersistence()) {
+    return null;
+  }
+
+  if (!firebaseApp) {
+    firebaseApp = initializeApp(getFirebaseConfig());
+  }
+
+  return firebaseApp;
 }
 
 export function getFirebaseAuth() {

@@ -198,12 +198,16 @@ export interface FocusSlice {
 
 export interface ActivitySlice {
   notifications: AppNotification[];
+  systemNotifications: AppNotification[];
   activities: ActivityItem[];
-  markNotificationRead: (id: string) => void;
-  markAllNotificationsRead: () => void;
-  clearNotifications: () => void;
+  setNotifications: (notifications: AppNotification[]) => void;
+  upsertSystemNotification: (notif: Omit<AppNotification, 'scope'> & { scope?: 'system' }) => void;
+  dismissSystemNotification: (id: string) => void;
+  markNotificationRead: (id: string) => Promise<void>;
+  markAllNotificationsRead: () => Promise<void>;
+  clearNotifications: () => Promise<void>;
   addActivity: (activity: Omit<ActivityItem, 'id' | 'createdAt'>) => void;
-  addNotification: (notif: Omit<AppNotification, 'id' | 'createdAt'>) => void;
+  addNotification: (notif: Omit<AppNotification, 'id' | 'createdAt' | 'scope'> & { scope?: 'user' | 'system' }) => Promise<void>;
 }
 
 export type AppStore = AuthSlice & UISlice & TaskSlice & HabitSlice & RoutineSlice & FinanceSlice & CalendarSlice & WeeklyPlanningSlice & NoteSlice & JournalingSlice & FocusSlice & ActivitySlice & PersonalGoalSlice;

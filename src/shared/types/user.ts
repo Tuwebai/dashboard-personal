@@ -19,6 +19,7 @@ export interface UserSettings {
   weekStartsMonday: boolean;
   defaultTaskView: TaskView;
   notificationsEnabled: boolean;
+  pushNotifications: boolean;
   taskNotifications: boolean;
   habitNotifications: boolean;
   financeAlerts: boolean;

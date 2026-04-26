@@ -117,7 +117,7 @@ export function pushSyncErrorNotification(error: PersistenceSyncErrorInfo) {
   const language = (store.settings.language ?? 'es') as Lang;
   const localizedNotification = getLocalizedSyncNotification(language, error);
   const now = new Date().toISOString();
-  const existingNotification = store.notifications.find(
+  const existingNotification = store.systemNotifications.find(
     (notification) =>
       notification.type === 'system' &&
       notification.title === localizedNotification.title &&
@@ -125,31 +125,33 @@ export function pushSyncErrorNotification(error: PersistenceSyncErrorInfo) {
   );
 
   if (existingNotification) {
-    useAppStore.setState((currentState) => ({
-      notifications: currentState.notifications.map((notification) =>
-        notification.id === existingNotification.id
-          ? {
-              ...notification,
-              isRead: false,
-              createdAt: now,
-            }
-          : notification,
-      ),
-    }));
+    store.upsertSystemNotification({
+      ...existingNotification,
+      isRead: false,
+      createdAt: now,
+      delivery: {
+        ...existingNotification.delivery,
+        inApp: 'queued',
+      },
+      channels: existingNotification.channels,
+      scope: 'system',
+    });
     return;
   }
 
-  useAppStore.setState((currentState) => ({
-    notifications: [
-      {
-        id: `sync-error-${Date.now()}`,
-        type: 'system',
-        title: localizedNotification.title,
-        message: localizedNotification.message,
-        isRead: false,
-        createdAt: now,
-      },
-      ...currentState.notifications,
-    ],
-  }));
+  store.upsertSystemNotification({
+    id: `sync-error-${Date.now()}`,
+    type: 'system',
+    title: localizedNotification.title,
+    message: localizedNotification.message,
+    isRead: false,
+    createdAt: now,
+    channels: ['in_app'],
+    delivery: {
+      inApp: 'queued',
+      push: 'disabled',
+    },
+    scope: 'system',
+    isEphemeral: true,
+  });
 }

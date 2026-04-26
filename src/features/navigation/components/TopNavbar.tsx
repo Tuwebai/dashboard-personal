@@ -37,9 +37,11 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
     workspaceReadOnly,
     setThemeMode,
     notifications,
+    systemNotifications,
     markNotificationRead,
     markAllNotificationsRead,
     clearNotifications,
+    dismissSystemNotification,
     setCommandPaletteOpen,
     focusSessions,
     selectedFocusSessionId,
@@ -52,9 +54,11 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
       workspaceReadOnly: state.workspaceReadOnly,
       setThemeMode: state.setThemeMode,
       notifications: state.notifications,
+      systemNotifications: state.systemNotifications,
       markNotificationRead: state.markNotificationRead,
       markAllNotificationsRead: state.markAllNotificationsRead,
       clearNotifications: state.clearNotifications,
+      dismissSystemNotification: state.dismissSystemNotification,
       setCommandPaletteOpen: state.setCommandPaletteOpen,
       focusSessions: state.focusSessions,
       selectedFocusSessionId: state.selectedFocusSessionId,
@@ -64,8 +68,13 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
     }))
   );
   const resolvedTheme = useResolvedTheme(themeMode);
-
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const visibleNotifications = useMemo(
+    () => [...systemNotifications, ...notifications].sort(
+      (left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
+    ),
+    [notifications, systemNotifications],
+  );
+  const unreadCount = visibleNotifications.filter(n => !n.isRead).length;
   const activeFocusSession = useMemo(
     () => {
       const selectedSession = focusSessions.find(
@@ -231,15 +240,15 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                   <div className="flex items-center gap-3">
                     {unreadCount > 0 && (
                       <button
-                        onClick={markAllNotificationsRead}
+                        onClick={() => void markAllNotificationsRead()}
                         className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
                       >
                         {t('common.markAllRead')}
                       </button>
                     )}
-                    {notifications.length > 0 && (
+                    {visibleNotifications.length > 0 && (
                       <button
-                        onClick={clearNotifications}
+                        onClick={() => void clearNotifications()}
                         className="text-xs text-text-secondary transition-colors hover:text-text-primary"
                       >
                         {t('common.clearAll')}
@@ -248,22 +257,25 @@ export function TopNavbar({ activeModule, onNavigate, onToggleSidebar }: TopNavb
                   </div>
                 </div>
                 <div className="max-h-80 overflow-y-auto divide-y divide-border">
-                  {notifications.length === 0 ? (
+                  {visibleNotifications.length === 0 ? (
                     <div className="p-4 text-center text-sm text-text-secondary">
                       {t('common.noNotifications')}
                     </div>
                   ) : (
-                    notifications.slice(0, 10).map(notif => {
+                    visibleNotifications.slice(0, 10).map(notif => {
                       const Icon = NOTIF_ICONS[notif.type];
                       return (
                         <button
                           key={notif.id}
-                          onClick={() => {
-                            markNotificationRead(notif.id);
+                          onClick={async () => {
+                            await markNotificationRead(notif.id);
                             if (notif.actionUrl) {
                               onNavigate(getModuleFromPath(notif.actionUrl));
-                              setNotifOpen(false);
                             }
+                            if (notif.scope === 'system' && notif.isEphemeral) {
+                              dismissSystemNotification(notif.id);
+                            }
+                            setNotifOpen(false);
                           }}
                           className={cn(
                             'w-full flex items-start gap-3 px-4 py-3 hover:bg-white/4 transition-colors text-left',

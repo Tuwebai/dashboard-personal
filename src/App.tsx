@@ -11,6 +11,8 @@ import { FeatureErrorBoundary } from './shared/ui/FeatureErrorBoundary';
 import { PageSkeleton } from './shared/ui/PageSkeleton';
 import { AppLoadingScreen } from './shared/ui/AppLoadingScreen';
 import { useRealtimeAppearance } from './core/appearance/theme';
+import { useNotificationSync } from './core/notifications/useNotificationSync';
+import { usePushRegistration } from './core/notifications/usePushRegistration';
 
 const Dashboard = lazy(() => import('./features/dashboard/pages/DashboardPage').then(m => ({ default: m.Dashboard })));
 const GoalsPage = lazy(() => import('./features/goals/pages/GoalsPage').then(m => ({ default: m.GoalsPage })));
@@ -39,6 +41,8 @@ export default function App() {
   const { resolvedTheme } = useRealtimeAppearance();
   useFirebaseAuthBootstrap();
   useFirebasePersistenceSync();
+  useNotificationSync();
+  usePushRegistration();
   useAppNavigationSync(activeModule, authStatus, setActiveModule);
 
   const handleNavigate = (module: AppModule) => {

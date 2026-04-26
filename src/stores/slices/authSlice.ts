@@ -134,6 +134,17 @@ export const createAuthSlice: StateCreator<
       }
     }
 
+    if (authProvider === 'password' && firebaseUid) {
+      const updatedAt = new Date().toISOString();
+      const [{ disableNotificationDeviceRemote }, { getPushDeviceId, revokePushToken }] = await Promise.all([
+        import('../../core/notifications/firestore'),
+        import('../../core/notifications/push'),
+      ]);
+
+      await disableNotificationDeviceRemote(firebaseUid, getPushDeviceId(), updatedAt).catch(() => undefined);
+      await revokePushToken().catch(() => false);
+    }
+
     await signOutFirebaseUser();
   },
 });

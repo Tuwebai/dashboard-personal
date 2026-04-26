@@ -6,7 +6,7 @@ import { useI18n } from '../../../shared/i18n/useI18n';
 export function NotificationSection() {
   const { t } = useI18n();
   const { 
-    settings, permissionStatus, toggleGlobal, toggleFeature, requestBrowserPermission 
+    settings, permissionStatus, supportState, authProvider, toggleGlobal, togglePush, toggleFeature, requestBrowserPermission 
   } = useNotificationSettings();
 
   const notificationGroups = [
@@ -42,6 +42,34 @@ export function NotificationSection() {
             label={t('settings.enableAll')}
           />
         </div>
+
+        <div className="rounded-xl border border-border bg-bg-tertiary p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-white">{t('settings.pushBrowserTitle')}</p>
+              <p className="mt-0.5 text-xs text-white/40">
+                {supportState.supportsPush
+                  ? supportState.isChromiumPreferred
+                    ? t('settings.pushBrowserDesc')
+                    : t('settings.pushBrowserLimited')
+                  : t('settings.pushUnsupported')}
+              </p>
+            </div>
+            <Switch
+              checked={settings.pushNotifications}
+              onChange={(value) => void togglePush(value)}
+              disabled={!settings.notificationsEnabled || !supportState.supportsPush}
+              label={t('settings.pushBrowserSwitch')}
+            />
+          </div>
+        </div>
+
+        {authProvider === 'anonymous' && (
+          <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4">
+            <p className="text-sm font-semibold text-amber-100">{t('settings.pushGuestTitle')}</p>
+            <p className="mt-1 text-xs text-amber-100/80">{t('settings.pushGuestDesc')}</p>
+          </div>
+        )}
         
         <div className="space-y-4">
           {notificationGroups.map((group) => (
@@ -75,10 +103,13 @@ export function NotificationSection() {
         <div>
           <p className="text-sm font-semibold text-white">{t('common.desktopNotifications')}</p>
           <p className="text-sm text-white/30">{browserPermissionMessage}</p>
+          {!supportState.supportsPush && (
+            <p className="mt-1 text-xs text-white/30">{t('settings.pushInAppOnly')}</p>
+          )}
         </div>
         <button 
           onClick={requestBrowserPermission}
-          disabled={permissionStatus === 'granted'}
+          disabled={permissionStatus === 'granted' || !supportState.supportsNotifications}
           className="ml-auto px-4 py-2 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-semibold transition-all border border-border"
         >
           {browserPermissionActionLabel}

@@ -5,5 +5,17 @@ service cloud.firestore {
     match /users/{userId}/crm/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    match /users/{userId}/notificationInbox/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/notificationDevices/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/notificationPreferences/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
   }
 }
