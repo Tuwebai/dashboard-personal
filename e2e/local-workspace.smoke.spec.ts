@@ -63,6 +63,7 @@ test.describe('workspace local smoke', () => {
     await expect(page.getByText(transactionName)).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Inicio' }).first().click();
-    await expect(page.getByText('Buenas noches').or(page.getByText('Buen día')).or(page.getByText('Buenas tardes'))).toBeVisible();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.locator('header').getByText('Inicio')).toBeVisible();
   });
 });
