@@ -23,7 +23,7 @@ import {
   STORE_STORAGE_KEY,
 } from '../core/persistence/storage';
 import { isPersistedWorkspaceSnapshot, pickPersistedWorkspace } from '../core/persistence/workspace';
-import { shouldUseFirebasePersistence } from '../core/persistence/firebase';
+import { shouldUseFirebasePersistence } from '../core/persistence/config';
 import { emitWorkspaceReadonlyBlockedEvent } from '../core/persistence/workspaceReadonly';
 
 function isPersistedAppStore(value: unknown): value is PersistedAppStore {

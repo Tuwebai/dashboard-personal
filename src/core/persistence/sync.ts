@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
-import { subscribeToFirebaseAuth } from './firebase';
 import { isFirebasePersistenceConfigured } from './config';
+import { loadFirebaseBridge, loadRemoteWorkspaceBridge } from './firebaseLoaders';
 import {
   isPersistedWorkspaceSnapshot,
   mergePersistedWorkspace,
@@ -18,11 +18,6 @@ import {
 } from './syncMetadata';
 import { resolvePersistenceSyncError } from './syncErrors';
 import { clearWorkspaceCache, readWorkspaceCache, writeWorkspaceCache } from './remoteCache';
-import {
-  hydrateWorkspaceFromRemote,
-  subscribeWorkspaceRemote,
-  writeWorkspaceRemote,
-} from './remoteWorkspace';
 import { createScopedInitialSnapshot, isRemoteStatePayload } from './syncWorkspace';
 import { usePersistenceModeValue } from './usePersistenceModeValue';
 
@@ -46,6 +41,8 @@ export function useFirebasePersistenceSync() {
     let syncTimeout: number | null = null;
     let storeUnsubscribe: () => void = () => undefined;
     let remoteUnsubscribe: (() => void) | null = null;
+    const firebaseBridgePromise = loadFirebaseBridge();
+    const remoteWorkspaceBridgePromise = loadRemoteWorkspaceBridge();
 
     const setAuthState = useAppStore.getState().setAuthState;
     const setWorkspaceReadOnly = useAppStore.getState().setWorkspaceReadOnly;
@@ -98,7 +95,8 @@ export function useFirebasePersistenceSync() {
           pendingLocalUpdatedAt = updatedAt;
           dispatchSyncStatus('syncing', getLastSyncAt(uid));
 
-          void writeWorkspaceRemote(uid, { updatedAt, state: snapshot })
+          void remoteWorkspaceBridgePromise
+            .then(({ writeWorkspaceRemote }) => writeWorkspaceRemote(uid, { updatedAt, state: snapshot }))
             .then(() => {
               setLastSyncAt(uid, updatedAt);
               clearLastSyncError(uid);
@@ -127,6 +125,11 @@ export function useFirebasePersistenceSync() {
       setWorkspaceReadOnly(false);
 
       try {
+        const {
+          hydrateWorkspaceFromRemote,
+          subscribeWorkspaceRemote,
+          writeWorkspaceRemote,
+        } = await remoteWorkspaceBridgePromise;
         const snapshot = await hydrateWorkspaceFromRemote(uid);
         if (cancelled || currentUid !== uid) {
           return;
@@ -225,30 +228,38 @@ export function useFirebasePersistenceSync() {
       }
     };
 
-    const authUnsubscribe = subscribeToFirebaseAuth((user) => {
+    let authUnsubscribe: () => void = () => undefined;
+
+    void firebaseBridgePromise.then(({ subscribeToFirebaseAuth }) => {
       if (cancelled) {
         return;
       }
 
-      teardownSubscriptions();
-      remoteHydrated = false;
-      syncing = false;
-      pendingLocalUpdatedAt = '';
-      lastConfirmedSnapshot = '';
+      authUnsubscribe = subscribeToFirebaseAuth((user) => {
+        if (cancelled) {
+          return;
+        }
 
-      if (!user) {
-        const previousUid = currentUid;
-        currentUid = null;
-        clearLastSyncError(previousUid);
-        clearLastSyncAt(previousUid);
-        clearWorkspaceCache(previousUid);
-        dispatchSyncStatus('idle');
-        setWorkspaceReadOnly(false);
-        return;
-      }
+        teardownSubscriptions();
+        remoteHydrated = false;
+        syncing = false;
+        pendingLocalUpdatedAt = '';
+        lastConfirmedSnapshot = '';
 
-      currentUid = user.uid;
-      void bootRemoteWorkspace(user.uid, user.email);
+        if (!user) {
+          const previousUid = currentUid;
+          currentUid = null;
+          clearLastSyncError(previousUid);
+          clearLastSyncAt(previousUid);
+          clearWorkspaceCache(previousUid);
+          dispatchSyncStatus('idle');
+          setWorkspaceReadOnly(false);
+          return;
+        }
+
+        currentUid = user.uid;
+        void bootRemoteWorkspace(user.uid, user.email);
+      });
     });
 
     return () => {

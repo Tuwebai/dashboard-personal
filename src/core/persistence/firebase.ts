@@ -12,7 +12,7 @@ import {
   type User,
 } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getPersistenceMode, isFirebasePersistenceConfigured } from './config';
+import { shouldUseFirebasePersistence } from './config';
 
 let firebaseApp: FirebaseApp | null = null;
 let firestoreDb: Firestore | null = null;
@@ -33,10 +33,6 @@ function getFirebaseConfig() {
 
 function isAnonymousAuthEnabled() {
   return import.meta.env.VITE_FIREBASE_ENABLE_ANONYMOUS_AUTH === 'true';
-}
-
-export function shouldUseFirebasePersistence() {
-  return getPersistenceMode() === 'firebase' && isFirebasePersistenceConfigured();
 }
 
 export function getFirebaseFirestore() {

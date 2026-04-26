@@ -51,6 +51,10 @@ export function isFirebasePersistenceConfigured() {
   );
 }
 
+export function shouldUseFirebasePersistence() {
+  return getPersistenceMode() === 'firebase' && isFirebasePersistenceConfigured();
+}
+
 export function subscribePersistenceModeChange(onChange: () => void) {
   if (typeof window === 'undefined') {
     return () => undefined;

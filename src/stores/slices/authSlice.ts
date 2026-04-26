@@ -1,14 +1,8 @@
 import { StateCreator } from 'zustand';
 import { AuthSlice, AppStore } from '../types';
 import { CURRENT_USER, DEFAULT_SETTINGS } from '../../core/constants';
-import {
-  linkAnonymousFirebaseUser,
-  signInFirebaseAnonymously,
-  signInFirebaseWithEmail,
-  signOutFirebaseUser,
-  signUpFirebaseWithEmail,
-  shouldUseFirebasePersistence,
-} from '../../core/persistence/firebase';
+import { shouldUseFirebasePersistence } from '../../core/persistence/config';
+import { loadFirebaseBridge } from '../../core/persistence/firebaseLoaders';
 
 const DEFAULT_AUTH_STATUS: AuthSlice['authStatus'] = shouldUseFirebasePersistence()
   ? 'loading'
@@ -47,6 +41,7 @@ export const createAuthSlice: StateCreator<
     state.firebaseUid = authState.firebaseUid;
   }),
   signInAnonymously: async () => {
+    const { signInFirebaseAnonymously } = await loadFirebaseBridge();
     const user = await signInFirebaseAnonymously();
 
     if (!user) {
@@ -54,6 +49,7 @@ export const createAuthSlice: StateCreator<
     }
   },
   signInWithEmail: async (email, password) => {
+    const { signInFirebaseWithEmail } = await loadFirebaseBridge();
     const user = await signInFirebaseWithEmail(email, password);
 
     if (!user) {
@@ -61,6 +57,7 @@ export const createAuthSlice: StateCreator<
     }
   },
   signUpWithEmail: async (email, password) => {
+    const { signUpFirebaseWithEmail } = await loadFirebaseBridge();
     const user = await signUpFirebaseWithEmail(email, password);
 
     if (!user) {
@@ -68,6 +65,7 @@ export const createAuthSlice: StateCreator<
     }
   },
   linkAnonymousAccount: async (email, password) => {
+    const { linkAnonymousFirebaseUser } = await loadFirebaseBridge();
     const user = await linkAnonymousFirebaseUser(email, password);
 
     if (!user) {
@@ -75,6 +73,7 @@ export const createAuthSlice: StateCreator<
     }
   },
   signOut: async () => {
+    const { signOutFirebaseUser } = await loadFirebaseBridge();
     await signOutFirebaseUser();
   },
 });

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useAppStore } from '../../stores/useAppStore';
-import { subscribeToFirebaseAuth } from './firebase';
 import { isFirebasePersistenceConfigured } from './config';
+import { loadFirebaseBridge } from './firebaseLoaders';
 import { usePersistenceModeValue } from './usePersistenceModeValue';
 import { resetWorkspaceForSession } from './workspace';
 
@@ -23,38 +23,52 @@ export function useFirebaseAuthBootstrap() {
       return;
     }
 
-    return subscribeToFirebaseAuth((user) => {
-      if (!user) {
-        const hadActiveSession = previousUidRef.current !== null;
-        previousUidRef.current = null;
-        if (hadActiveSession) {
-          resetWorkspaceForSession();
-        }
-        setAuthState({
-          authStatus: 'unauthenticated',
-          authProvider: null,
-          firebaseUid: null,
-        });
-        setWorkspaceReadOnly(false);
+    let cancelled = false;
+    let authUnsubscribe: () => void = () => undefined;
+
+    void loadFirebaseBridge().then(({ subscribeToFirebaseAuth }) => {
+      if (cancelled) {
         return;
       }
 
-      if (previousUidRef.current && previousUidRef.current !== user.uid) {
-        resetWorkspaceForSession(user.uid, user.email);
-      }
+      authUnsubscribe = subscribeToFirebaseAuth((user) => {
+        if (!user) {
+          const hadActiveSession = previousUidRef.current !== null;
+          previousUidRef.current = null;
+          if (hadActiveSession) {
+            resetWorkspaceForSession();
+          }
+          setAuthState({
+            authStatus: 'unauthenticated',
+            authProvider: null,
+            firebaseUid: null,
+          });
+          setWorkspaceReadOnly(false);
+          return;
+        }
 
-      previousUidRef.current = user.uid;
-      const authProvider = user.isAnonymous ? 'anonymous' : 'password';
-      updateUser({
-        id: user.uid,
-        email: user.email ?? '',
+        if (previousUidRef.current && previousUidRef.current !== user.uid) {
+          resetWorkspaceForSession(user.uid, user.email);
+        }
+
+        previousUidRef.current = user.uid;
+        const authProvider = user.isAnonymous ? 'anonymous' : 'password';
+        updateUser({
+          id: user.uid,
+          email: user.email ?? '',
+        });
+        setAuthState({
+          authStatus: 'loading',
+          authProvider,
+          firebaseUid: user.uid,
+        });
+        setWorkspaceReadOnly(false);
       });
-      setAuthState({
-        authStatus: 'loading',
-        authProvider,
-        firebaseUid: user.uid,
-      });
-      setWorkspaceReadOnly(false);
     });
+
+    return () => {
+      cancelled = true;
+      authUnsubscribe();
+    };
   }, [persistenceMode, setAuthState, setWorkspaceReadOnly, updateUser]);
 }
